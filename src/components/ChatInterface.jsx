@@ -53,16 +53,16 @@ const ChatInterface = () => {
       <div className={`flex-1 overflow-y-auto p-4 ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}>
         {messages.length === 1 ? (
           // Show initial message and prompts in center when no user messages exist
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-1">
             <div className="text-xl font-semibold">{messages[0].content}</div>
             <p className="text-sm text-gray-600">{messages[0].subtext}</p>
             <p className="text-sm text-gray-600 mb-12 mt-15">{messages[0].para}</p>
 
-            <div className="grid grid-cols-2 gap-2 mt-4">
+            <div className="grid grid-cols-2 gap-4 mt-4">
               {suggestionPrompts.map((prompt, index) => (
                 <button
                   key={index}
-                  className="p-4 text-sm text-blue-500 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-left"
+                  className="p-4  text-sm text-[#52A1FF] border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-left"
                   onClick={() => setInputMessage(prompt)}
                 >
                   {prompt}

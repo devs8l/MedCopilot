@@ -19,7 +19,7 @@ const Home = () => {
             <div className="bg-primary flex flex-col gap-3">
                 <div className="flex flex-col  h-[75%] items-center justify-between  bg-white rounded-2xl drop-shadow-md">
                     <button
-                        className={`px-4 py-2 mt-3 rounded-md ${isExpanded ? 'self-start' : 'self-center'}`}
+                        className={`px-4 py-2 mt-3 rounded-md cursor-pointer ${isExpanded ? 'self-start' : 'self-center'}`}
                         onClick={() => setIsExpanded(!isExpanded)}
                     >
                         {isExpanded ? <ChevronLeft /> : <Menu />}
