@@ -101,7 +101,7 @@ const ChatInterface = () => {
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="Type Here..."
-            className="flex-1 p-4  rounded-lg focus:outline-none bg-gray-100 focus:ring-2 focus:ring-blue-500"
+            className="flex-1 p-4  rounded-lg focus:outline-none bg-gray-100 "
           />
           <button
             onClick={handleSendMessage}
