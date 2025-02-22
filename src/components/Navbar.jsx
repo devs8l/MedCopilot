@@ -8,7 +8,7 @@ const Navbar = () => {
     return (
         <div className='grid grid-cols-[2fr_1fr] sm:grid-cols-[1fr_2fr_1fr] gap-4 py-5 px-5'>
             <div className=' py-3'>
-                <h1 className='text-3xl sf-bold '>MedCopilot</h1>
+                <h1 className='text-3xl  font-semibold'>MedCopilot</h1>
                 <p className='text-sm text-gray-600'>Product by JNC Tech</p>
             </div>
             <div className='hidden  md:flex sm:flex lg:flex py-3 gap-3 items-center'>
