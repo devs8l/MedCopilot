@@ -3,6 +3,7 @@ import { Menu, ChevronLeft, BookOpenCheck,User } from "lucide-react";
 import UserData from "../components/UserData";
 import Patients from "../components/Patients";
 import Calendar from "../components/Calendar";
+import ChatInterface from "../components/ChatInterface";
 
 
 const Home = () => {
@@ -48,7 +49,9 @@ const Home = () => {
             </div>
 
             {/* Right Section (Empty for now) */}
-            <div className="drop-shadow-md bg-white rounded-2xl"></div>
+            <div className="drop-shadow-md bg-white rounded-2xl overflow-hidden">
+                <ChatInterface/>
+            </div>
         </div>
     );
 };
