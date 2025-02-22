@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@font-face {
+    font-family: 'SF';
+    src: url(/fonts/SFPRODISPLAYMEDIUM.OTF);
+}
+@font-face {
+    font-family: 'SF-Reg';
+    src: url(/fonts/SFPRODISPLAYREGULAR.OTF);
+}
+
+@theme {
+    --color-primary: #f8f8f8;
+    --color-action-btn:#13181E;
+
+}
+
+.sf-bold{
+    font-family: "SF";
+}
+
+*{
+    font-family: "SF-Reg";
+}
