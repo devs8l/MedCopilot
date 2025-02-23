@@ -14,7 +14,7 @@ const Home = () => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
-        <div className={`grid mt-3 gap-3 min-h-[70vh]
+        <div className={`grid mt-3 gap-3 
             grid-cols-1
             md:grid-cols-[0.1fr_3fr_2fr]
             md:${isExpanded ? 'grid-cols-[0.8fr_3fr_2fr]' : 'grid-cols-[0.1fr_1fr_1fr]'} 
@@ -27,7 +27,7 @@ const Home = () => {
             <div className="drop-shadow-md bg-white rounded-2xl transition-all duration-300 overflow-y-auto ">
                 <Routes>
                     <Route path="/" element={<Patients />} />
-                    <Route path="/user" element={<UserData />} />
+                    <Route path="/user/:id" element={<UserData />} />
                 </Routes>
             </div>
 

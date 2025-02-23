@@ -18,7 +18,7 @@ export default function Calendar() {
       <DateCalendar 
         value={selectedDate ? dayjs(selectedDate) : null} 
         onChange={handleDateChange} 
-        
+        sx={{ width: 300 ,marginTop:-3}}
         
       />
     </LocalizationProvider>
