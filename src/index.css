@@ -7,6 +7,19 @@
     font-family: 'SF-Reg';
     src: url(/fonts/SFPRODISPLAYREGULAR.OTF);
 }
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.scrollbar-hidden {
+    scrollbar-width: none;
+}
+
+/* Optional: Prevent content shift due to scrollbar hiding */
+.scrollbar-hidden {
+    overflow: auto;
+}
 
 @theme {
     --color-primary: #f8f8f8;

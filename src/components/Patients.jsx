@@ -5,8 +5,9 @@ import dayjs from "dayjs";
 const Patients = () => {
     const {selectedDate} = useContext(MedContext)
     return (
-        <div className='w-full h-full flex justify-center items-center'>
+        <div className="w-full h-full flex  flex-col justify-start items-center  p-11">
             <p>{dayjs(selectedDate).format("YYYY-MM-DD")}</p>
+            
         </div>
     )
 }
