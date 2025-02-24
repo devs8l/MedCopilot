@@ -47,10 +47,10 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="flex flex-col h-[80vh] w-full mx-auto bg-white shadow-lg overflow-hidden">
+    <div className="flex flex-col h-full w-full mx-auto bg-white shadow-lg ">
 
       {/* Messages Container */}
-      <div className={`flex-1 overflow-y-auto p-4 ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}>
+      <div className={`flex-1 overflow-y-auto p-4  ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}>
         {messages.length === 1 ? (
           // Show initial message and prompts in center when no user messages exist
           <div className="text-center space-y-1">

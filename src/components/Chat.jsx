@@ -3,7 +3,7 @@ import ChatInterface from './ChatInterface'
 
 const Chat = () => {
     return (
-        <div className="drop-shadow-md bg-white rounded-2xl overflow-hidden">
+        <div className="drop-shadow-md bg-white h-[80vh] rounded-2xl overflow-y-auto">
             <ChatInterface />
         </div>
     )

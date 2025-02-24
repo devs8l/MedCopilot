@@ -4,15 +4,17 @@ import { Link } from "react-router-dom";  // ✅ Import Link
 import { GripVertical, Plus } from "lucide-react";
 
 const Patients = () => {
-    const { filteredUsers } = useContext(MedContext);
+    const { filteredUsers,searchQuery, searchFilteredUsers } = useContext(MedContext);
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 5;
 
+    const displayedUsers = searchQuery ? searchFilteredUsers : filteredUsers;
+
     // Pagination calculations
-    const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+    const totalPages = Math.ceil(displayedUsers.length / usersPerPage);
     const startIndex = (currentPage - 1) * usersPerPage;
     const endIndex = startIndex + usersPerPage;
-    const usersToShow = filteredUsers.slice(startIndex, endIndex);
+    const usersToShow = displayedUsers.slice(startIndex, endIndex);
 
     return (
         <div className="mx-auto bg-white p-6 h-[80vh] flex flex-col">

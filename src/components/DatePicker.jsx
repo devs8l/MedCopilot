@@ -93,7 +93,7 @@ const DatePicker = () => {
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-4  border border-gray-300 rounded-lg px-2">
+      <div className="flex items-center gap-4  border border-gray-300 rounded-lg px-1">
         <button
           onClick={() => changeDate(-1)}
           className="p-1 rounded cursor-pointer"
@@ -103,7 +103,7 @@ const DatePicker = () => {
 
         <button
           onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-          className="px-4 py-2 text-center cursor-pointer rounded"
+          className=" py-2 text-center cursor-pointer rounded"
         >
           {formatDate(selectedDate)}
         </button>

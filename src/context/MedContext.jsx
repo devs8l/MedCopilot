@@ -4,6 +4,7 @@ export const MedContext = createContext();
 
 const MedContextProvider = (props) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([
     { id: "MAS12345", name: "Andrea Smith", time: "12:00 PM", status: "Active", appointmentDate: "2025-02-23",profileImage:"https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12346", name: "Zack Thompson", time: "1:00 PM", status: "First Time Patient", appointmentDate: "2025-02-24",profileImage:"https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
@@ -27,15 +28,22 @@ const MedContextProvider = (props) => {
   const formattedSelectedDate = selectedDate.toISOString().split("T")[0];
 
   // Filter users based on the selected date
-  const filteredUsers = users.filter(user => user.appointmentDate === formattedSelectedDate);
+  const searchFilteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredUsers = searchFilteredUsers.filter(user => user.appointmentDate === formattedSelectedDate);
 
 
   const value = {
     selectedDate,
     setSelectedDate,
     users,
+    searchFilteredUsers,
     filteredUsers,
-    setUsers
+    setUsers,
+    searchQuery,
+    setSearchQuery,
   };
   return (
     <MedContext.Provider value={value}>
