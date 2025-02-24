@@ -7,19 +7,30 @@
     font-family: 'SF-Reg';
     src: url(/fonts/SFPRODISPLAYREGULAR.OTF);
 }
-.scrollbar-hidden::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for Firefox */
-.scrollbar-hidden {
-    scrollbar-width: none;
-}
-
-/* Optional: Prevent content shift due to scrollbar hiding */
-.scrollbar-hidden {
-    overflow: auto;
-}
+/* Customize the scrollbar width */
+::-webkit-scrollbar {
+    
+    width: 2px;
+    height: 8px; /* For horizontal scroll */
+  }
+  
+  /* Track (background of scrollbar) */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  /* Handle (the draggable part) */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
 
 @theme {
     --color-primary: #f8f8f8;
