@@ -1,12 +1,15 @@
-import React from 'react'
-import ChatInterface from './ChatInterface'
+import React from "react";
+import ChatInterface from "./ChatInterface";
 
 const Chat = () => {
     return (
-        <div className="drop-shadow-md bg-white h-[80vh] rounded-2xl overflow-y-auto">
-            <ChatInterface />
+        <div className="drop-shadow-md bg-white  rounded-2xl flex flex-col overflow-hidden">
+            {/* Make this wrapper full height and ensure child can scroll */}
+            <div className="flex-grow overflow-y-auto  ">
+                <ChatInterface />
+            </div>
         </div>
-    )
-}
+    );
+};
 
-export default Chat
+export default Chat;

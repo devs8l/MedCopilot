@@ -14,17 +14,17 @@ const Home = () => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
-        <div className={`grid mt-3 gap-3 
+        <div className={`grid  gap-3 
             grid-cols-1
             md:grid-cols-[0.1fr_3fr_2fr]
             md:${isExpanded ? 'grid-cols-[0.8fr_3fr_2fr]' : 'grid-cols-[0.1fr_1fr_1fr]'} 
-            transition-all duration-300`}
+            transition-all duration-300 pb-10`}
         >
             {/* Sidebar */}
             <SideBar />
 
             {/* Middle Section */}
-            <div className="drop-shadow-md bg-white rounded-2xl transition-all duration-300 overflow-y-auto ">
+            <div className="drop-shadow-md bg-white rounded-2xl transition-all  duration-300 overflow-y-auto ">
                 <Routes>
                     <Route path="/" element={<Patients />} />
                     <Route path="/user/:id" element={<UserData />} />

@@ -7,7 +7,7 @@ const SideBar = () => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
-        <div className={`bg-primary flex flex-col gap-3 justify-between transition-all h-full  duration-300 ${isExpanded ? 'w-[350px]' : 'w-[60px]'}`}>
+        <div className={`bg-primary flex flex-col gap-3 justify-between transition-all  min-h-[80vh] duration-300 ${isExpanded ? 'w-[350px]' : 'w-[60px]'}`}>
             {/* Sidebar Top Section */}
             <div className="flex flex-col  h-[75%] items-center overflow-hidden  justify-between bg-white rounded-2xl drop-shadow-md transition-all duration-300">
 
@@ -20,16 +20,16 @@ const SideBar = () => {
                 </button>
 
                 {/* Calendar Section */}
-                <div className={`transition-all duration-300  mt-[-20px] overflow-hidden ${isExpanded ? ' opacity-100 ' : 'hidden opacity-0'}`}>
+                <div className={`transition-all  duration-300  mt-[-20px] overflow-hidden ${isExpanded ? ' opacity-100 ' : 'hidden opacity-0'}`}>
                     <Calendar />
                 </div>
 
                 {/* Buttons Section */}
                 <div className={`flex flex-col items-center min-w-[320px] justify-between w-full mt-[-15px] px-4 gap-4 py-3 transition-all   duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 hidden'}`}>
-                    <button className="w-full bg-white cursor-pointer text-sm gap-2 text-center px-4 py-4 flex items-center justify-center rounded-md border border-gray-300">
+                    <button className="w-full bg-white cursor-pointer text-sm gap-2 text-center px-3 py-3 flex items-center justify-center rounded-md border border-gray-300">
                         Create Event <ChevronDown size={20} />
                     </button>
-                    <button className="w-full bg-action-btn cursor-pointer text-white text-sm px-4 py-4 rounded-md">
+                    <button className="w-full bg-action-btn cursor-pointer text-white text-sm px-3 py-3 rounded-md">
                         + Add Appointment
                     </button>
                 </div>

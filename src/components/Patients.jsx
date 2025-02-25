@@ -17,7 +17,7 @@ const Patients = () => {
     const usersToShow = displayedUsers.slice(startIndex, endIndex);
 
     return (
-        <div className="mx-auto bg-white p-6 h-[80vh] flex flex-col">
+        <div className="mx-auto bg-white p-6  flex flex-col">
             {/* List of Filtered Patients */}
             <div className="space-y-4 flex-grow overflow-auto">
                 {usersToShow.length > 0 ? (
