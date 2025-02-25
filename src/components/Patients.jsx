@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import { MedContext } from "../context/MedContext";
 import { Link } from "react-router-dom";  // ✅ Import Link
-import { GripVertical, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, GripVertical, Plus } from "lucide-react";
 
 const Patients = () => {
-    const { filteredUsers,searchQuery, searchFilteredUsers } = useContext(MedContext);
+    const { filteredUsers,searchQuery, searchFilteredUsers ,isUserSelected, setIsUserSelected } = useContext(MedContext);
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 5;
 
@@ -22,7 +22,7 @@ const Patients = () => {
             <div className="space-y-4 flex-grow overflow-auto">
                 {usersToShow.length > 0 ? (
                     usersToShow.map((user) => (
-                        <Link to={`/user/${user.id}`} key={user.id} className="block">
+                        <Link to={`/user/${user.id}`} key={user.id} onClick={()=>setIsUserSelected(true)} className="block">
                             <div className="grid grid-cols-[0.4fr_0.2fr_2fr_1fr] items-center gap-4 p-6 hover:bg-gray-50 rounded-lg transition-colors duration-150 cursor-pointer">
                                 <span className="text-sm text-gray-500">{user.time}</span>
                                 <GripVertical color="#0000004D"/> 
@@ -47,25 +47,25 @@ const Patients = () => {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-                <div className="flex justify-center mt-auto pt-4">
+                <div className="flex justify-center absolute bottom-1 left-[40%]  pt-4">
                     <button
-                        className={`px-4 py-2 rounded-md mx-2 ${currentPage === 1 ? "bg-gray-200 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"
+                        className={`px-3 py-1 rounded-md mx-2 ${currentPage === 1 ? "bg-gray-200 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"
                             }`}
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(currentPage - 1)}
                     >
-                        Previous
+                        <ChevronLeft />
                     </button>
-                    <span className="px-4 py-2 bg-gray-100 rounded-md">
+                    <span className="px-3 py-1 bg-gray-100 rounded-md">
                         {currentPage} / {totalPages}
                     </span>
                     <button
-                        className={`px-4 py-2 rounded-md mx-2 ${currentPage === totalPages ? "bg-gray-200 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"
+                        className={`px-3 py-1 rounded-md mx-2 ${currentPage === totalPages ? "bg-gray-200 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"
                             }`}
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage(currentPage + 1)}
                     >
-                        Next
+                        <ChevronRight />
                     </button>
                 </div>
             )}

@@ -4,7 +4,7 @@ import { MedContext } from '../context/MedContext';
 
 const DatePicker = () => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const {selectedDate,setSelectedDate} = useContext(MedContext)
+  const {selectedDate,setSelectedDate,isUserSelected,setIsUserSelected} = useContext(MedContext)
 
   const formatDate = (date) => {
     const options = { 
@@ -96,21 +96,24 @@ const DatePicker = () => {
       <div className="flex items-center gap-4  border border-gray-300 rounded-lg px-1">
         <button
           onClick={() => changeDate(-1)}
-          className="p-1 rounded cursor-pointer"
+          className={`p-1 rounded ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'}`}
+          disabled={isUserSelected === true}
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
 
         <button
           onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-          className=" py-2 text-center cursor-pointer rounded"
+          className={`py-2 text-center ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'}  rounded`}
+          disabled={isUserSelected === true}
         >
           {formatDate(selectedDate)}
         </button>
 
         <button
           onClick={() => changeDate(1)}
-          className="p-1 rounded cursor-pointer"
+          className={`p-1 rounded ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'}`}
+          disabled={isUserSelected === true}
         >
           <ChevronRight className="h-4 w-4" />
         </button>

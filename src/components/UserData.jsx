@@ -6,7 +6,7 @@ import { Clock, AlertCircle, CheckCircle2, AlertTriangle, Sparkles, Info } from 
 const UserData = () => {
   const { id } = useParams();
   const { filteredUsers } = useContext(MedContext);
-
+  
   const user = filteredUsers.find((u) => u.id === id);
 
   if (!user) {

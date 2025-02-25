@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 const SideBar = () => {
     const [isExpanded, setIsExpanded] = useState(false);
-
     return (
         <div className={`bg-primary flex flex-col gap-3 justify-between transition-all  min-h-[80vh] duration-300 ${isExpanded ? 'w-[350px]' : 'w-[60px]'}`}>
             {/* Sidebar Top Section */}
