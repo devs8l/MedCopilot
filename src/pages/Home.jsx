@@ -9,30 +9,29 @@ import Hero from "../components/Hero";
 import Chat from "../components/Chat";
 import { Route, Routes } from 'react-router-dom'
 
-
 const Home = () => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
-        <div className={`grid  gap-3 
-            grid-cols-1
-            md:grid-cols-[0.1fr_3fr_2fr]
-            md:${isExpanded ? 'grid-cols-[0.8fr_3fr_2fr]' : 'grid-cols-[0.1fr_1fr_1fr]'} 
-            transition-all duration-300 pb-10`}
-        >
-            {/* Sidebar */}
-            <SideBar />
+        <div className="flex h-full">
+            {/* Main content area with sidebar and middle section that can resize */}
+            <div className={`flex-grow grid grid-cols-[auto_1fr] gap-3 h-[80vh] transition-all duration-300`}>
+                {/* Sidebar */}
+                <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
-            {/* Middle Section */}
-            <div className="drop-shadow-md bg-white rounded-2xl transition-all  duration-300 overflow-y-auto ">
-                <Routes>
-                    <Route path="/" element={<Patients />} />
-                    <Route path="/user/:id" element={<UserData />} />
-                </Routes>
+                {/* Middle Section */}
+                <div className="drop-shadow-md bg-white rounded-2xl transition-all duration-300 overflow-y-auto">
+                    <Routes>
+                        <Route path="/" element={<Patients />} />
+                        <Route path="/user/:id" element={<UserData />} />
+                    </Routes>
+                </div>
             </div>
 
-            {/* Right Section */}
-            <Chat />
+            {/* Chat section with fixed width */}
+            <div className="w-1/3 ml-3">
+                <Chat />
+            </div>
         </div>
     );
 };

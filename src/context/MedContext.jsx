@@ -10,7 +10,7 @@ const MedContextProvider = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([
     { id: "MAS12345", name: "Andrea Smith", time: "12:00 PM", status: "Active", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12346", name: "Zack Thompson", time: "1:00 PM", status: "First Time Patient", appointmentDate: "2025-02-24", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
+    { id: "MAS12346", name: "Zack Thompson", time: "1:00 PM", status: "First Time Patient", appointmentDate: "2025-02-26", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12347", name: "Lara Chen", time: "2:00 PM", status: "Returning", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12348", name: "Michael Brown", time: "2:30 PM", status: "Active", appointmentDate: "2025-02-25", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12349", name: "Sarah Wilson", time: "3:00 PM", status: "Active", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },

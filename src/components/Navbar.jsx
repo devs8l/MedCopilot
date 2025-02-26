@@ -16,9 +16,9 @@ const Navbar = () => {
                 <p className='text-md text-gray-600'>Product by JNC Tech</p>
             </div>
             <div className={`hidden sm:grid md:grid lg:grid py-2 items-center ${isSearchOpen ? "grid-cols-[0.4fr_5.5fr_1fr]" : "grid-cols-[0.2fr_1.6fr_1.5fr] lg:grid-cols[0.4fr_1.5fr_1.5fr] "} justify-start`}>
-                <Link to={'/'} onClick={()=>setIsUserSelected(false)}><ChevronLeft /></Link>
-                <div className='flex items-center w-full'>
-                    <div className={`flex  gap-3 items-center w-full justify-center transition-all duration-300 ease-in-out`}>
+                <Link to={'/'} onClick={()=>{setIsUserSelected(false),setSearchQuery('')}}><ChevronLeft /></Link>
+                <div className={`flex items-center w-full ${isUserSelected ? 'hidden':''}`}>
+                    <div className={`flex  gap-3 items-center w-full justify-center  transition-all duration-300 ease-in-out`}>
                         <DatePicker />
                         <DateSort />
                     </div>
@@ -40,7 +40,7 @@ const Navbar = () => {
                 <div className='flex gap-6 items-center'>
                     <button
                         onClick={() => setIsSearchOpen(!isSearchOpen)}
-                        className={`transition-all duration-200 ease-in-out ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'} hover:scale-110`}
+                        className={`transition-all duration-200 ease-in-out ${isUserSelected ? 'hidden':''} hover:scale-110`}
                         aria-label={isSearchOpen ? "Close search" : "Open search"}
                         disabled={isUserSelected === true}
                     >
