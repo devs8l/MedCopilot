@@ -108,15 +108,15 @@ const LoginSignup = () => {
       </div>
 
       {/* Right side - Login/Signup form */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-8 bg-white">
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-10 bg-[#f8f8f8]">
         <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="flex justify-end mb-8">
-            <img src="/jnc.png" alt="JNC Logo" className="w-20" />
+          <div className="flex justify-end absolute top-10 right-20">
+            <img src="/jnc-svg.svg" alt="JNC Logo" className="w-18" />
           </div>
 
           {/* Welcome text */}
-          <h2 className="text-2xl font-bold text-center mb-2">
+          <h2 className="text-3xl font-bold text-center mb-2 ">
             {isLogin ? 'Welcome to MedCopilot' : 'Create Your Account'}
           </h2>
           <p className="text-center mb-8">
@@ -135,7 +135,7 @@ const LoginSignup = () => {
           )}
 
           {/* Login/Signup form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 w-[90%] m-auto">
             {/* Email field - only for signup */}
             {!isLogin && (
               <div>
@@ -143,7 +143,7 @@ const LoginSignup = () => {
                   type="email"
                   name="email"
                   placeholder="Email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={credentials.email}
                   onChange={handleChange}
                 />
@@ -156,7 +156,7 @@ const LoginSignup = () => {
                 type="text"
                 name="username"
                 placeholder={isLogin ? "Username or Email" : "Username"}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={credentials.username}
                 onChange={handleChange}
               />
@@ -168,7 +168,7 @@ const LoginSignup = () => {
                 type="password"
                 name="password"
                 placeholder="Password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={credentials.password}
                 onChange={handleChange}
               />
@@ -181,7 +181,7 @@ const LoginSignup = () => {
                   type="password"
                   name="confirmPassword"
                   placeholder="Confirm Password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={credentials.confirmPassword}
                   onChange={handleChange}
                 />
@@ -192,7 +192,7 @@ const LoginSignup = () => {
             <div>
               <button
                 type="submit"
-                className="w-full bg-gray-900 text-white py-3 rounded-md hover:bg-gray-800 transition-colors"
+                className="w-full bg-[#13181E] cursor-pointer text-white py-3  rounded-xl hover:bg-gray-800 transition-colors"
               >
                 {isLogin ? 'Log in' : 'Sign up'}
               </button>
@@ -210,16 +210,16 @@ const LoginSignup = () => {
               </div>
 
               {/* Social logins */}
-              <div className="space-y-3">
-                <button className="w-full border border-gray-300 py-3 px-4 rounded-md flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors">
-                  <span className="text-red-500">G</span>
+              <div className="space-y-3 w-[90%] m-auto">
+                <button className="w-full border border-gray-300 py-3 px-4 bg-white rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors">
+                  <img src="/google.png" className='w-4 h-4' alt="" />
                   <span>Log in with Google</span>
                 </button>
-                <button className="w-full border border-gray-300 py-3 px-4 rounded-md flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors">
-                  <span>🍎</span>
+                <button className="w-full border border-gray-300 py-3 px-4 bg-white rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors">
+                  <img src="/apple-logo.png" className='w-4 h-4' alt="" />
                   <span>Log in with Apple</span>
                 </button>
-                <button className="w-full border border-gray-300 py-3 px-4 rounded-md flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors">
+                <button className="w-full border border-gray-300 py-3 px-4 bg-white rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors">
                   <span>Use Single Sign-On (SSO)</span>
                 </button>
               </div>
