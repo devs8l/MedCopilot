@@ -5,7 +5,9 @@ export const MedContext = createContext();
 const MedContextProvider = (props) => {
   const [isUserSelected, setIsUserSelected] = useState(false);
   const [filterBasis, setFilterBasis] = useState("day");
-  
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("isAuthenticated") === "true"
+  );
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([
@@ -28,6 +30,19 @@ const MedContextProvider = (props) => {
 
 
 
+  // Authentication handlers
+  const login = () => {
+    localStorage.setItem("isAuthenticated", "true");
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("isAuthenticated");
+    setIsAuthenticated(false);
+  };
+
+
+
   // Filter users based on selected date
   const formattedSelectedDate = selectedDate.toISOString().split("T")[0];
 
@@ -37,43 +52,45 @@ const MedContextProvider = (props) => {
   );
 
   // If there's a search query, ignore date filtering and return search results
-const filteredUsers = searchQuery
-? users.filter(user => 
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-: users.filter(user => {
-    const userDate = new Date(user.appointmentDate);
-    const selectedDateObj = new Date(selectedDate);
+  const filteredUsers = searchQuery
+    ? users.filter(user =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    : users.filter(user => {
+      const userDate = new Date(user.appointmentDate);
+      const selectedDateObj = new Date(selectedDate);
 
-    if (filterBasis === "day") {
-      return userDate.toISOString().split("T")[0] === formattedSelectedDate;
-    } else if (filterBasis === "week") {
-      const startOfWeek = new Date(selectedDateObj);
-      startOfWeek.setDate(selectedDateObj.getDate() - selectedDateObj.getDay());
+      if (filterBasis === "day") {
+        return userDate.toISOString().split("T")[0] === formattedSelectedDate;
+      } else if (filterBasis === "week") {
+        const startOfWeek = new Date(selectedDateObj);
+        startOfWeek.setDate(selectedDateObj.getDate() - selectedDateObj.getDay());
 
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-      return userDate >= startOfWeek && userDate <= endOfWeek;
-    } else if (filterBasis === "month") {
-      return (
-        userDate.getFullYear() === selectedDateObj.getFullYear() &&
-        userDate.getMonth() === selectedDateObj.getMonth()
-      );
-    } else if (filterBasis === "year") {
-      return userDate.getFullYear() === selectedDateObj.getFullYear();
-    }
+        return userDate >= startOfWeek && userDate <= endOfWeek;
+      } else if (filterBasis === "month") {
+        return (
+          userDate.getFullYear() === selectedDateObj.getFullYear() &&
+          userDate.getMonth() === selectedDateObj.getMonth()
+        );
+      } else if (filterBasis === "year") {
+        return userDate.getFullYear() === selectedDateObj.getFullYear();
+      }
 
-    return false;
-  });
+      return false;
+    });
 
 
 
   const value = {
+    isAuthenticated,
+    login,
+    logout,
     selectedDate,
     setSelectedDate,
     users,
-    searchFilteredUsers,
     filteredUsers,
     setUsers,
     searchQuery,
@@ -81,7 +98,7 @@ const filteredUsers = searchQuery
     isUserSelected,
     setIsUserSelected,
     filterBasis,
-  setFilterBasis
+    setFilterBasis,
   };
   return (
     <MedContext.Provider value={value}>

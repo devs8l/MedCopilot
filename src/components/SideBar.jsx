@@ -11,14 +11,14 @@ const SideBar = ({ isExpanded, setIsExpanded }) => {
 
                 {/* Toggle Button */}
                 <button
-                    className="px-4 py-2 mt-3 rounded-md cursor-pointer self-start"
+                    className="px-4 py-2 mt-3 rounded-md cursor-pointer relative z-100 self-start"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
                 <Menu />
                 </button>
 
                 {/* Calendar Section */}
-                <div className={`transition-all duration-300 mt-[-20px]  overflow-hidden ${isExpanded ? 'opacity-100' : 'hidden opacity-0'}`}>
+                <div className={`transition-all duration-300 mt-[-20px] h-[65%] mb-2 overflow-auto ${isExpanded ? 'opacity-100' : 'hidden opacity-0'}`}>
                     <Calendar />
                 </div>
 

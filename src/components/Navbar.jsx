@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
 import DatePicker from './DatePicker';
-import { Moon, Search, CircleHelp, ChevronLeft, X } from 'lucide-react';
+import { Moon, Search, CircleHelp, ChevronLeft, X, LogOut } from 'lucide-react';
 import DateSort from './DateSort';
 import { Link } from 'react-router-dom';
 import { MedContext } from '../context/MedContext'; // Import context
 
 const Navbar = () => {
-    const { searchQuery, setSearchQuery,isUserSelected,setIsUserSelected } = useContext(MedContext); // Access context
+    const { searchQuery, setSearchQuery,isUserSelected,setIsUserSelected,logout } = useContext(MedContext); // Access context
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     return (
@@ -54,6 +54,7 @@ const Navbar = () => {
                 <h1 className='text-xl'>
                     {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </h1>
+                <LogOut className='cursor-pointer' onClick={()=>logout()}/>
             </div>
         </div>
     );
