@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from 'react';
 
 export const MedContext = createContext();
 
@@ -9,8 +9,7 @@ const MedContextProvider = (props) => {
     localStorage.getItem("isAuthenticated") === "true"
   );
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [searchQuery, setSearchQuery] = useState("");
-
+  const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([
     { id: "MAS12345", name: "Andrea Smith", time: "12:00 PM", status: "Active", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12346", name: "Zack Thompson", time: "1:00 PM", status: "First Time Patient", appointmentDate: "2025-02-26", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
@@ -29,6 +28,8 @@ const MedContextProvider = (props) => {
     { id: "MAS12359", name: "Patricia Clark", time: "8:00 PM", status: "Active", appointmentDate: "2025-03-01", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
   ]);
 
+
+
   // Authentication handlers
   const login = () => {
     localStorage.setItem("isAuthenticated", "true");
@@ -40,47 +41,52 @@ const MedContextProvider = (props) => {
     setIsAuthenticated(false);
   };
 
-  // Format selectedDate for consistent comparison
+  
+
+
+  // Filter users based on selected date
   const formattedSelectedDate = selectedDate.toISOString().split("T")[0];
 
   // Filter users based on the selected date
+  const searchFilteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // If there's a search query, ignore date filtering and return search results
   const filteredUsers = searchQuery
-    ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : users.filter((user) => {
-        const userDateFormatted = new Date(user.appointmentDate)
-          .toISOString()
-          .split("T")[0];
+    ? users.filter(user =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    : users.filter(user => {
+      const userDate = new Date(user.appointmentDate);
+      const selectedDateObj = new Date(selectedDate);
 
-        if (filterBasis === "day") {
-          return userDateFormatted === formattedSelectedDate;
-        } else if (filterBasis === "week") {
-          const userDate = new Date(user.appointmentDate);
-          const startOfWeek = new Date(selectedDate);
-          startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay());
-          const endOfWeek = new Date(startOfWeek);
-          endOfWeek.setDate(startOfWeek.getDate() + 6);
-          return userDate >= startOfWeek && userDate <= endOfWeek;
-        } else if (filterBasis === "month") {
-          return (
-            new Date(user.appointmentDate).getFullYear() ===
-              selectedDate.getFullYear() &&
-            new Date(user.appointmentDate).getMonth() ===
-              selectedDate.getMonth()
-          );
-        } else if (filterBasis === "year") {
-          return (
-            new Date(user.appointmentDate).getFullYear() ===
-            selectedDate.getFullYear()
-          );
-        }
+      if (filterBasis === "day") {
+        return userDate.toISOString().split("T")[0] === formattedSelectedDate;
+      } else if (filterBasis === "week") {
+        const startOfWeek = new Date(selectedDateObj);
+        startOfWeek.setDate(selectedDateObj.getDate() - selectedDateObj.getDay());
 
-        return false;
-      });
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-  console.log("Selected Date:", selectedDate);
-  console.log("Users Dates:", filteredUsers.map((u) => u.appointmentDate));
+        return userDate >= startOfWeek && userDate <= endOfWeek;
+      } else if (filterBasis === "month") {
+        return (
+          userDate.getFullYear() === selectedDateObj.getFullYear() &&
+          userDate.getMonth() === selectedDateObj.getMonth()
+        );
+      } else if (filterBasis === "year") {
+        return userDate.getFullYear() === selectedDateObj.getFullYear();
+      }
+
+      return false;
+    });
+
+    console.log("Selected Date:", selectedDate);
+  console.log("Users Dates:", filteredUsers.map(u => u.appointmentDate));
+
+
 
   const value = {
     isAuthenticated,
@@ -97,13 +103,13 @@ const MedContextProvider = (props) => {
     setIsUserSelected,
     filterBasis,
     setFilterBasis,
+    searchFilteredUsers
   };
-
   return (
     <MedContext.Provider value={value}>
       {props.children}
     </MedContext.Provider>
-  );
-};
+  )
+}
 
-export default MedContextProvider;
+export default MedContextProvider
