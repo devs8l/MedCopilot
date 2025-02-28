@@ -18,7 +18,7 @@ const SideBar = ({ isExpanded, setIsExpanded }) => {
                 </button>
 
                 {/* Calendar Section */}
-                <div className={`transition-all duration-300 mt-[-20px] h-[65%] mb-2 overflow-auto ${isExpanded ? 'opacity-100' : 'hidden opacity-0'}`}>
+                <div className={`transition-all duration-300 mt-[-20px] h-[70%] mb-2 overflow-auto ${isExpanded ? 'opacity-100' : 'hidden opacity-0'}`}>
                     <Calendar />
                 </div>
 

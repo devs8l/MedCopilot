@@ -210,7 +210,7 @@ const LoginSignup = () => {
               </div>
 
               {/* Social logins */}
-              <div className="space-y-3 w-[90%] m-auto">
+              {/* <div className="space-y-3 w-[90%] m-auto">
                 <button className="w-full border border-gray-300 py-3 px-4 bg-white rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors">
                   <img src="/google.png" className='w-4 h-4' alt="" />
                   <span>Log in with Google</span>
@@ -222,7 +222,7 @@ const LoginSignup = () => {
                 <button className="w-full border border-gray-300 py-3 px-4 bg-white rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors">
                   <span>Use Single Sign-On (SSO)</span>
                 </button>
-              </div>
+              </div> */}
 
               {/* Forgot password */}
               <div className="text-center mt-6">
