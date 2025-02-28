@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 
 const SideBar = ({ isExpanded, setIsExpanded }) => {
     return (
-        <div className={`bg-primary flex flex-col gap-3 justify-between transition-all min-h-[80vh] duration-300 ${isExpanded ? 'w-[350px]' : 'w-[60px]'}`}>
+        <div className={`bg-primary dark:bg-[#161616] flex flex-col gap-3 justify-between transition-all min-h-[80vh] duration-300 ${isExpanded ? 'w-[350px]' : 'w-[60px]'}`}>
             {/* Sidebar Top Section */}
-            <div className="flex flex-col h-[75%] items-center overflow-hidden justify-between bg-white rounded-2xl drop-shadow-md transition-all duration-300">
+            <div className="flex flex-col h-[75%] items-center overflow-hidden justify-between bg-white dark:bg-[#272626] rounded-2xl drop-shadow-md transition-all duration-300">
 
                 {/* Toggle Button */}
                 <button
@@ -34,7 +34,7 @@ const SideBar = ({ isExpanded, setIsExpanded }) => {
             </div>
 
             {/* Sidebar Navigation */}
-            <div className="flex flex-col transition-all p-5 flex-grow duration-300 gap-1 items-center justify-around bg-white rounded-2xl drop-shadow-md w-full">
+            <div className="flex flex-col transition-all p-5 flex-grow duration-300 gap-1 items-center justify-around bg-white dark:bg-[#272626] rounded-2xl drop-shadow-md w-full">
 
                 {/* Make an Appointment Button */}
                 <button className={`flex cursor-pointer items-center ${isExpanded ? 'p-4' : 'p-0'} gap-3 text-sm rounded-md w-full mt-2 text-center hover:bg-gray-50 transition-all duration-300`}>

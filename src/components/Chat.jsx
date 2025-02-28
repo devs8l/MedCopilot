@@ -4,11 +4,11 @@ import { Maximize, Minimize } from "lucide-react";
 
 const Chat = ({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
     return (
-        <div className="drop-shadow-md bg-white rounded-2xl flex flex-col overflow-hidden">
+        <div className="drop-shadow-md px-3 pt-5 bg-white dark:bg-[#272626] rounded-2xl flex flex-col overflow-hidden">
             {/* Header with buttons */}
-            <div className="p-2 flex items-center justify-between">
+            <div className={`p-5  flex items-center justify-between bg-[#f7f7f7] rounded-xl ${isFullScreen ? 'bg-white':''} `}>
                 {/* Left side - swap position buttons */}
-                <div className={`flex space-x-2 ${isFullScreen ? "hidden" : ""}`}>
+                <div className={`flex  space-x-2 ${isFullScreen ? "hidden" : ""}`}>
                     <button
                         onClick={() => swapPosition(true)}
                         className={`p-1 rounded ${isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
@@ -35,7 +35,7 @@ const Chat = ({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
             </div>
 
             {/* Chat content area */}
-            <div className={`flex-grow overflow-y-auto ${isFullScreen ? 'h-[calc(80vh-40px)]':'h-[calc(80vh-50px)]'} `}>
+            <div className={`flex-grow overflow-y-auto ${isFullScreen ? 'h-[calc(80vh-90px)]':'h-[calc(80vh-90px)]'} `}>
                 <ChatInterface />
             </div>
         </div>
