@@ -17,9 +17,9 @@ const Patients = () => {
     const usersToShow = displayedUsers.slice(startIndex, endIndex);
 
     return (
-        <div className="mx-auto bg-white dark:bg-[#272626] p-3 py-1 pb-4  flex flex-col justify-between gap-3 rounded-xl ">
+        <div className="mx-auto bg-white dark:bg-[#272626] px-1 py-1 pb-4  flex flex-col justify-between gap-3 rounded-xl ">
             <div>
-                <div className="grid grid-cols-[1fr_2fr_1fr]  px-6 py-6  bg-[#f7f7f7] dark:bg-[#464444] font-semibold text-gray-700 rounded-xl ">
+                <div className="grid grid-cols-[1fr_2fr_1fr]  px-5 py-5  bg-[#f7f7f7] dark:bg-[#464444] font-semibold text-gray-700 rounded-xl ">
                     <span>Time</span>
                     <span>Patients</span>
                 </div>

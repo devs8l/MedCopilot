@@ -52,7 +52,7 @@ const Home = () => {
                     
                     {/* Content taking remaining space - hidden in fullscreen mode */}
                     {!isFullScreen && (
-                        <div className="flex-grow drop-shadow-md bg-white dark:bg-[#272626]  rounded-2xl transition-all duration-100 overflow-y-auto p-4">
+                        <div className="flex-grow drop-shadow-md bg-white dark:bg-[#272626]  rounded-2xl transition-all duration-100 overflow-y-auto p-2">
                             <Outlet />
                         </div>
                     )}
@@ -65,7 +65,7 @@ const Home = () => {
                     
                     {/* Middle Section - hidden in fullscreen mode */}
                     {!isFullScreen && (
-                        <div className="flex-grow drop-shadow-md bg-white dark:bg-[#272626] rounded-2xl transition-all duration-100 overflow-y-auto p-4 mx-3">
+                        <div className="flex-grow drop-shadow-md bg-white dark:bg-[#272626] rounded-2xl transition-all duration-100 overflow-y-auto p-2 mx-3">
                             <Outlet />
                         </div>
                     )}
