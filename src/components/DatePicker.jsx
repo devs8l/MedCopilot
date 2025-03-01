@@ -66,9 +66,12 @@ const DatePicker = () => {
         <td 
           key={i}
           onClick={() => {
-            setSelectedDate(currentDate);
+            const newDate = new Date(year, month, i);
+            newDate.setHours(12, 0, 0, 0); // Ensures no timezone shift
+        
+            setSelectedDate(newDate);
             setIsCalendarOpen(false);
-          }}
+        }}
           className={`p-2 text-center cursor-pointer hover:bg-gray-100 ${
             isSelected ? 'bg-blue-500 text-white hover:bg-blue-600' : ''
           }`}

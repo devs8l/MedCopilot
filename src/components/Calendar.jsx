@@ -7,19 +7,25 @@ import { useContext } from "react";
 import dayjs from "dayjs";
 
 export default function Calendar() {
-  const { selectedDate, setSelectedDate } = useContext(MedContext); // Ensure context provides setSelectedDate
+  const { selectedDate, setSelectedDate } = useContext(MedContext);
   const handleDateChange = (newDate) => {
-    setSelectedDate(newDate); // Update context state
+    setSelectedDate(newDate);
     console.log("Selected Date:", newDate.format("YYYY-MM-DD"));
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateCalendar 
-        value={selectedDate ? dayjs(selectedDate) : null} 
-        onChange={handleDateChange} 
-        
-      />
-    </LocalizationProvider>
+    <div className="calendar-container w-full overflow-y-auto overflow-x-hidden ">
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DateCalendar
+          value={selectedDate ? dayjs(selectedDate) : null}
+          onChange={handleDateChange}
+          sx={{
+            '.MuiPickersDay-root': {
+              fontSize: '0.8rem',
+            }
+          }}
+        />
+      </LocalizationProvider>
+    </div>
   );
 }

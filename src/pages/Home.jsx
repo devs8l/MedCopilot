@@ -36,7 +36,7 @@ const Home = () => {
                     
                     {/* Chat in middle with conditional width */}
                     <div 
-                        className="transition-all duration-300 mx-3" 
+                        className="transition-all duration-100 mx-3" 
                         style={{ 
                             width: isFullScreen ? getFullScreenWidth() : chatWidth, 
                             flexShrink: 0 
@@ -65,14 +65,14 @@ const Home = () => {
                     
                     {/* Middle Section - hidden in fullscreen mode */}
                     {!isFullScreen && (
-                        <div className="flex-grow drop-shadow-md bg-white dark:bg-[#272626] rounded-2xl transition-all duration-200 overflow-y-auto p-4 mx-3">
+                        <div className="flex-grow drop-shadow-md bg-white dark:bg-[#272626] rounded-2xl transition-all duration-100 overflow-y-auto p-4 mx-3">
                             <Outlet />
                         </div>
                     )}
                     
                     {/* Chat Section with conditional width */}
                     <div 
-                        className="transition-all duration-200 " 
+                        className="transition-all duration-100 " 
                         style={{ 
                             width: isFullScreen ? getFullScreenWidth() : chatWidth,
                             marginLeft: isFullScreen ? '12px' : '0', 
