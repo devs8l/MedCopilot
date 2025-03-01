@@ -25,7 +25,7 @@ const App = () => {
           <Route path="/login" element={<Login login={login} />} />
         </Routes>
       ) : (
-        <div className="px-4 sm:px-[1vw] lg:px-[2vw] md:px-[2vw] bg-primary dark:bg-[#161616]  min-h-screen">
+        <div className="px-2  bg-primary dark:bg-[#161616]  min-h-screen overflow-x-hidden">
           {isAuthenticated && <Navbar handleLogout={logout} />}
           <Routes>
             <Route path="/" element={<Home />}>

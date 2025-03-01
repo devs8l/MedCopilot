@@ -4,7 +4,7 @@ import Patients from './Patients'
 
 const Hero = () => {
     return (
-        <div className="h-[80vh] drop-shadow-md bg-white rounded-2xl  transition-all duration-300  overflow-y-auto ">
+        <div className="h-[80vh] drop-shadow-lg bg-white rounded-2xl  transition-all duration-300  overflow-y-auto ">
             {location.pathname === "/user" ? <UserData /> : <Patients />}
         </div>
     )

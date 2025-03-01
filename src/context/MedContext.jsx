@@ -5,6 +5,7 @@ export const MedContext = createContext();
 const MedContextProvider = (props) => {
   const [isUserSelected, setIsUserSelected] = useState(false);
   const [filterBasis, setFilterBasis] = useState("day");
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("isAuthenticated") === "true"
   );
@@ -103,7 +104,10 @@ const MedContextProvider = (props) => {
     setIsUserSelected,
     filterBasis,
     setFilterBasis,
-    searchFilteredUsers
+    searchFilteredUsers,
+    isExpanded,
+    setIsExpanded
+
   };
   return (
     <MedContext.Provider value={value}>

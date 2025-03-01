@@ -4,9 +4,9 @@ import { Maximize, Minimize } from "lucide-react";
 
 const Chat = ({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
     return (
-        <div className="drop-shadow-md px-3 pt-3 bg-white dark:bg-[#272626] rounded-2xl flex flex-col overflow-hidden">
+        <div className="drop-shadow-lg px-3 pt-3 bg-white dark:bg-[#272626] rounded-2xl flex flex-col overflow-hidden">
             {/* Header with buttons */}
-            <div className={`p-4  flex items-center justify-between bg-[#f7f7f7] rounded-xl ${isFullScreen ? 'bg-white':''} `}>
+            <div className={`p-4  flex items-center justify-between  rounded-xl ${isFullScreen ? 'bg-white':''} `}>
                 {/* Left side - swap position buttons */}
                 <div className={`flex  space-x-2 ${isFullScreen ? "hidden" : ""}`}>
                     <button
