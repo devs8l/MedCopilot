@@ -29,8 +29,6 @@ const MedContextProvider = (props) => {
     { id: "MAS12359", name: "Patricia Clark", time: "8:00 PM", status: "Active", appointmentDate: "2025-03-01", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
   ]);
 
-
-
   // Authentication handlers
   const login = () => {
     localStorage.setItem("isAuthenticated", "true");
@@ -42,16 +40,34 @@ const MedContextProvider = (props) => {
     setIsAuthenticated(false);
   };
 
-  
+  // Format dates consistently for comparison
+  const formatDateForComparison = (date) => {
+    if (date instanceof Date) {
+      return date.toISOString().split('T')[0];
+    }
+    return new Date(date).toISOString().split('T')[0];
+  };
 
+  // Helper function to get the week bounds for a given date
+  const getWeekBounds = (date) => {
+    const currentDate = new Date(date);
+    const dayOfWeek = currentDate.getDay();
+    
+    // Calculate start of week (Sunday)
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - dayOfWeek);
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    // Calculate end of week (Saturday)
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    
+    return { startOfWeek, endOfWeek };
+  };
 
-  // Filter users based on selected date
-  const formattedSelectedDate = selectedDate.toISOString().split("T")[0];
-
-  // Filter users based on the selected date
-  const searchFilteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get formatted selected date for comparison
+  const formattedSelectedDate = formatDateForComparison(selectedDate);
 
   // If there's a search query, ignore date filtering and return search results
   const filteredUsers = searchQuery
@@ -59,35 +75,40 @@ const MedContextProvider = (props) => {
       user.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
     : users.filter(user => {
+      const userDateFormatted = formatDateForComparison(user.appointmentDate);
       const userDate = new Date(user.appointmentDate);
-      const selectedDateObj = new Date(selectedDate);
-
+      
       if (filterBasis === "day") {
-        return userDate.toISOString().split("T")[0] === formattedSelectedDate;
+        return userDateFormatted === formattedSelectedDate;
       } else if (filterBasis === "week") {
-        const startOfWeek = new Date(selectedDateObj);
-        startOfWeek.setDate(selectedDateObj.getDate() - selectedDateObj.getDay());
-
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-
+        // Get the bounds of the week containing the selected date
+        const { startOfWeek, endOfWeek } = getWeekBounds(selectedDate);
+        
+        // Check if the user date is within the range
         return userDate >= startOfWeek && userDate <= endOfWeek;
       } else if (filterBasis === "month") {
         return (
-          userDate.getFullYear() === selectedDateObj.getFullYear() &&
-          userDate.getMonth() === selectedDateObj.getMonth()
+          userDate.getFullYear() === selectedDate.getFullYear() &&
+          userDate.getMonth() === selectedDate.getMonth()
         );
       } else if (filterBasis === "year") {
-        return userDate.getFullYear() === selectedDateObj.getFullYear();
+        return userDate.getFullYear() === selectedDate.getFullYear();
       }
 
       return false;
     });
 
-    console.log("Selected Date:", selectedDate);
-  console.log("Users Dates:", filteredUsers.map(u => u.appointmentDate));
+  // Get week bounds for the context to use in components
+  const weekBounds = getWeekBounds(selectedDate);
 
+  // Separate search filtered users
+  const searchFilteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
+  console.log("Selected Date:", formatDateForComparison(selectedDate));
+  console.log("Week Range:", formatDateForComparison(weekBounds.startOfWeek), "to", formatDateForComparison(weekBounds.endOfWeek));
+  console.log("Users Dates:", filteredUsers.map(u => formatDateForComparison(u.appointmentDate)));
 
   const value = {
     isAuthenticated,
@@ -104,16 +125,17 @@ const MedContextProvider = (props) => {
     setIsUserSelected,
     filterBasis,
     setFilterBasis,
-    searchFilteredUsers,
     isExpanded,
-    setIsExpanded
-
+    setIsExpanded,
+    searchFilteredUsers,
+    weekBounds
   };
+  
   return (
     <MedContext.Provider value={value}>
       {props.children}
     </MedContext.Provider>
-  )
-}
+  );
+};
 
-export default MedContextProvider
+export default MedContextProvider;
