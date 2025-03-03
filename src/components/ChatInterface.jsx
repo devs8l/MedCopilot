@@ -1,17 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ChevronUp, ArrowUp, Paperclip, Lightbulb, Clock10 } from 'lucide-react';
+import React, { useRef, useEffect, useContext } from 'react';
+import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X } from 'lucide-react';
+import { MedContext } from '../context/MedContext';
 
-const ChatInterface = ({isFullScreen}) => {
-  const [messages, setMessages] = useState([
-    {
-      type: 'bot',
-      content: 'Hi, I am your copilot!',
-      subtext: 'Chat and resolve all your queries',
-      para: 'Or try these prompts to get started',
-      isInitial: true // Marking the initial message
-    }
-  ]);
-  const [inputMessage, setInputMessage] = useState('');
+const ChatInterface = ({ isFullScreen }) => {
+  const { 
+    openDocumentPreview,
+    messages,
+    inputMessage,
+    setInputMessage,
+    uploadedFiles,
+    setUploadedFiles,
+    sendMessage,
+    regenerateMessage
+  } = useContext(MedContext);
+  
+  const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   const suggestionPrompts = [
@@ -29,38 +32,52 @@ const ChatInterface = ({isFullScreen}) => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
-
-    // Add user message
-    setMessages(prev => [...prev, { type: 'user', content: inputMessage }]);
-
-    // Simulated AI response
-    setTimeout(() => {
-      setMessages(prev => [...prev, {
-        type: 'bot',
-        content: 'temp reply later we will use AI here',
-        isInitial: false // Mark as non-initial AI response
-      }]);
-    }, 1000);
-
-    setInputMessage('');
+  const handleSendMessage = () => {
+    sendMessage(inputMessage, uploadedFiles);
   };
 
-  const handleRegenerate = (index) => {
-    setMessages(prevMessages => {
-      return prevMessages.map((msg, i) => {
-        if (i === index) {
-          return { ...msg, content: 'regenerated temp msg' }; // Modify AI response
-        }
-        return msg;
-      });
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (files.length === 0) return;
+    
+    // Process each file
+    const newFiles = files.map(file => ({
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      data: URL.createObjectURL(file),
+      file: file // Store the actual file object
+    }));
+    
+    setUploadedFiles(prev => [...prev, ...newFiles]);
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveFile = (index) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleDocumentClick = (file) => {
+    // Use the openDocumentPreview function from context
+    openDocumentPreview({
+      title: file.name,
+      url: file.data,
+      type: file.type
     });
   };
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
     alert('Copied to clipboard!');
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -93,13 +110,31 @@ const ChatInterface = ({isFullScreen}) => {
                   <div className={`${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800'
                     } max-w-[80%] rounded-xl p-3`}>
                     <p>{message.content}</p>
+                    
+                    {/* Display files if they exist */}
+                    {message.files && message.files.length > 0 && (
+                      <div className="mt-2 space-y-2">
+                        {message.files.map((file, fileIndex) => (
+                          <div 
+                            key={fileIndex} 
+                            className="p-2 bg-white bg-opacity-20 rounded flex justify-between items-center cursor-pointer hover:bg-opacity-30"
+                            onClick={() => handleDocumentClick(file)}
+                          >
+                            <div className="flex items-center">
+                              <img src="/doc.svg" className='w-3 h-3 mr-1' alt="" />
+                              <span className="text-sm truncate max-w-[200px] text-black">{file.name}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Action buttons for bot messages (excluding the initial copilot message) */}
                 {message.type === 'bot' && !message.isInitial && (
                   <div className="flex justify-start space-x-4 text-gray-500 ml-2 mt-4">
-                    <button onClick={() => handleRegenerate(index)} className="hover:text-blue-500">
+                    <button onClick={() => regenerateMessage(index)} className="hover:text-blue-500">
                       <RefreshCcw size={18} />
                     </button>
                     <button onClick={() => handleCopy(message.content)} className="hover:text-green-500">
@@ -123,47 +158,68 @@ const ChatInterface = ({isFullScreen}) => {
         )}
       </div>
 
+      {/* File Upload Input (hidden) */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileUpload}
+        className="hidden"
+        multiple
+      />
+
+      {/* Display uploaded files before sending */}
+      {uploadedFiles.length > 0 && (
+        <div className="px-4 py-2">
+          <div className="flex flex-wrap gap-2">
+            {uploadedFiles.map((file, index) => (
+              <div key={index} className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1">
+                <span className="text-xs truncate max-w-[150px]">{file.name}</span>
+                <button 
+                  onClick={() => handleRemoveFile(index)}
+                  className="ml-2 text-gray-500 hover:text-red-500"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Input Area */}
-      <div className={`py-4 px-0 ${isFullScreen ? 'w-1/3' : 'w-full'} mx-auto  `}>
-        <div className="flex flex-col  gap-2 bg-gray-100 dark:bg-[#171616] dark:text-white overflow-hidden rounded-lg pb-1">
+      <div className={`py-4 px-0 ${isFullScreen ? 'w-1/3' : 'w-full'} mx-auto`}>
+        <div className="flex flex-col gap-2 bg-gray-100 dark:bg-[#171616] dark:text-white overflow-hidden rounded-lg pb-1">
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="How can MedCopilot help?"
-            className="flex-1 p-4  rounded-lg focus:outline-none dark:bg-[#171616] dark:text-white"
+            className="flex-1 p-4 rounded-lg focus:outline-none dark:bg-[#171616] dark:text-white"
           />
           <div className='flex justify-between items-center p-4'>
-            <div className='flex '>
+            <div className='flex'>
               <button
-                onClick={handleSendMessage}
-                className="p-3 mr-2 border-[#9B9EA2]  border text-white rounded-full cursor-pointer  transition-colors"
+                onClick={triggerFileUpload}
+                className="p-3 mr-2 border-[#9B9EA2] border text-white rounded-full cursor-pointer transition-colors"
               >
                 <img src="/doc.svg" className='w-4 h-4' alt="" />
               </button>
               <button
                 onClick={handleSendMessage}
-                className="p-2 px-4 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center  transition-colors"
+                className="p-2 px-4 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
               >
-                <Lightbulb  color={'#9B9EA2'}  size={20} /><span className='text-[#9B9EA2] '>Think</span>
+                <Lightbulb color={'#9B9EA2'} size={20} /><span className='text-[#9B9EA2]'>Think</span>
               </button>
             </div>
             <div>
-              {/* <button
-                onClick={handleSendMessage}
-                className="p-3 mr-2 border-[#72A8EE] border text-white rounded-full cursor-pointer  transition-colors"
-              >
-                <Clock10 color={'#72A8EE'} size={20} />
-              </button> */}
               <button
                 onClick={handleSendMessage}
-                className="p-2  bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
+                className="p-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
               >
                 <ArrowUp size={25} />
               </button>
             </div>
-
           </div>
         </div>
       </div>

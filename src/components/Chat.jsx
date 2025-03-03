@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import ChatInterface from "./ChatInterface";
 import { Maximize, Minimize } from "lucide-react";
+import { MedContext } from "../context/MedContext";
 
 const Chat = ({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
+
+    
     return (
         <div className="drop-shadow-lg px-3 pt-3 bg-white dark:bg-[#272626] rounded-2xl flex flex-col overflow-hidden">
             {/* Header with buttons */}

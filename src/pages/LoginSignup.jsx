@@ -35,7 +35,7 @@ const LoginSignup = () => {
     
     if (isLogin) {
       // Login logic
-      console.log('Login attempted with:', credentials);
+      // console.log('Login attempted with:', credentials);
       
       // Check against temp credentials
       if (
@@ -51,7 +51,7 @@ const LoginSignup = () => {
       }
     } else {
       // Signup logic
-      console.log('Signup attempted with:', credentials);
+      // console.log('Signup attempted with:', credentials);
       
       // Validation checks
       if (!credentials.email || !credentials.username || !credentials.password) {

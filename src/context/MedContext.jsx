@@ -14,6 +14,19 @@ const MedContextProvider = (props) => {
   const [previewDoc, setPreviewDoc] = useState(null);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
 
+  // Chat state management
+  const [messages, setMessages] = useState([
+    {
+      type: 'bot',
+      content: 'Hi, I am your copilot!',
+      subtext: 'Chat and resolve all your queries',
+      para: 'Or try these prompts to get started',
+      isInitial: true // Marking the initial message
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
   const openDocumentPreview = (doc) => {
     setPreviewDoc(doc);
     setIsPreviewVisible(true);
@@ -23,6 +36,46 @@ const MedContextProvider = (props) => {
     setPreviewDoc(null);
     setIsPreviewVisible(false);
   };
+
+  // Function to handle sending messages
+  const sendMessage = async (message, files = []) => {
+    if (!message.trim() && files.length === 0) return;
+
+    // Add user message
+    setMessages(prev => [...prev, {
+      type: 'user',
+      content: message,
+      files: files.length > 0 ? files : undefined
+    }]);
+
+    // Simulated AI response
+    setTimeout(() => {
+      setMessages(prev => [...prev, {
+        type: 'bot',
+        content: 'I see you\'ve shared a document. Is there anything specific you\'d like to know about it?',
+        isInitial: false // Mark as non-initial AI response
+      }]);
+    }, 1000);
+
+    // Clear input and files after sending
+    setInputMessage('');
+    setUploadedFiles([]);
+  };
+
+  // Function to regenerate specific message
+  const regenerateMessage = (index) => {
+    setMessages(prevMessages => {
+      return prevMessages.map((msg, i) => {
+        if (i === index) {
+          return { ...msg, content: 'regenerated temp msg' }; // Modify AI response
+        }
+        return msg;
+      });
+    });
+  };
+
+  const [selectedUser, setSelectedUser] = useState(null);
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([
@@ -32,7 +85,7 @@ const MedContextProvider = (props) => {
     { id: "MAS12348", name: "Michael Brown", time: "2:30 PM", status: "Active", appointmentDate: "2025-02-25", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12349", name: "Sarah Wilson", time: "3:00 PM", status: "Active", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12350", name: "James Rodriguez", time: "3:30 PM", status: "First Time Patient", appointmentDate: "2025-02-24", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12351", name: "Emma Davis", time: "4:00 PM", status: "Active", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
+    { id: "MAS12351", name: "Emma Davis", time: "4:00 PM", status: "Active", appointmentDate: "2025-03-03", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12352", name: "David Miller", time: "4:30 PM", status: "Returning", appointmentDate: "2025-02-25", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12353", name: "Sophie Taylor", time: "5:00 PM", status: "Active", appointmentDate: "2025-02-24", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
     { id: "MAS12354", name: "Robert Garcia", time: "5:30 PM", status: "First Time Patient", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe" },
@@ -149,7 +202,19 @@ const MedContextProvider = (props) => {
     previewDoc,
     isPreviewVisible,
     openDocumentPreview,
-    closeDocumentPreview
+    closeDocumentPreview,
+    // Chat-related state and functions
+    messages,
+    setMessages,
+    inputMessage,
+    setInputMessage,
+    uploadedFiles,
+    setUploadedFiles,
+    sendMessage,
+    regenerateMessage,
+
+    selectedUser,
+    setSelectedUser
   };
 
   return (
