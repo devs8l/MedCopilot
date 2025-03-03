@@ -1,15 +1,42 @@
-import React, { useContext } from "react";
-import { useParams } from "react-router-dom";
+// UserData.jsx
+import React, { useContext, useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext";
 import { Clock, AlertCircle, CheckCircle2, AlertTriangle, Sparkles, Info } from "lucide-react";
 
 const UserData = () => {
   const { id } = useParams();
-  const { filteredUsers } = useContext(MedContext);
+  const navigate = useNavigate();
+  const { users, filteredUsers, setIsUserSelected } = useContext(MedContext);
+  const [userData, setUserData] = useState(null);
   
-  const user = filteredUsers.find((u) => u.id === id);
+  // Set isUserSelected to true when this component mounts
+  useEffect(() => {
+    setIsUserSelected(true);
+    
+    // Cleanup function to set isUserSelected to false when unmounting
+    return () => {
+      setIsUserSelected(false);
+    };
+  }, [setIsUserSelected]);
+  
+  // Find user data
+  useEffect(() => {
+    // First try to find in filteredUsers
+    let user = filteredUsers.find((u) => u.id === id);
+    
+    // If not found, look in the full users array
+    if (!user) {
+      user = users.find((u) => u.id === id);
+    }
+    
+    // Set the user data
+    if (user) {
+      setUserData(user);
+    }
+  }, [id, filteredUsers, users]);
 
-  if (!user) {
+  if (!userData) {
     return <h2 className="text-center text-gray-500">User Not Found</h2>;
   }
 
@@ -54,24 +81,23 @@ const UserData = () => {
   };
 
   return (
-    <div className="p-6 bg-white flex flex-col gap-6 rounded-lg  mx-auto h-full overflow-auto">
+    <div className="p-6 bg-white flex flex-col gap-6 rounded-lg mx-auto h-full overflow-auto">
       {/* Profile Section */}
-      <div >
-        <div className="flex items-start justify-between ">
+      <div>
+        <div className="flex items-start justify-between">
           <div className="flex items-start space-x-4">
             <img
-              src={user?.profileImage || "/api/placeholder/80/80"}
+              src={userData?.profileImage || "/api/placeholder/80/80"}
               className="w-16 h-16 rounded-full object-cover"
-              alt={user?.name}
+              alt={userData?.name}
             />
             <div className="flex flex-col gap-5">
               <div>
-                <h2 className="text-xl font-semibold">{user?.name}</h2>
-                <p className="text-sm text-gray-500">#{user?.id}</p>
-
+                <h2 className="text-xl font-semibold">{userData?.name}</h2>
+                <p className="text-sm text-gray-500">#{userData?.id}</p>
               </div>
               {/* Medical Details Grid */}
-              <div className=" grid grid-cols-4 gap-3 mb-6">
+              <div className="grid grid-cols-4 gap-3 mb-6">
                 <div>
                   <p className="text-sm text-gray-500">Age</p>
                   <p className="font-medium">32</p>
@@ -92,18 +118,16 @@ const UserData = () => {
             </div>
           </div>
         </div>
-
-
       </div>
 
       {/* Action Buttons */}
       <div className="flex space-x-4 mb-6">
         <button className="flex items-center space-x-2 bg-gray-900 text-white px-4 py-2 rounded-lg">
-          <Sparkles  className="w-4 h-4" />
+          <Sparkles className="w-4 h-4" />
           <span className="text-sm">Summarize Patient Profile</span>
         </button>
         <button className="flex items-center space-x-2 border border-gray-300 px-4 py-2 rounded-lg">
-          <Info  className="w-4 h-4" />
+          <Info className="w-4 h-4" />
           <span>Highlight Key Events</span>
         </button>
       </div>
@@ -113,7 +137,7 @@ const UserData = () => {
         {medicalEvents.map((event, index) => (
           <div
             key={index}
-            className="flex items-center justify-between  pb-4"
+            className="flex items-center justify-between pb-4"
           >
             <div className="flex items-start space-x-3">
               {getStatusIcon(event.status)}
@@ -137,4 +161,4 @@ const UserData = () => {
   );
 };
 
-export default UserData;  
+export default UserData;

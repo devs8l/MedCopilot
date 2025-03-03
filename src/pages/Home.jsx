@@ -74,7 +74,7 @@ const Resizer = ({ onResize, orientation = "vertical", className = "" }) => {
       onMouseLeave={() => setHovered(false)}
     >
       {/* Handle dots for visual feedback */}
-      <div className={`flex ${orientation === "vertical" ? "flex-col" : "flex-row"} gap-1`}>
+      <div className={`flex ${orientation === "vertical" ? "flex-col" : "flex-row"} gap-1 ml-2`}>
         <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
         <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
         <div className="w-1 h-1 bg-gray-500 rounded-full"></div>

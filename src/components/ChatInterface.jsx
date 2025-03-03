@@ -158,7 +158,7 @@ const ChatInterface = ({isFullScreen}) => {
               </button> */}
               <button
                 onClick={handleSendMessage}
-                className="p-2 mr-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
+                className="p-2  bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
               >
                 <ArrowUp size={25} />
               </button>
