@@ -6,7 +6,7 @@ const Chat = ({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
     return (
         <div className="drop-shadow-lg px-3 pt-3 bg-white dark:bg-[#272626] rounded-2xl flex flex-col overflow-hidden">
             {/* Header with buttons */}
-            <div className={`p-4  flex items-center justify-between  rounded-xl ${isFullScreen ? 'bg-white':''} `}>
+            <div className={`p-4  flex items-center justify-between  rounded-xl ${isFullScreen ? 'bg-white':''} dark:text-white dark:bg-[#272626]`}>
                 {/* Left side - swap position buttons */}
                 <div className={`flex  space-x-2 ${isFullScreen ? "hidden" : ""}`}>
                     <button
@@ -36,7 +36,7 @@ const Chat = ({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
 
             {/* Chat content area */}
             <div className={`flex-grow overflow-y-auto ${isFullScreen ? 'h-[calc(80vh-73px)]':'h-[calc(80vh-75px)]'} `}>
-                <ChatInterface />
+                <ChatInterface isFullScreen={isFullScreen} />
             </div>
         </div>
     );

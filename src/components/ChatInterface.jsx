@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ChevronUp, ArrowUp, Paperclip, Lightbulb, Clock10 } from 'lucide-react';
 
-const ChatInterface = () => {
+const ChatInterface = ({isFullScreen}) => {
   const [messages, setMessages] = useState([
     {
       type: 'bot',
@@ -69,8 +69,8 @@ const ChatInterface = () => {
       <div className={`flex-1 overflow-y-auto p-4 ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}>
         {messages.length === 1 ? (
           <div className="text-center space-y-1">
-            <div className="text-xl font-semibold">{messages[0].content}</div>
-            <p className="text-sm text-gray-600">{messages[0].subtext}</p>
+            <div className="text-xl font-semibold dark:text-white">{messages[0].content}</div>
+            <p className="text-sm text-gray-600 ">{messages[0].subtext}</p>
             <p className="text-sm text-gray-600 mb-12 mt-15">{messages[0].para}</p>
 
             <div className="grid grid-cols-2 gap-4 mt-4">
@@ -124,38 +124,38 @@ const ChatInterface = () => {
       </div>
 
       {/* Input Area */}
-      <div className="py-4 px-0 ">
-        <div className="flex flex-col  gap-2 bg-gray-100 overflow-hidden rounded-lg pb-1">
+      <div className={`py-4 px-0 ${isFullScreen ? 'w-1/3' : 'w-full'} mx-auto  `}>
+        <div className="flex flex-col  gap-2 bg-gray-100 dark:bg-[#171616] dark:text-white overflow-hidden rounded-lg pb-1">
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="How can MedCopilot help?"
-            className="flex-1 p-4  rounded-lg focus:outline-none bg-gray-100"
+            className="flex-1 p-4  rounded-lg focus:outline-none dark:bg-[#171616] dark:text-white"
           />
           <div className='flex justify-between items-center p-4'>
             <div className='flex '>
               <button
                 onClick={handleSendMessage}
-                className="p-2 mr-2 border-[#72A8EE]  border text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
+                className="p-3 mr-2 border-[#9B9EA2]  border text-white rounded-full cursor-pointer  transition-colors"
               >
-                <Paperclip  color={'#72A8EE'} />
+                <img src="/doc.svg" className='w-4 h-4' alt="" />
               </button>
               <button
                 onClick={handleSendMessage}
-                className="p-2 px-4 mr-2 border-[#72A8EE] border text-white flex rounded-full cursor-pointer  transition-colors"
+                className="p-2 px-4 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center  transition-colors"
               >
-                <Lightbulb  color={'#72A8EE'} size={25} /><span className='text-[#72A8EE]'>Think</span>
+                <Lightbulb  color={'#9B9EA2'}  size={20} /><span className='text-[#9B9EA2] '>Think</span>
               </button>
             </div>
             <div>
-              <button
+              {/* <button
                 onClick={handleSendMessage}
-                className="p-2 mr-2 border-[#72A8EE] border text-white rounded-full cursor-pointer  transition-colors"
+                className="p-3 mr-2 border-[#72A8EE] border text-white rounded-full cursor-pointer  transition-colors"
               >
-                <Clock10 color={'#72A8EE'} size={25} />
-              </button>
+                <Clock10 color={'#72A8EE'} size={20} />
+              </button> */}
               <button
                 onClick={handleSendMessage}
                 className="p-2 mr-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"

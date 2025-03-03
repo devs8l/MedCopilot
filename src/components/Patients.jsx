@@ -327,7 +327,7 @@ const Patients = () => {
     };
 
     return (
-        <div className="mx-auto bg-white dark:bg-[#272626] px-1 py-1 pb-4 flex flex-col justify-between gap-3 rounded-xl overflow-hidden">
+        <div className="mx-auto bg-white dark:bg-[#272626] px-1 py-1 pb-1 flex flex-col justify-between gap-3 rounded-xl overflow-hidden">
             {renderView()}
         </div>
     );

@@ -54,7 +54,7 @@ const UserData = () => {
   };
 
   return (
-    <div className="p-6 bg-white flex flex-col gap-6 rounded-lg  mx-auto mt-5">
+    <div className="p-6 bg-white flex flex-col gap-6 rounded-lg  mx-auto h-full overflow-auto">
       {/* Profile Section */}
       <div >
         <div className="flex items-start justify-between ">
@@ -113,7 +113,7 @@ const UserData = () => {
         {medicalEvents.map((event, index) => (
           <div
             key={index}
-            className="flex items-center justify-between  pb-7"
+            className="flex items-center justify-between  pb-4"
           >
             <div className="flex items-start space-x-3">
               {getStatusIcon(event.status)}

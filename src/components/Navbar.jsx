@@ -34,7 +34,7 @@ const Navbar = () => {
         <div className={`grid dark:text-white grid-cols-[2fr_1fr] ${isSearchOpen ? 'sm:grid-cols-[1fr_4fr_1fr]' : 'sm:grid-cols-[1fr_3fr_1fr]'} gap-4 py-3 px-5`}>
             <div className="flex items-start gap-5">
                 {/* Sidebar Toggle Button */}
-                <button onClick={() => setIsExpanded(!isExpanded)} className="rounded-md py-5 dark:bg-gray-800 cursor-pointer mr-1 ml-3 ">
+                <button onClick={() => setIsExpanded(!isExpanded)} className="rounded-md py-5 dark:bg-gray-800 cursor-pointer mr-1  ">
                     <Menu size={24} />
                 </button>
 

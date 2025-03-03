@@ -3,7 +3,9 @@ import { createContext, useEffect, useState } from 'react';
 export const MedContext = createContext();
 
 const MedContextProvider = (props) => {
-  const [isUserSelected, setIsUserSelected] = useState(false);
+  const [isUserSelected, setIsUserSelected] = useState(
+    localStorage.getItem("isUserSelected") === "true"
+  );
   const [filterBasis, setFilterBasis] = useState("day");
   const [isExpanded, setIsExpanded] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -34,6 +36,9 @@ const MedContextProvider = (props) => {
     localStorage.setItem("isAuthenticated", "true");
     setIsAuthenticated(true);
   };
+  useEffect(() => {
+    localStorage.setItem("isUserSelected", isUserSelected);
+  }, [isUserSelected]);
 
   const logout = () => {
     localStorage.removeItem("isAuthenticated");
