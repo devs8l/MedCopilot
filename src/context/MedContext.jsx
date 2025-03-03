@@ -11,6 +11,18 @@ const MedContextProvider = (props) => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("isAuthenticated") === "true"
   );
+  const [previewDoc, setPreviewDoc] = useState(null);
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+
+  const openDocumentPreview = (doc) => {
+    setPreviewDoc(doc);
+    setIsPreviewVisible(true);
+  };
+
+  const closeDocumentPreview = () => {
+    setPreviewDoc(null);
+    setIsPreviewVisible(false);
+  };
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([
@@ -57,17 +69,17 @@ const MedContextProvider = (props) => {
   const getWeekBounds = (date) => {
     const currentDate = new Date(date);
     const dayOfWeek = currentDate.getDay();
-    
+
     // Calculate start of week (Sunday)
     const startOfWeek = new Date(currentDate);
     startOfWeek.setDate(currentDate.getDate() - dayOfWeek);
     startOfWeek.setHours(0, 0, 0, 0);
-    
+
     // Calculate end of week (Saturday)
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
-    
+
     return { startOfWeek, endOfWeek };
   };
 
@@ -82,13 +94,13 @@ const MedContextProvider = (props) => {
     : users.filter(user => {
       const userDateFormatted = formatDateForComparison(user.appointmentDate);
       const userDate = new Date(user.appointmentDate);
-      
+
       if (filterBasis === "day") {
         return userDateFormatted === formattedSelectedDate;
       } else if (filterBasis === "week") {
         // Get the bounds of the week containing the selected date
         const { startOfWeek, endOfWeek } = getWeekBounds(selectedDate);
-        
+
         // Check if the user date is within the range
         return userDate >= startOfWeek && userDate <= endOfWeek;
       } else if (filterBasis === "month") {
@@ -133,9 +145,13 @@ const MedContextProvider = (props) => {
     isExpanded,
     setIsExpanded,
     searchFilteredUsers,
-    weekBounds
+    weekBounds,
+    previewDoc,
+    isPreviewVisible,
+    openDocumentPreview,
+    closeDocumentPreview
   };
-  
+
   return (
     <MedContext.Provider value={value}>
       {props.children}

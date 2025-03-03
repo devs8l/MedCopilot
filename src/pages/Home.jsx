@@ -74,7 +74,7 @@ const Resizer = ({ onResize, orientation = "vertical", className = "" }) => {
       onMouseLeave={() => setHovered(false)}
     >
       {/* Handle dots for visual feedback */}
-      <div className={`flex ${orientation === "vertical" ? "flex-col" : "flex-row"} gap-1 ml-2`}>
+      <div className={`flex ${orientation === "vertical" ? "flex-col" : "flex-row"} gap-1 `}>
         <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
         <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
         <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
@@ -198,7 +198,7 @@ const Home = () => {
             style={{
               width: isFullScreen ? getFullScreenWidth() : `${chatWidth}px`,
               flexShrink: 0,
-              marginLeft: isFullScreen ? '0' : '12px',
+              marginLeft: isFullScreen ? '0' : '0px',
 
             }}
           >
@@ -237,7 +237,7 @@ const Home = () => {
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
             <div
-              className="drop-shadow-lg bg-white dark:bg-[#272626] rounded-2xl p-2 mx-1"
+              className="drop-shadow-lg bg-white dark:bg-[#272626] rounded-2xl p-2 "
               style={{ width: `${contentWidth}px` }}
             >
               <Outlet />
@@ -258,7 +258,7 @@ const Home = () => {
               width: isFullScreen ? getFullScreenWidth() : `${chatWidth}px`,
               maxWidth: '100vw',  // Prevent overflow
               flexShrink: 0,
-              marginLeft: isFullScreen ? '0' : '12px',
+              marginLeft: isFullScreen ? '0' : '0px',
             }}
           >
             <Chat
