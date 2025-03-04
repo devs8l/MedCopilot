@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useContext } from 'react';
-import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X } from 'lucide-react';
+import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock } from 'lucide-react';
 import { MedContext } from '../context/MedContext';
 
-const ChatInterface = ({ isFullScreen }) => {
-  const { 
+const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
+  const {
     openDocumentPreview,
     messages,
     inputMessage,
@@ -11,18 +11,21 @@ const ChatInterface = ({ isFullScreen }) => {
     uploadedFiles,
     setUploadedFiles,
     sendMessage,
-    regenerateMessage
+    regenerateMessage,
+    selectedUser,
+    handleClockClick
   } = useContext(MedContext);
-  
+
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   const suggestionPrompts = [
-    'How to get Lorem Ipsum?',
-    'How to get Lorem Ipsum?',
-    'How to get Lorem Ipsum?',
-    'How to get Lorem Ipsum?'
+    "Summarize this patient's last visit.",
+    "Show me recent lab results and trends.",
+    "Does this patient have any allergies or chronic conditions?",
+    "Suggest possible causes for the patient’s current symptoms."
   ];
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -34,13 +37,14 @@ const ChatInterface = ({ isFullScreen }) => {
 
   const handleSendMessage = () => {
     sendMessage(inputMessage, uploadedFiles);
+    setPromptGiven(true);
   };
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
-    
+
     if (files.length === 0) return;
-    
+
     // Process each file
     const newFiles = files.map(file => ({
       name: file.name,
@@ -49,9 +53,9 @@ const ChatInterface = ({ isFullScreen }) => {
       data: URL.createObjectURL(file),
       file: file // Store the actual file object
     }));
-    
+
     setUploadedFiles(prev => [...prev, ...newFiles]);
-    
+
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -88,9 +92,9 @@ const ChatInterface = ({ isFullScreen }) => {
           <div className="text-center space-y-1">
             <div className="text-xl font-semibold dark:text-white">{messages[0].content}</div>
             <p className="text-sm text-gray-600 ">{messages[0].subtext}</p>
-            <p className="text-sm text-gray-600 mb-12 mt-15">{messages[0].para}</p>
+            <p className="text-sm text-gray-600 mb-10 mt-10">{messages[0].para}</p>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-2 gap-4 w-2/3 m-auto">
               {suggestionPrompts.map((prompt, index) => (
                 <button
                   key={index}
@@ -110,13 +114,13 @@ const ChatInterface = ({ isFullScreen }) => {
                   <div className={`${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800'
                     } max-w-[80%] rounded-xl p-3`}>
                     <p>{message.content}</p>
-                    
+
                     {/* Display files if they exist */}
                     {message.files && message.files.length > 0 && (
                       <div className="mt-2 space-y-2">
                         {message.files.map((file, fileIndex) => (
-                          <div 
-                            key={fileIndex} 
+                          <div
+                            key={fileIndex}
                             className="p-2 bg-white bg-opacity-20 rounded flex justify-between items-center cursor-pointer hover:bg-opacity-30"
                             onClick={() => handleDocumentClick(file)}
                           >
@@ -169,12 +173,12 @@ const ChatInterface = ({ isFullScreen }) => {
 
       {/* Display uploaded files before sending */}
       {uploadedFiles.length > 0 && (
-        <div className="px-4 py-2">
+        <div className="px-3 py-2">
           <div className="flex flex-wrap gap-2">
             {uploadedFiles.map((file, index) => (
               <div key={index} className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1">
                 <span className="text-xs truncate max-w-[150px]">{file.name}</span>
-                <button 
+                <button
                   onClick={() => handleRemoveFile(index)}
                   className="ml-2 text-gray-500 hover:text-red-500"
                 >
@@ -212,7 +216,13 @@ const ChatInterface = ({ isFullScreen }) => {
                 <Lightbulb color={'#9B9EA2'} size={20} /><span className='text-[#9B9EA2]'>Think</span>
               </button>
             </div>
-            <div>
+            <div className='flex'>
+              <button
+                onClick={handleClockClick(selectedUser._id)}
+                className="p-3  mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
+              >
+                <img src="/clock.svg" className='w-4 h-4' alt="" />
+              </button>
               <button
                 onClick={handleSendMessage}
                 className="p-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"

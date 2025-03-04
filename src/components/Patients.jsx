@@ -71,7 +71,7 @@ const Patients = () => {
 
     // Render a single patient card
     const renderPatientCard = (user) => (
-        <Link to={`/user/${user.id}`} key={user.id} onClick={() => handleUserClick(user)} className="block">
+        <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
             <div className="grid grid-cols-[1fr_2fr_1fr] items-center gap-4 p-6 hover:bg-gray-50 rounded-lg transition-colors duration-150 cursor-pointer">
                 <span className="text-sm text-gray-500">{user.time}</span>
                 <div className="grid grid-cols-[3rem_auto] items-center gap-4">
@@ -80,7 +80,7 @@ const Patients = () => {
                     </div>
                     <div>
                         <h3 className="font-medium text-gray-900">{user.name}</h3>
-                        <p className="text-sm text-gray-500">#{user.id}</p>
+                        <p className="text-sm text-gray-500">#{user._id}</p>
                     </div>
                 </div>
                 <ChevronDown size={20} />
@@ -150,7 +150,7 @@ const Patients = () => {
                                     {dayData.patients.length > 0 ? (
                                         <div className="space-y-3">
                                             {dayData.patients.map(user => (
-                                                <Link to={`/user/${user.id}`} key={user.id} onClick={() => handleUserClick(user)} className="block">
+                                                <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
                                                     <div className="p-2 hover:bg-gray-100 dark:hover:bg-[#3a3a3a] rounded-lg">
                                                         <div className="flex items-center gap-2">
                                                             
@@ -237,7 +237,7 @@ const Patients = () => {
                                             {groupedPatients[day] && groupedPatients[day].length > 0 ? (
                                                 <div className="space-y-2">
                                                     {groupedPatients[day].map(user => (
-                                                        <Link to={`/user/${user.id}`} key={user.id} onClick={() => handleUserClick(user)} className="block">
+                                                        <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
                                                             <div className="p-1 hover:bg-gray-100 dark:hover:bg-[#3a3a3a] rounded text-xs">
                                                                 <p className="font-medium truncate">{user.name}</p>
                                                                 <p className="text-gray-500">{user.time}</p>
@@ -292,7 +292,7 @@ const Patients = () => {
                                         <p className="text-sm font-medium">{groupedPatients[index].length} appointments</p>
                                         <div className="space-y-1 max-h-[150px] overflow-y-auto">
                                             {groupedPatients[index].slice(0, 5).map(user => (
-                                                <Link to={`/user/${user.id}`} key={user.id} onClick={() => handleUserClick(user)} className="block">
+                                                <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
                                                     <div className="p-1 hover:bg-gray-100 dark:hover:bg-[#3a3a3a] rounded text-xs">
                                                         <p className="font-medium truncate">{user.name}</p>
                                                         <p className="text-gray-500">{new Date(user.appointmentDate).getDate()} {month.substring(0, 3)}</p>

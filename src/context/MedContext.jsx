@@ -13,6 +13,8 @@ const MedContextProvider = (props) => {
   );
   const [previewDoc, setPreviewDoc] = useState(null);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Chat state management
   const [messages, setMessages] = useState([
@@ -26,6 +28,72 @@ const MedContextProvider = (props) => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
+
+  // Initialize users state
+  const [users, setUsers] = useState([]);
+
+  // Fetch patient data from API
+  useEffect(() => {
+    const fetchPatients = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("https://medicalchat-backend-mongodb.vercel.app/patients/all");
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setUsers(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching patient data:", err);
+        setError("Failed to load patient data. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPatients();
+  }, []);
+
+  // Initialize selectedUser from localStorage or set to null
+  const [selectedUser, setSelectedUser] = useState(() => {
+    const savedUserJSON = localStorage.getItem("selectedUser");
+    if (savedUserJSON) {
+      try {
+        const savedUser = JSON.parse(savedUserJSON);
+        return savedUser;
+      } catch (error) {
+        console.error("Error parsing saved user from localStorage:", error);
+      }
+    }
+    return null;
+  });
+
+  // Verify selectedUser still exists in users array after fetching
+  useEffect(() => {
+    if (selectedUser && users.length > 0) {
+      // Use _id for comparison since that's the MongoDB identifier
+      const userStillExists = users.some(user => user._id === selectedUser._id);
+      if (!userStillExists) {
+        setSelectedUser(null);
+        localStorage.removeItem("selectedUser");
+        localStorage.setItem("isUserSelected", "false");
+      }
+    }
+  }, [users, selectedUser]);
+
+  // Update localStorage when selectedUser changes
+  useEffect(() => {
+    if (selectedUser) {
+      localStorage.setItem("selectedUser", JSON.stringify(selectedUser));
+      localStorage.setItem("isUserSelected", "true");
+    } else {
+      localStorage.removeItem("selectedUser");
+      localStorage.setItem("isUserSelected", "false");
+    }
+  }, [selectedUser]);
 
   const openDocumentPreview = (doc) => {
     setPreviewDoc(doc);
@@ -74,40 +142,24 @@ const MedContextProvider = (props) => {
     });
   };
 
-  const [selectedUser, setSelectedUser] = useState(null);
-
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
-  const [users, setUsers] = useState([
-    { id: "MAS12345", name: "Andrea Smith", time: "12:00 PM", status: "Active", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12346", name: "Zack Thompson", time: "1:00 PM", status: "First Time Patient", appointmentDate: "2025-02-26", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12347", name: "Lara Chen", time: "2:00 PM", status: "Returning", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12348", name: "Michael Brown", time: "2:30 PM", status: "Active", appointmentDate: "2025-02-25", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12349", name: "Sarah Wilson", time: "3:00 PM", status: "Active", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12350", name: "James Rodriguez", time: "3:30 PM", status: "First Time Patient", appointmentDate: "2025-02-24", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12351", name: "Emma Davis", time: "4:00 PM", status: "Active", appointmentDate: "2025-03-03", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12352", name: "David Miller", time: "4:30 PM", status: "Returning", appointmentDate: "2025-02-25", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12353", name: "Sophie Taylor", time: "5:00 PM", status: "Active", appointmentDate: "2025-02-24", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12354", name: "Robert Garcia", time: "5:30 PM", status: "First Time Patient", appointmentDate: "2025-02-23", profileImage: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe" },
-    { id: "MAS12355", name: "Lisa Anderson", time: "6:00 PM", status: "Active", appointmentDate: "2025-03-01", profileImage: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe" },
-    { id: "MAS12356", name: "Kevin", time: "6:30 PM", status: "Returning", appointmentDate: "2025-03-02", profileImage: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe" },
-    { id: "MAS12357", name: "Rachel White", time: "7:00 PM", status: "Active", appointmentDate: "2025-03-02", profileImage: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe" },
-    { id: "MAS12358", name: "Thomas Lee", time: "7:30 PM", status: "First Time Patient", appointmentDate: "2025-03-01", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-    { id: "MAS12359", name: "Patricia Clark", time: "8:00 PM", status: "Active", appointmentDate: "2025-03-01", profileImage: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91" },
-  ]);
 
   // Authentication handlers
   const login = () => {
     localStorage.setItem("isAuthenticated", "true");
     setIsAuthenticated(true);
   };
-  useEffect(() => {
-    localStorage.setItem("isUserSelected", isUserSelected);
-  }, [isUserSelected]);
 
   const logout = () => {
     localStorage.removeItem("isAuthenticated");
     setIsAuthenticated(false);
+  };
+
+  // Enhanced setSelectedUser function that also updates isUserSelected
+  const handleSelectUser = (user) => {
+    setSelectedUser(user);
+    setIsUserSelected(!!user);
   };
 
   // Format dates consistently for comparison
@@ -145,6 +197,8 @@ const MedContextProvider = (props) => {
       user.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
     : users.filter(user => {
+      if (!user.appointmentDate) return false;
+
       const userDateFormatted = formatDateForComparison(user.appointmentDate);
       const userDate = new Date(user.appointmentDate);
 
@@ -176,9 +230,57 @@ const MedContextProvider = (props) => {
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  console.log("Selected Date:", formatDateForComparison(selectedDate));
-  console.log("Week Range:", formatDateForComparison(weekBounds.startOfWeek), "to", formatDateForComparison(weekBounds.endOfWeek));
-  console.log("Users Dates:", filteredUsers.map(u => formatDateForComparison(u.appointmentDate)));
+  const fetchPatientHistory = async (selectedUserId) => {
+    try {
+      const response = await fetch(
+        `https://medicalchat-backend-mongodb.vercel.app/patients/${selectedUserId}/history`
+      );
+      if (!response.ok) throw new Error("Failed to fetch history");
+      const historyData = await response.json();
+      return historyData; // Pass this to the next API
+    } catch (error) {
+      console.error("Error fetching history:", error);
+      return null;
+    }
+  };
+
+  const analyzePatientHistory = async (historyData) => {
+    try {
+      const response = await fetch(
+        `https://medicalchat-tau.vercel.app/medical_analysis/what was my patient suffer most`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(historyData), // Sending history as body
+        }
+      );
+      if (!response.ok) throw new Error("Analysis failed");
+      const analysisResult = await response.json();
+      return analysisResult;
+    } catch (error) {
+      console.error("Error analyzing history:", error);
+      return null;
+    }
+  };
+  const handleClockClick = async (selectedUserId) => {
+    const historyData = await fetchPatientHistory(selectedUserId);
+    if (historyData) {
+      const analysisResult = await analyzePatientHistory(historyData);
+      if (analysisResult) {
+        // Update chat messages with the response
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: "bot", content: analysisResult.content },
+        ]);
+      }
+    }
+  };
+
+
+
+
 
   const value = {
     isAuthenticated,
@@ -212,9 +314,16 @@ const MedContextProvider = (props) => {
     setUploadedFiles,
     sendMessage,
     regenerateMessage,
-
+    // User selection with local storage support
     selectedUser,
-    setSelectedUser
+    setSelectedUser: handleSelectUser,
+    // Loading and error states
+    isLoading,
+    error,
+    //history
+    fetchPatientHistory,
+    analyzePatientHistory,
+    handleClockClick
   };
 
   return (

@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext";
-import { Clock, AlertCircle, CheckCircle2, AlertTriangle, Sparkles, Info } from "lucide-react";
+import { Clock, AlertCircle, CheckCircle2, AlertTriangle, Sparkles, Info, Ellipsis } from "lucide-react";
 
 const UserData = () => {
   const { id } = useParams();
@@ -23,11 +23,11 @@ const UserData = () => {
   // Find user data
   useEffect(() => {
     // First try to find in filteredUsers
-    let user = filteredUsers.find((u) => u.id === id);
+    let user = filteredUsers.find((u) => u._id === id);
     
     // If not found, look in the full users array
     if (!user) {
-      user = users.find((u) => u.id === id);
+      user = users.find((u) => u._id === id);
     }
     
     // Set the user data
@@ -37,8 +37,21 @@ const UserData = () => {
   }, [id, filteredUsers, users]);
 
   if (!userData) {
-    return <h2 className="text-center text-gray-500">User Not Found</h2>;
+    return <h2 className="text-center text-gray-500 flex w-full h-full items-center justify-center"><Ellipsis /></h2>;
   }
+
+  // Calculate age based on DOB
+  const calculateAge = (dob) => {
+    if (!dob) return "N/A";
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
 
   const medicalEvents = [
     {
@@ -81,7 +94,7 @@ const UserData = () => {
   };
 
   return (
-    <div className="p-6 bg-white flex flex-col gap-6 rounded-lg mx-auto h-full overflow-auto">
+    <div className="p-6 bg-white flex flex-col gap-6 rounded-lg dark:bg-[#272727] mx-auto h-full overflow-auto">
       {/* Profile Section */}
       <div>
         <div className="flex items-start justify-between">
@@ -94,25 +107,25 @@ const UserData = () => {
             <div className="flex flex-col gap-5">
               <div>
                 <h2 className="text-xl font-semibold">{userData?.name}</h2>
-                <p className="text-sm text-gray-500">#{userData?.id}</p>
+                <p className="text-sm text-gray-500">#{userData?._id}</p>
               </div>
               {/* Medical Details Grid */}
               <div className="grid grid-cols-4 gap-3 mb-6">
                 <div>
                   <p className="text-sm text-gray-500">Age</p>
-                  <p className="font-medium">32</p>
+                  <p className="font-medium">{calculateAge(userData?.dob)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Sex</p>
-                  <p className="font-medium">Female</p>
+                  <p className="font-medium">{userData?.gender || "N/A"}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">BP</p>
-                  <p className="font-medium">High</p>
+                  <p className="text-sm text-gray-500">Blood Type</p>
+                  <p className="font-medium">{userData?.blood_type || "N/A"}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Diabetic?</p>
-                  <p className="font-medium">Type A</p>
+                  <p className="text-sm text-gray-500">Allergies</p>
+                  <p className="font-medium">{userData?.allergies?.length > 0 ? userData.allergies[0] : "None"}</p>
                 </div>
               </div>
             </div>
