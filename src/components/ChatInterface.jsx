@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useContext } from 'react';
-import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock } from 'lucide-react';
+import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2 } from 'lucide-react';
 import { MedContext } from '../context/MedContext';
 
 const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
@@ -13,7 +13,8 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
     sendMessage,
     regenerateMessage,
     selectedUser,
-    handleClockClick
+    handleClockClick,
+    isloadingHistory
   } = useContext(MedContext);
 
   const fileInputRef = useRef(null);
@@ -218,10 +219,14 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
             </div>
             <div className='flex'>
               <button
-                onClick={handleClockClick(selectedUser._id)}
-                className="p-3  mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
+                onClick={()=>handleClockClick(selectedUser._id)}
+                className="p-3 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
               >
-                <img src="/clock.svg" className='w-4 h-4' alt="" />
+                {isloadingHistory ? (
+                  <Loader2 className="animate-spin" color={'#9B9EA2'} size={20} />
+                ) : (
+                  <History color={'#9B9EA2'} size={20} />
+                )}
               </button>
               <button
                 onClick={handleSendMessage}

@@ -16,6 +16,9 @@ const MedContextProvider = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
+  const [isloadingHistory, setIsloadingHistory] = useState(false);
+
   // Chat state management
   const [messages, setMessages] = useState([
     {
@@ -120,7 +123,7 @@ const MedContextProvider = (props) => {
     setTimeout(() => {
       setMessages(prev => [...prev, {
         type: 'bot',
-        content: 'I see you\'ve shared a document. Is there anything specific you\'d like to know about it?',
+        content: 'AI generated response?',
         isInitial: false // Mark as non-initial AI response
       }]);
     }, 1000);
@@ -265,6 +268,7 @@ const MedContextProvider = (props) => {
     }
   };
   const handleClockClick = async (selectedUserId) => {
+    setIsloadingHistory(true)
     const historyData = await fetchPatientHistory(selectedUserId);
     if (historyData) {
       const analysisResult = await analyzePatientHistory(historyData);
@@ -276,6 +280,7 @@ const MedContextProvider = (props) => {
         ]);
       }
     }
+    setIsloadingHistory(false)
   };
 
 
@@ -323,7 +328,8 @@ const MedContextProvider = (props) => {
     //history
     fetchPatientHistory,
     analyzePatientHistory,
-    handleClockClick
+    handleClockClick,
+    isloadingHistory
   };
 
   return (
