@@ -4,7 +4,7 @@ import { Maximize, Minimize, X, AlertCircle } from "lucide-react";
 import { MedContext } from "../context/MedContext";
 
 const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
-    const { selectedUser, setIsUserSelected } = useContext(MedContext);
+    const { selectedUser, setIsUserSelected,setMessages } = useContext(MedContext);
     const [promptGiven, setPromptGiven] = useState(() => {
         const storedPromptGiven = localStorage.getItem(`promptGiven_${selectedUser?.id}`);
         return storedPromptGiven ? JSON.parse(storedPromptGiven) : false;
@@ -63,7 +63,19 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
         setShowConfirmDialog(false);
         setShowSessionHeader(false);
         setSessionActive(false);
+        
+        // Clear chat messages
+        setMessages([
+            {
+                type: 'bot',
+                content: 'Hi, I am your copilot!',
+                subtext: 'Chat and resolve all your queries',
+                para: 'Or try these prompts to get started',
+                isInitial: true
+            }
+        ]);
     };
+    
 
     const cancelEndSession = () => {
         setShowConfirmDialog(false);

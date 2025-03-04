@@ -110,6 +110,7 @@ const MedContextProvider = (props) => {
 
   // Function to handle sending messages
   const sendMessage = async (message, files = []) => {
+    setInputMessage('');
     if (!message.trim() && files.length === 0) return;
 
     // Add user message
@@ -119,17 +120,55 @@ const MedContextProvider = (props) => {
       files: files.length > 0 ? files : undefined
     }]);
 
-    // Simulated AI response
-    setTimeout(() => {
+    try {
+      // First, fetch the patient history
+      if (!selectedUser) {
+        throw new Error("No patient selected");
+      }
+
+      const historyData = await fetchPatientHistory(selectedUser._id);
+
+      if (!historyData) {
+        throw new Error("Failed to fetch patient history");
+      }
+
+      // Make API call to get medical analysis with history data
+      const response = await fetch(
+        `https://medicalchat-tau.vercel.app/medical_analysis/${encodeURIComponent(message)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(historyData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Add bot response to messages
       setMessages(prev => [...prev, {
         type: 'bot',
-        content: 'AI generated response?',
-        isInitial: false // Mark as non-initial AI response
+        content: data.content || 'No response from medical analysis',
+        isInitial: false
       }]);
-    }, 1000);
+    } catch (error) {
+      console.error('Error processing medical analysis:', error);
+
+      // Add error message to messages
+      setMessages(prev => [...prev, {
+        type: 'bot',
+        content: 'Sorry, there was an error processing your request.',
+        isInitial: false
+      }]);
+    }
 
     // Clear input and files after sending
-    setInputMessage('');
+    
     setUploadedFiles([]);
   };
 
