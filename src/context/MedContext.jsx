@@ -15,6 +15,7 @@ const MedContextProvider = (props) => {
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isMessageLoading, setIsMessageLoading] = useState(false);
 
 
   const [isloadingHistory, setIsloadingHistory] = useState(false);
@@ -119,6 +120,7 @@ const MedContextProvider = (props) => {
       content: message,
       files: files.length > 0 ? files : undefined
     }]);
+    setIsMessageLoading(true);
 
     try {
       // First, fetch the patient history
@@ -166,22 +168,84 @@ const MedContextProvider = (props) => {
         isInitial: false
       }]);
     }
+    finally {
+      setIsMessageLoading(false);
+    }
 
     // Clear input and files after sending
-    
+
     setUploadedFiles([]);
   };
 
   // Function to regenerate specific message
-  const regenerateMessage = (index) => {
-    setMessages(prevMessages => {
-      return prevMessages.map((msg, i) => {
-        if (i === index) {
-          return { ...msg, content: 'regenerated temp msg' }; // Modify AI response
+  const regenerateMessage = async (index) => {
+    // Get the original user message to regenerate the response
+    const originalUserMessage = messages[index - 1]?.content;
+
+    if (!originalUserMessage || !selectedUser) {
+      console.error("Cannot regenerate message: No original message or selected user");
+      return;
+    }
+
+    try {
+      // Remove the current bot message
+      setMessages(prevMessages =>
+        prevMessages.filter((_, i) => i !== index)
+      );
+
+      // Show loading state
+      setIsMessageLoading(true);
+
+      // Fetch patient history
+      const historyData = await fetchPatientHistory(selectedUser._id);
+
+      if (!historyData) {
+        throw new Error("Failed to fetch patient history");
+      }
+
+      // Regenerate response using the original message
+      const response = await fetch(
+        `https://medicalchat-tau.vercel.app/medical_analysis/${encodeURIComponent(originalUserMessage)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(historyData),
         }
-        return msg;
-      });
-    });
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Add regenerated bot response to messages
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          type: 'bot',
+          content: data.content || 'No response from medical analysis',
+          isInitial: false
+        }
+      ]);
+
+    } catch (error) {
+      console.error('Error regenerating message:', error);
+
+      // Add error message to messages
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          type: 'bot',
+          content: 'Sorry, unable to regenerate the response. Please try again.',
+          isInitial: false
+        }
+      ]);
+    } finally {
+      setIsMessageLoading(false);
+    }
   };
 
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -307,19 +371,65 @@ const MedContextProvider = (props) => {
     }
   };
   const handleClockClick = async (selectedUserId) => {
-    setIsloadingHistory(true)
-    const historyData = await fetchPatientHistory(selectedUserId);
-    if (historyData) {
-      const analysisResult = await analyzePatientHistory(historyData);
-      if (analysisResult) {
-        // Update chat messages with the response
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: "bot", content: analysisResult.content },
-        ]);
-      }
+    // Ensure a user is selected
+    if (!selectedUserId) {
+      console.error("No patient selected");
+      return;
     }
-    setIsloadingHistory(false)
+
+    try {
+      setIsloadingHistory(true);
+
+      // Fetch patient history
+      const historyData = await fetchPatientHistory(selectedUserId);
+
+      if (!historyData) {
+        throw new Error("No patient history found");
+      }
+
+      // Fetch analysis with a more dynamic query
+      const analysisResult = await fetch(
+        `https://medicalchat-tau.vercel.app/medical_analysis/Provide a comprehensive overview of this patient's medical history`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(historyData),
+        }
+      );
+
+      if (!analysisResult.ok) {
+        throw new Error("Failed to analyze patient history");
+      }
+
+      const analysisData = await analysisResult.json();
+
+      // Add bot message with consistent type
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          type: 'bot',
+          content: analysisData.content || 'No analysis available',
+          isInitial: false
+        },
+      ]);
+
+    } catch (error) {
+      console.error("Error fetching/analyzing patient history:", error);
+
+      // Add error message to chat
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          type: 'bot',
+          content: 'Unable to retrieve patient history. Please try again.',
+          isInitial: false
+        },
+      ]);
+    } finally {
+      setIsloadingHistory(false);
+    }
   };
 
 
@@ -368,7 +478,9 @@ const MedContextProvider = (props) => {
     fetchPatientHistory,
     analyzePatientHistory,
     handleClockClick,
-    isloadingHistory
+    isloadingHistory,
+    // Message loading state
+    isMessageLoading
   };
 
   return (

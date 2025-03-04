@@ -4,6 +4,7 @@ import Calendar from './Calendar';
 import { Link } from 'react-router-dom';
 import { MedContext } from '../context/MedContext';
 
+
 const SideBar = ({ isExpanded, setIsExpanded, isFullScreen }) => {
     return (
         <div className={`bg-primary dark:bg-[#161616] flex flex-col gap-3 justify-between  min-h-[80vh] ${isExpanded ? 'w-[320px]' : ''}`}>

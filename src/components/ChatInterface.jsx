@@ -14,7 +14,8 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
     regenerateMessage,
     selectedUser,
     handleClockClick,
-    isloadingHistory
+    isloadingHistory,
+    isMessageLoading
   } = useContext(MedContext);
 
   const fileInputRef = useRef(null);
@@ -24,9 +25,8 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
     "Summarize this patient's last visit.",
     "Show me recent lab results and trends.",
     "Does this patient have any allergies or chronic conditions?",
-    "Suggest possible causes for the patient’s current symptoms."
+    "Suggest possible causes for the patient's current symptoms."
   ];
-
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -34,7 +34,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isMessageLoading]);
 
   const handleSendMessage = () => {
     sendMessage(inputMessage, uploadedFiles);
@@ -111,53 +111,73 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
           <div className="space-y-6">
             {messages.map((message, index) => (
               <div key={index} className="space-y-1">
-                <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800'
-                    } max-w-[80%] rounded-xl p-3`}>
-                    <p>{message.content}</p>
+                {/* User messages always render normally */}
+                {message.type === 'user' && (
+                  <div className="flex justify-end">
+                    <div className="bg-blue-500 text-white max-w-[80%] rounded-xl p-3">
+                      <p>{message.content}</p>
 
-                    {/* Display files if they exist */}
-                    {message.files && message.files.length > 0 && (
-                      <div className="mt-2 space-y-2">
-                        {message.files.map((file, fileIndex) => (
-                          <div
-                            key={fileIndex}
-                            className="p-2 bg-white bg-opacity-20 rounded flex justify-between items-center cursor-pointer hover:bg-opacity-30"
-                            onClick={() => handleDocumentClick(file)}
-                          >
-                            <div className="flex items-center">
-                              <img src="/doc.svg" className='w-3 h-3 mr-1' alt="" />
-                              <span className="text-sm truncate max-w-[200px] text-black">{file.name}</span>
+                      {/* Display files for user messages if they exist */}
+                      {message.files && message.files.length > 0 && (
+                        <div className="mt-2 space-y-2">
+                          {message.files.map((file, fileIndex) => (
+                            <div
+                              key={fileIndex}
+                              className="p-2 bg-white bg-opacity-20 rounded flex justify-between items-center cursor-pointer hover:bg-opacity-30"
+                              onClick={() => handleDocumentClick(file)}
+                            >
+                              <div className="flex items-center">
+                                <img src="/doc.svg" className='w-3 h-3 mr-1' alt="" />
+                                <span className="text-sm truncate max-w-[200px]">{file.name}</span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Action buttons for bot messages (excluding the initial copilot message) */}
+                {/* For bot messages, check loading state */}
                 {message.type === 'bot' && !message.isInitial && (
-                  <div className="flex justify-start space-x-4 text-gray-500 ml-2 mt-4">
-                    <button onClick={() => regenerateMessage(index)} className="hover:text-blue-500">
-                      <RefreshCcw size={18} />
-                    </button>
-                    <button onClick={() => handleCopy(message.content)} className="hover:text-green-500">
-                      <Clipboard size={18} />
-                    </button>
-                    <button onClick={() => console.log('Forward')} className="hover:text-yellow-500">
-                      <ArrowRight size={18} />
-                    </button>
-                    <button onClick={() => console.log('Liked')} className="hover:text-blue-500">
-                      <ThumbsUp size={18} />
-                    </button>
-                    <button onClick={() => console.log('Disliked')} className="hover:text-red-500">
-                      <ThumbsDown size={18} />
-                    </button>
+                  <div className="flex justify-start">
+                    <div className="bg-gray-100 text-gray-800 max-w-[80%] rounded-xl p-3">
+                      <p>{message.content}</p>
+
+                      {/* Action buttons for bot messages */}
+                      <div className="flex justify-start space-x-4 text-gray-500 ml-2 mt-4">
+                        <button onClick={() => regenerateMessage(index)} className="hover:text-blue-500">
+                          <RefreshCcw size={18} />
+                        </button>
+                        <button onClick={() => handleCopy(message.content)} className="hover:text-green-500">
+                          <Clipboard size={18} />
+                        </button>
+                        <button onClick={() => console.log('Forward')} className="hover:text-yellow-500">
+                          <ArrowRight size={18} />
+                        </button>
+                        <button onClick={() => console.log('Liked')} className="hover:text-blue-500">
+                          <ThumbsUp size={18} />
+                        </button>
+                        <button onClick={() => console.log('Disliked')} className="hover:text-red-500">
+                          <ThumbsDown size={18} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
             ))}
+
+            {/* Separate loader div that appears only when loading */}
+            {isMessageLoading && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 text-gray-800 max-w-[80%] rounded-xl p-3 flex items-center space-x-2">
+                  <Loader2 className="animate-spin text-gray-500" size={20} />
+                  <span className="text-sm text-gray-500">MedCopilot is preparing a detailed response...</span>
+                </div>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
         )}
@@ -219,7 +239,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
             </div>
             <div className='flex'>
               <button
-                onClick={()=>handleClockClick(selectedUser._id)}
+                onClick={() => handleClockClick(selectedUser._id)}
                 className="p-3 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
               >
                 {isloadingHistory ? (
