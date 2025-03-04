@@ -11,9 +11,9 @@ const Navbar = () => {
 
     // Dark mode state
     const [theme, setTheme] = useState(
-        localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        localStorage.getItem("theme") || "light" // Default to "light" instead of checking system preference
     );
+    
 
     // Apply theme on mount & when theme state changes
     useEffect(() => {
