@@ -114,7 +114,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
                 {/* User messages always render normally */}
                 {message.type === 'user' && (
                   <div className="flex justify-end">
-                    <div className="bg-blue-500 text-white max-w-[80%] rounded-xl p-3">
+                    <div className="bg-blue-500 text-white max-w-[80%] rounded-lg p-3">
                       <p>{message.content}</p>
 
                       {/* Display files for user messages if they exist */}
@@ -141,7 +141,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
                 {/* For bot messages, check loading state */}
                 {message.type === 'bot' && !message.isInitial && (
                   <div className="flex justify-start">
-                    <div className="bg-gray-100 text-gray-800 max-w-[80%] rounded-xl p-3">
+                    <div className="bg-white text-gray-800 max-w-[80%] rounded-lg p-3">
                       <p>{message.content}</p>
 
                       {/* Action buttons for bot messages */}

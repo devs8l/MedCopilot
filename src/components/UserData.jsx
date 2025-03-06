@@ -95,6 +95,7 @@ const UserData = () => {
 
   return (
     <div className="p-6  flex flex-col gap-6 rounded-lg dark:bg-[#272727] mx-auto h-[70%] overflow-auto">
+      <h2 className=" text-sm">Appointments &gt; {userData?.name}</h2>
       {/* Profile Section */}
       <div>
         <div className="flex items-start justify-between">
