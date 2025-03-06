@@ -3,12 +3,14 @@ import { Outlet } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import Chat from "../components/Chat";
 import { MedContext } from "../context/MedContext";
+import MidHeader from "../components/MidHeader";
 
-// Resizer with direct mouse tracking
-const Resizer = ({ onResize, orientation = "vertical", className = "" }) => {
+// Improved Resizer with better event handling and throttling
+const Resizer = ({ onResize, orientation = "vertical", className = "", isExpanded }) => {
   const resizerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const lastResizeTime = useRef(0);
 
   // Track starting positions for precise calculations
   const dragInfo = useRef({
@@ -18,21 +20,33 @@ const Resizer = ({ onResize, orientation = "vertical", className = "" }) => {
     sidebarWidth: 0
   });
 
+  // Throttle resize events to improve performance
+  const throttledResize = (e, dragInfoData) => {
+    const now = Date.now();
+    if (now - lastResizeTime.current > 16) { // ~60fps throttle
+      onResize(e.clientX, dragInfoData);
+      lastResizeTime.current = now;
+    }
+  };
+
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isDragging) return;
-
-      // Direct mouse position tracking for exact positioning
-      onResize(e.clientX, dragInfo.current);
+      
+      // Throttle resize for performance
+      throttledResize(e, dragInfo.current);
       e.preventDefault();
     };
 
     const handleMouseUp = () => {
-      setIsDragging(false);
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
+      if (isDragging) {
+        setIsDragging(false);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
     };
 
+    // Add event listeners when dragging starts
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
@@ -40,11 +54,22 @@ const Resizer = ({ onResize, orientation = "vertical", className = "" }) => {
       document.body.style.userSelect = "none";
     }
 
+    // Clean up on unmount or when dragging stops
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDragging, onResize, orientation]);
+
+  // Force cleanup if component unmounts during drag
+  useEffect(() => {
+    return () => {
+      if (isDragging) {
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
+    };
+  }, [isDragging]);
 
   const handleMouseDown = (e) => {
     e.stopPropagation();
@@ -64,20 +89,20 @@ const Resizer = ({ onResize, orientation = "vertical", className = "" }) => {
     <div
       ref={resizerRef}
       className={`
-        ${orientation === "vertical" ? "w-2 cursor-col-resize mx-1" : "h-2 cursor-row-resize my-1"}
-        ${isDragging ? "" : hovered ? "" : " bg-opacity-50"}
+        ${orientation === "vertical" ? "w-1 cursor-col-resize" : "h-2 cursor-row-resize my-1"}
         transition-colors duration-150 ease-in-out rounded-full flex items-center justify-center
+        ${isExpanded ? 'mx-0.5' : 'mx-0'}
         ${className}
       `}
       onMouseDown={handleMouseDown}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Handle dots for visual feedback */}
-      <div className={`flex ${orientation === "vertical" ? "flex-col" : "flex-row"} gap-1 `}>
-        <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
-        <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
-        <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
+      {/* Handle dots for visual feedback - improved visibility */}
+      <div className={`flex ${orientation === "vertical" ? "flex-col" : "flex-row"} gap-0.5`}>
+        <div className={`w-1 h-1 ${isDragging || hovered ? "bg-gray-700" : "bg-gray-500"} rounded-full`}></div>
+        <div className={`w-1 h-1 ${isDragging || hovered ? "bg-gray-700" : "bg-gray-500"} rounded-full`}></div>
+        <div className={`w-1 h-1 ${isDragging || hovered ? "bg-gray-700" : "bg-gray-500"} rounded-full`}></div>
       </div>
     </div>
   );
@@ -90,22 +115,31 @@ const Home = () => {
   const [chatWidth, setChatWidth] = useState(800);
   const [contentWidth, setContentWidth] = useState(0);
   const containerRef = useRef(null);
-  const layoutRef = useRef({ lastChatWidth: 800 });
+  const layoutRef = useRef({ lastChatWidth: 1100 });
 
   // Calculate and set panel widths with constraints
   const calculatePanelWidths = (newChatWidth) => {
     if (containerRef.current) {
       const totalWidth = containerRef.current.offsetWidth;
-      const sidebarWidth = isExpanded ? 350 : 70;
-      const availableWidth = totalWidth - sidebarWidth - 10; // 10px for margins and resizer
+      const sidebarWidth = isExpanded ? 350 : 70; // Match with SideBar component's width
+      const availableWidth = totalWidth - sidebarWidth; // Reduced margin for tighter spacing
 
       // Set minimum and maximum widths for chat
       const minChatWidth = Math.min(300, availableWidth * 0.3);
       const maxChatWidth = Math.min(1200, availableWidth * 0.7);
-      const constrainedChatWidth = Math.max(minChatWidth, Math.min(newChatWidth || chatWidth, maxChatWidth));
+
+      // When toggling sidebar, maintain proportions rather than fixed widths
+      let constrainedChatWidth;
+      if (newChatWidth === undefined) {
+        // When sidebar toggled, maintain the same proportion for chat
+        constrainedChatWidth = Math.max(minChatWidth,
+          Math.min(chatWidth * availableWidth / (totalWidth - (isExpanded ? 70 : 350) - 5), maxChatWidth));
+      } else {
+        constrainedChatWidth = Math.max(minChatWidth, Math.min(newChatWidth, maxChatWidth));
+      }
 
       // Calculate content width based on available space
-      const newContentWidth = availableWidth - constrainedChatWidth - 10;
+      const newContentWidth = availableWidth - constrainedChatWidth - 5;
 
       setChatWidth(constrainedChatWidth);
       setContentWidth(newContentWidth);
@@ -115,20 +149,20 @@ const Home = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
-      const handleResize = () => {
-          setWindowWidth(window.innerWidth); // Trigger a re-render
-      };
-  
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
+  // Recalculate when sidebar state changes
   useEffect(() => {
-      if (!isFullScreen) {
-          calculatePanelWidths(); // Ensure correct width calculation
-      }
-  }, [windowWidth, isExpanded, isFullScreen]); // Trigger recalculation on resize
-  
+    if (!isFullScreen) {
+      calculatePanelWidths();
+    }
+  }, [windowWidth, isExpanded, isFullScreen]);
 
   useEffect(() => {
     // Save chat width when going fullscreen
@@ -156,7 +190,6 @@ const Home = () => {
     const sidebarWidth = isExpanded ? 350 : 70;
     return `min(100vw, ${totalWidth - sidebarWidth}px)`;
   };
-
 
   // Precise resizing function that directly translates mouse position to panel width
   const handleChatResize = (mouseX, dragInfo) => {
@@ -186,10 +219,10 @@ const Home = () => {
   };
 
   return (
-    <div ref={containerRef} className={`flex h-full ${isFullScreen ? 'px-0' : 'px-2'} w-full `}>
+    <div ref={containerRef} className={`flex h-full ${isFullScreen ? 'px-0' : 'px-1'} w-full`}>
       {isSwapped ? (
         // Swapped layout
-        <div className="w-full flex h-[80vh] justify-between  flex-col sm:flex-row">
+        <div className="w-full flex h-[80vh] justify-between flex-col sm:flex-row">
           {/* Sidebar */}
           <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
@@ -199,7 +232,6 @@ const Home = () => {
               width: isFullScreen ? getFullScreenWidth() : `${chatWidth}px`,
               flexShrink: 0,
               marginLeft: isFullScreen ? '0' : '0px',
-
             }}
           >
             <Chat
@@ -215,15 +247,17 @@ const Home = () => {
             <Resizer
               onResize={handleChatResize}
               className="h-full self-stretch"
+              isExpanded={isExpanded}
             />
           )}
 
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
             <div
-              className="drop-shadow-lg bg-white dark:bg-[#272626] rounded-2xl p-2"
+              className="bg-[#FFFFFFCC] dark:bg-[#272626] rounded-lg p-1.5"
               style={{ width: `${contentWidth}px` }}
             >
+              <MidHeader />
               <Outlet />
             </div>
           )}
@@ -237,9 +271,10 @@ const Home = () => {
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
             <div
-              className="drop-shadow-lg bg-white dark:bg-[#272626] rounded-2xl p-2 "
+              className="bg-[#ffffffc3] dark:bg-[#272626] rounded-lg p-1.5"
               style={{ width: `${contentWidth}px` }}
             >
+              <MidHeader />
               <Outlet />
             </div>
           )}
@@ -249,6 +284,7 @@ const Home = () => {
             <Resizer
               onResize={handleChatResize}
               className="h-full self-stretch"
+              isExpanded={isExpanded}
             />
           )}
 
@@ -268,7 +304,6 @@ const Home = () => {
               isFullScreen={isFullScreen}
             />
           </div>
-
         </div>
       )}
     </div>

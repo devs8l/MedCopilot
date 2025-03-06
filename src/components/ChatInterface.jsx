@@ -86,9 +86,9 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full mx-auto bg-white dark:bg-[#272626] shadow-lg">
+    <div className="flex flex-col h-full w-full mx-auto  dark:bg-[#272626] shadow-lg">
       {/* Messages Container */}
-      <div className={`flex-1 overflow-y-auto p-4 ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}>
+      <div className={`flex-1 overflow-y-auto p-4  ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}>
         {messages.length === 1 ? (
           <div className="text-center space-y-1">
             <div className="text-xl font-semibold dark:text-white">{messages[0].content}</div>
@@ -110,7 +110,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
         ) : (
           <div className="space-y-6">
             {messages.map((message, index) => (
-              <div key={index} className="space-y-1">
+              <div key={index} className="space-y-1 ">
                 {/* User messages always render normally */}
                 {message.type === 'user' && (
                   <div className="flex justify-end">
@@ -123,7 +123,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
                           {message.files.map((file, fileIndex) => (
                             <div
                               key={fileIndex}
-                              className="p-2 bg-white bg-opacity-20 rounded flex justify-between items-center cursor-pointer hover:bg-opacity-30"
+                              className="p-2 rounded flex justify-between items-center cursor-pointer hover:bg-opacity-30"
                               onClick={() => handleDocumentClick(file)}
                             >
                               <div className="flex items-center">
@@ -213,7 +213,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
 
       {/* Input Area */}
       <div className={`py-4 px-0 ${isFullScreen ? 'w-1/3' : 'w-full'} mx-auto`}>
-        <div className="flex flex-col gap-2 bg-gray-100 dark:bg-[#171616] dark:text-white overflow-hidden rounded-lg pb-1">
+        <div className="flex flex-col gap-2 bg-white dark:bg-[#171616] dark:text-white overflow-hidden rounded-lg pb-1">
           <input
             type="text"
             value={inputMessage}

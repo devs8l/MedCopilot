@@ -20,6 +20,8 @@ const MedContextProvider = (props) => {
 
   const [isloadingHistory, setIsloadingHistory] = useState(false);
 
+  
+
   // Chat state management
   const [messages, setMessages] = useState([
     {

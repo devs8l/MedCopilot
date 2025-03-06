@@ -96,7 +96,7 @@ const DatePicker = () => {
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-4  border border-gray-300 rounded-lg px-1">
+      <div className="flex items-center gap-4  border border-black  rounded-md px-1">
         <button
           onClick={() => changeDate(-1)}
           className={`p-1 rounded ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'}`}

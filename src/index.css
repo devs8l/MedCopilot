@@ -1,67 +1,83 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
 @font-face {
-    font-family: 'SF';
-    src: url(/fonts/SFPRODISPLAYMEDIUM.OTF);
-}
-@font-face {
-    font-family: 'SF-Reg';
-    src: url(/fonts/SFPRODISPLAYREGULAR.OTF);
+  font-family: 'SF';
+  src: url(/fonts/SFPRODISPLAYMEDIUM.OTF);
 }
 
+@font-face {
+  font-family: 'SF-Reg';
+  src: url(/fonts/SFPRODISPLAYREGULAR.OTF);
+}
 
 
-.css-5wchs2-MuiDateCalendar-root{
+
+.css-5wchs2-MuiDateCalendar-root {
   max-height: 100% !important;
-  margin-left:0.5vw !important;
+  margin-left: 0.5vw !important;
   max-width: 100% !important;
 }
-.css-1nxbkmn-MuiPickersCalendarHeader-root{
+
+.css-1nxbkmn-MuiPickersCalendarHeader-root {
   max-height: 20px !important;
   min-height: 0 !important;
 }
-.css-1pv2de5-MuiDayCalendar-weekContainer{
+
+.css-1pv2de5-MuiDayCalendar-weekContainer {
   margin: 0px 0 !important;
 }
-.css-1chuxo2-MuiPickersCalendarHeader-label{
+
+.css-1chuxo2-MuiPickersCalendarHeader-label {
   margin-right: 0px !important;
   margin-left: 10px !important;
 }
 
 /* Customize the scrollbar width */
 ::-webkit-scrollbar {
-    
-    width: 2px;
-    height: 8px; /* For horizontal scroll */
-  }
-  
-  /* Track (background of scrollbar) */
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-  }
-  
-  /* Handle (the draggable part) */
-  ::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-  
+
+  width: 2px;
+  height: 8px;
+  /* For horizontal scroll */
+}
+
+/* Track (background of scrollbar) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+/* Handle (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.bg-custom-gradient {
+  background: linear-gradient(223.71deg, #c8deef 21.94%, #c8d7f3 77.39%);
+  backdrop-filter: blur(1400px);
+
+
+}
+
 
 @theme {
-    --color-primary: #f8f8f8;
-    --color-action-btn:#13181E;
+  /* --color-primary: linear-gradient(223.71deg, #B2DFFF 21.94%, #B2CCFF 77.39%); */
+  --color-action-btn: #13181E;
+  --color-card: #FFFFFFCC;
+
+
 }
 
-.sf-bold{
-    font-family: "SF";
+.sf-bold {
+  font-family: "SF";
 }
 
-*{
-    font-family: "SF-Reg";
+* {
+  font-family: "SF-Reg";
 }

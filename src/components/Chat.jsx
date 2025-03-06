@@ -82,9 +82,9 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
     };
 
     return (
-        <div className="drop-shadow-lg px-3 pt-3 bg-white dark:bg-[#272626] rounded-2xl flex flex-col overflow-hidden">
+        <div className=" px-3 pt-3 bg-[#ffffffc8] dark:bg-[#272626]  rounded-lg flex flex-col overflow-hidden">
             {/* Header with buttons */}
-            <div className={`p-4 flex items-center justify-between rounded-xl ${isFullScreen ? 'bg-white' : ''} dark:text-white dark:bg-[#272626] relative`}>
+            <div className={`p-4 flex items-center justify-between rounded-xl ${isFullScreen ? 'bg-[#FFFFFFCC]' : ''} dark:text-white dark:bg-[#272626] relative`}>
 
                 {/* Left side - swap position buttons */}
                 <div className={`flex space-x-2 ${isFullScreen ? "hidden" : ""}`}>
@@ -152,7 +152,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
             {/* Confirmation Dialog */}
             {showConfirmDialog && (
                 <div className="absolute inset-0 bg-[#0000008c] bg-opacity-30 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-4 max-w-md w-full shadow-lg">
+                    <div className="bg-[#FFFFFFCC] rounded-lg p-4 max-w-md w-full shadow-lg">
                         <div className="flex items-center gap-3 mb-4">
                             <AlertCircle className="text-red-500" size={24} />
                             <h2 className="text-lg font-semibold">End Session</h2>
@@ -177,7 +177,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
             )}
 
             {/* Chat content area */}
-            <div className={`flex-grow overflow-y-auto ${isFullScreen ? 'h-[calc(80vh-73px)]' : 'h-[calc(80vh-80px)]'} `}>
+            <div className={`flex-grow overflow-y-auto  ${isFullScreen ? 'h-[calc(80vh-73px)]' : 'h-[calc(80vh-80px)]'} `}>
                 <ChatInterface 
                     isFullScreen={isFullScreen} 
                     promptGiven={promptGiven} 
