@@ -36,8 +36,9 @@
 /* Customize the scrollbar width */
 ::-webkit-scrollbar {
 
-  width: 2px;
+  width: 1px;
   height: 8px;
+  color: red !important;
   /* For horizontal scroll */
 }
 

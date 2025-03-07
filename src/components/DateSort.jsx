@@ -11,7 +11,7 @@ const DateSort = () => {
                 <select
                     value={filterBasis}
                     onChange={(e) => setFilterBasis(e.target.value)}
-                    className="px-4 py-2 border-1 border-black  rounded-md  focus:outline-none appearance-none pr-8"
+                    className="px-4 py-2 bg-[#ffffff96]  rounded-md  text-sm text-[#000000b2] focus:outline-none appearance-none pr-8"
                 >
                     <option value="day">Day</option>
                     <option value="week">Week</option>

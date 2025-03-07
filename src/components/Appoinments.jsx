@@ -72,7 +72,7 @@ const Appoinments = () => {
     // Render a single patient card
     const renderPatientCard = (user) => (
         <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
-            <div className="grid grid-cols-[2fr_1fr] items-center gap-4 p-6 hover:bg-gray-50 rounded-lg transition-colors duration-150 cursor-pointer">
+            <div className="grid grid-cols-[2fr_1fr] items-center gap-1 p-6  hover:bg-gray-50  transition-colors duration-150 cursor-pointer mx-4  border-b-1 border-[#2228365a]">
 
                 <div className="grid grid-cols-[3rem_auto] items-center gap-4">
                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
@@ -126,7 +126,7 @@ const Appoinments = () => {
                         return (
                             <div key={dateString} className="mb-6">
                                 <h3 className="text-base font-medium mb-2 pl-5">{formattedDate}</h3>
-                                <div className="space-y-2">
+                                <div className="space-y-0">
                                     {groupedByDate[dateString].map(user => renderPatientCard(user))}
                                 </div>
                             </div>
@@ -312,7 +312,7 @@ const Appoinments = () => {
                     <h2 className="text-lg font-semibold mb-2">Yearly Calendar - {year}</h2>
                 </div>
 
-                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[65vh]">
+                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[50vh]">
                     <div className="grid grid-cols-3 gap-4">
                         {months.map((month, index) => (
                             <div key={month} className="border rounded-lg p-3 bg-gray-50 dark:bg-[#2a2a2a]">

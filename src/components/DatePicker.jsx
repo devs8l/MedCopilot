@@ -96,7 +96,7 @@ const DatePicker = () => {
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-4  border border-black  rounded-md px-1">
+      <div className="flex items-center gap-4 bg-[#ffffff96] text-sm text-[#000000b2]  rounded-md px-1">
         <button
           onClick={() => changeDate(-1)}
           className={`p-1 rounded ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'}`}
@@ -124,7 +124,7 @@ const DatePicker = () => {
       
 
       {isCalendarOpen && (
-        <div className="absolute top-full mt-2 bg-white border-1 border-gray-100  rounded-2xl shadow-lg p-4 z-10">
+        <div className="absolute top-full mt-2 bg-white border-1 border-gray-100  rounded-2xl shadow-lg p-4 z-20">
           <div className="flex items-center gap-2 mb-4 justify-between">
             <select
               value={selectedDate.getMonth()}

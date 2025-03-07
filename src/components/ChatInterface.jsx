@@ -1,10 +1,12 @@
 import React, { useRef, useEffect, useContext } from 'react';
 import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2 } from 'lucide-react';
 import { MedContext } from '../context/MedContext';
+import { ChatContext } from '../context/ChatContext';
 
 const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
+  const { openDocumentPreview, selectedUser } = useContext(MedContext); // Also get selectedUser from MedContext
+
   const {
-    openDocumentPreview,
     messages,
     inputMessage,
     setInputMessage,
@@ -12,11 +14,10 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
     setUploadedFiles,
     sendMessage,
     regenerateMessage,
-    selectedUser,
+    isMessageLoading,
     handleClockClick,
     isloadingHistory,
-    isMessageLoading
-  } = useContext(MedContext);
+  } = useContext(ChatContext);
 
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -36,7 +37,16 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
     scrollToBottom();
   }, [messages, isMessageLoading]);
 
+  // Add empty dependency array to prevent unnecessary re-renders
+  useEffect(() => {
+    scrollToBottom();
+  }, []);
+
   const handleSendMessage = () => {
+    if (!selectedUser) {
+      alert("Please select a patient first.");
+      return;
+    }
     sendMessage(inputMessage, uploadedFiles);
     setPromptGiven(true);
   };
@@ -68,7 +78,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
   };
 
   const handleDocumentClick = (file) => {
-    // Use the openDocumentPreview function from context
+    // Use the openDocumentPreview function from MedContext
     openDocumentPreview({
       title: file.name,
       url: file.data,
@@ -86,13 +96,13 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full mx-auto  dark:bg-[#272626] shadow-lg">
+    <div className="flex flex-col h-full w-full mx-auto dark:bg-[#272626] shadow-lg">
       {/* Messages Container */}
-      <div className={`flex-1 overflow-y-auto p-4  ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}>
+      <div className={`flex-1 overflow-y-auto p-4 ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}>
         {messages.length === 1 ? (
           <div className="text-center space-y-1">
             <div className="text-xl font-semibold dark:text-white">{messages[0].content}</div>
-            <p className="text-sm text-gray-600 ">{messages[0].subtext}</p>
+            <p className="text-sm text-gray-600">{messages[0].subtext}</p>
             <p className="text-sm text-gray-600 mb-10 mt-10">{messages[0].para}</p>
 
             <div className="grid grid-cols-2 gap-4 w-2/3 m-auto">
@@ -110,7 +120,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
         ) : (
           <div className="space-y-6">
             {messages.map((message, index) => (
-              <div key={index} className="space-y-1 ">
+              <div key={index} className="space-y-1">
                 {/* User messages always render normally */}
                 {message.type === 'user' && (
                   <div className="flex justify-end">
@@ -219,28 +229,32 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-            placeholder="How can MedCopilot help?"
+            placeholder={selectedUser ? "How can MedCopilot help?" : "Select a patient to start"}
             className="flex-1 p-4 rounded-lg focus:outline-none dark:bg-[#171616] dark:text-white"
+            disabled={!selectedUser}
           />
           <div className='flex justify-between items-center p-4'>
             <div className='flex'>
               <button
                 onClick={triggerFileUpload}
-                className="p-3 mr-2 border-[#9B9EA2] border text-white rounded-full cursor-pointer transition-colors"
+                className={`p-3 mr-2 border-[#9B9EA2] border text-white rounded-full cursor-pointer transition-colors ${!selectedUser ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={!selectedUser}
               >
                 <img src="/doc.svg" className='w-4 h-4' alt="" />
               </button>
               <button
                 onClick={handleSendMessage}
-                className="p-2 px-4 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
+                className={`p-2 px-4 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors ${!selectedUser ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={!selectedUser}
               >
                 <Lightbulb color={'#9B9EA2'} size={20} /><span className='text-[#9B9EA2]'>Think</span>
               </button>
             </div>
             <div className='flex'>
               <button
-                onClick={() => handleClockClick(selectedUser._id)}
-                className="p-3 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
+                onClick={() => handleClockClick()}
+                className={`p-3 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors ${!selectedUser ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={!selectedUser}
               >
                 {isloadingHistory ? (
                   <Loader2 className="animate-spin" color={'#9B9EA2'} size={20} />
@@ -250,7 +264,8 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven }) => {
               </button>
               <button
                 onClick={handleSendMessage}
-                className="p-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
+                className={`p-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors ${!selectedUser ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={!selectedUser}
               >
                 <ArrowUp size={25} />
               </button>

@@ -31,35 +31,32 @@ const Navbar = () => {
     };
 
     return (
-        <div className={`grid dark:text-white grid-cols-[2fr_1fr] ${isSearchOpen ? 'sm:grid-cols-[1fr_4fr_1fr]' : 'sm:grid-cols-[1fr_3fr_1fr]'} gap-4 py-3 px-5`}>
-            <div className="flex items-start gap-10">
+        <div className={`grid dark:text-white grid-cols-[2fr_1fr] ml-2 bg-[#FFFFFF66] rounded-xl ${isSearchOpen ? 'sm:grid-cols-[1fr_2fr_2fr]' : 'sm:grid-cols-[1fr_2fr_2fr]'} gap-4  mb-2 mt-2 px-5`}>
+            <div className="flex items-center gap-10">
                 {/* Sidebar Toggle Button */}
-                <button onClick={() => setIsExpanded(!isExpanded)} className="rounded-md py-5  cursor-pointer mr-1  ">
+                <button onClick={() => setIsExpanded(!isExpanded)} className="rounded-md   cursor-pointer mr-1  ">
                     <Menu size={24} />
                 </button>
 
-                <div className="py-3">
-                    <h1 className="text-2xl font-semibold">MedCopilot</h1>
-                    <p className="text-sm text-gray-600">Product by JNC Tech</p>
+                <div className="my-2">
+                    <h1 className="text-xl font-semibold">MedCopilot</h1>
+                    <p className="text-xs text-gray-600">Product by JNC Tech</p>
                 </div>
             </div>
 
-            <div className={`hidden sm:grid md:grid lg:grid py-2 items-center ${isSearchOpen ? "grid-cols-[0.4fr_5.5fr_1fr]" : "grid-cols-[0.2fr_1.6fr_1.5fr] lg:grid-cols[0.4fr_1.5fr_1.5fr]"} justify-start`}>
+            <div className={`hidden sm:grid md:grid lg:grid  items-center ${isSearchOpen ? "grid-cols-[0.4fr_5.5fr_1fr]" : "grid-cols-[0.2fr_1.6fr_1.5fr]  lg:grid-cols[0.4fr_1.5fr_1.5fr]"} justify-start`}>
                 <Link to={'/'} className={`${isUserSelected ? '' : 'opacity-0 pointer-events-none'}`} onClick={() => { setIsUserSelected(false); setSelectedUser(null);; setSearchQuery(''); }}>
                     <ChevronLeft />
                 </Link>
                 <div className={`flex items-center w-full ${isUserSelected ? 'hidden' : ''}`}>
-                    <div className={`flex gap-3 items-center w-full justify-center ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
-                        <DatePicker />
-                        <DateSort />
-                    </div>
+
                     {!isSearchOpen ? (
                         <div></div>
                     ) : (
                         <div className='flex items-center w-full mr-4 ml-1 '>
                             <input
                                 type="text"
-                                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-black dark:text-white rounded-lg px-4 py-2 w-full focus:outline-none"
+                                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-black dark:text-white my-2 rounded-lg px-4 py-2 w-full focus:outline-none"
                                 placeholder="Search..."
                                 autoFocus
                                 value={searchQuery}
@@ -69,13 +66,14 @@ const Navbar = () => {
                     )}
                 </div>
                 <div className='flex gap-6 items-center'>
-                    <h1 className='text-xl'>
-                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </h1>
+
                 </div>
             </div>
-            <div className='flex justify-end items-center gap-8 py-3'>
-
+            <div className='flex justify-end items-center gap-8 py-2'>
+                <h1 className='text-md flex'>
+                    {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', weekday: 'long' })} | {' '}
+                    {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </h1>
 
                 {/* <LogOut className='cursor-pointer' onClick={() => {logout();setSelectedUser(null)}} /> */}
                 <button

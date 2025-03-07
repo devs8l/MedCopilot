@@ -1,91 +1,110 @@
 import React, { useContext, useEffect, memo, useState } from "react";
 import ChatInterface from "./ChatInterface";
-import { Maximize, Minimize, X, AlertCircle } from "lucide-react";
+import { Maximize, Minimize, X, AlertCircle, Plus } from "lucide-react";
 import { MedContext } from "../context/MedContext";
+import { ChatContext } from "../context/ChatContext";
 
 const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
-    const { selectedUser, setIsUserSelected,setMessages } = useContext(MedContext);
-    const [promptGiven, setPromptGiven] = useState(() => {
-        const storedPromptGiven = localStorage.getItem(`promptGiven_${selectedUser?.id}`);
-        return storedPromptGiven ? JSON.parse(storedPromptGiven) : false;
+    const { selectedUser, setIsUserSelected, setSelectedUser } = useContext(MedContext);
+    const { clearChatHistory, userMessages } = useContext(ChatContext);
+    
+    // Store active tabs
+    const [activeTabs, setActiveTabs] = useState(() => {
+        const storedTabs = localStorage.getItem('activeTabs');
+        return storedTabs ? JSON.parse(storedTabs) : [];
     });
-
-    const [showSessionStarted, setShowSessionStarted] = useState(() => {
-        return selectedUser
-            ? !localStorage.getItem(`sessionStarted_${selectedUser.id}`)
-            : false;
-    });
-
-    const [showSessionHeader, setShowSessionHeader] = useState(false);
+    
+    // Current active tab (user ID)
+    const [activeTabId, setActiveTabId] = useState(null);
+    
+    // Dialog state
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const [sessionActive, setSessionActive] = useState(false);
+    const [tabToClose, setTabToClose] = useState(null);
 
+    // Effect to track if user is newly selected
     useEffect(() => {
+        if (selectedUser && !activeTabs.find(tab => tab._id === selectedUser._id)) {
+            // Add new user to tabs
+            setActiveTabs(prev => [...prev, selectedUser]);
+            
+            // Set local storage
+            localStorage.setItem(`sessionStarted_${selectedUser._id}`, "true");
+            
+            // Show notification for new session (could be implemented as needed)
+        }
+        
+        // Set active tab to selected user
         if (selectedUser) {
-            const storedPromptGiven = localStorage.getItem(`promptGiven_${selectedUser.id}`);
-            setPromptGiven(storedPromptGiven ? JSON.parse(storedPromptGiven) : false);
-            setSessionActive(true);
-
-            // Ensure session start notification only shows ONCE per user
-            if (!localStorage.getItem(`sessionStarted_${selectedUser.id}`)) {
-                setShowSessionStarted(true);
-                localStorage.setItem(`sessionStarted_${selectedUser.id}`, "true");
-
-                // Auto-hide after 3 sec
-                setTimeout(() => {
-                    setShowSessionStarted(false);
-                }, 3000);
-            }
-
-            // Delay session header appearance
-            const headerTimer = setTimeout(() => {
-                setShowSessionHeader(true);
-            }, 300);
-
-            return () => clearTimeout(headerTimer);
+            setActiveTabId(selectedUser._id);
         }
     }, [selectedUser]);
 
+    // Save active tabs to localStorage
     useEffect(() => {
-        if (selectedUser) {
-            localStorage.setItem(`promptGiven_${selectedUser.id}`, JSON.stringify(promptGiven));
-        }
-    }, [promptGiven, selectedUser]);
+        localStorage.setItem('activeTabs', JSON.stringify(activeTabs));
+    }, [activeTabs]);
 
-    const handleEndSessionClick = () => {
+    // Function to switch between tabs
+    const switchToTab = (userId) => {
+        const userToSelect = activeTabs.find(tab => tab._id === userId);
+        if (userToSelect) {
+            setSelectedUser(userToSelect);
+            setActiveTabId(userId);
+        }
+    };
+
+    // Function to close tab with confirmation
+    const handleCloseTab = (e, userId) => {
+        e.stopPropagation(); // Prevent tab switching when clicking close button
+        setTabToClose(userId);
         setShowConfirmDialog(true);
     };
 
-    const confirmEndSession = () => {
-        setPromptGiven(false);
-        localStorage.removeItem(`promptGiven_${selectedUser?.id}`);
-        localStorage.removeItem(`sessionStarted_${selectedUser?.id}`);
-        setShowConfirmDialog(false);
-        setShowSessionHeader(false);
-        setSessionActive(false);
-        
-        // Clear chat messages
-        setMessages([
-            {
-                type: 'bot',
-                content: 'Hi, I am your copilot!',
-                subtext: 'Chat and resolve all your queries',
-                para: 'Or try these prompts to get started',
-                isInitial: true
+    // Confirm closing tab
+    const confirmCloseTab = () => {
+        if (tabToClose) {
+            // Remove from active tabs
+            const updatedTabs = activeTabs.filter(tab => tab._id !== tabToClose);
+            setActiveTabs(updatedTabs);
+            
+            // Clear localStorage for this user session
+            localStorage.removeItem(`promptGiven_${tabToClose}`);
+            localStorage.removeItem(`sessionStarted_${tabToClose}`);
+            
+            // Clear chat history for this user
+            clearChatHistory(tabToClose);
+            
+            // If we're closing the active tab, switch to another tab if available
+            if (activeTabId === tabToClose) {
+                if (updatedTabs.length > 0) {
+                    setSelectedUser(updatedTabs[0]);
+                    setActiveTabId(updatedTabs[0]._id);
+                } else {
+                    setSelectedUser(null);
+                    setActiveTabId(null);
+                    setIsUserSelected(true);
+                }
             }
-        ]);
+            
+            setShowConfirmDialog(false);
+            setTabToClose(null);
+        }
     };
     
-
-    const cancelEndSession = () => {
+    const cancelCloseTab = () => {
         setShowConfirmDialog(false);
+        setTabToClose(null);
+    };
+
+    // Determine if a tab has chat history
+    const hasHistory = (userId) => {
+        return userMessages[userId] && userMessages[userId].length > 1;
     };
 
     return (
-        <div className=" px-3 pt-3 bg-[#ffffffc8] dark:bg-[#272626]  rounded-lg flex flex-col overflow-hidden">
-            {/* Header with buttons */}
+        <div className="px-3 pt-3 bg-[#ffffffc8] dark:bg-[#272626] rounded-lg flex flex-col overflow-hidden">
+            {/* Header with tabs and buttons */}
             <div className={`p-4 flex items-center justify-between rounded-xl ${isFullScreen ? 'bg-[#FFFFFFCC]' : ''} dark:text-white dark:bg-[#272626] relative`}>
-
                 {/* Left side - swap position buttons */}
                 <div className={`flex space-x-2 ${isFullScreen ? "hidden" : ""}`}>
                     <button
@@ -104,40 +123,39 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     </button>
                 </div>
 
-                {/* Middle Section */}
-                <div className="w-full flex items-center px-5 justify-between">
-                    {/* Session header with fade-in animation */}
-                    <h1 className={`transition-opacity duration-500 text-[#00000091] ${
-                        showSessionHeader && sessionActive ? "opacity-100" : "opacity-0"
-                    }`}>
-                        {selectedUser && showSessionHeader && sessionActive ? `Session for ${selectedUser.name}` : ""}
-                    </h1>
-
-                    {/* Session Started Notification */}
-                    {showSessionStarted && (
-                        <div className="transition-opacity duration-300 ease-in-out bg-blue-500 text-white p-3 mt-[-30px] rounded-lg font-medium flex items-center gap-1 ml-auto">
-                            <div className="flex items-center gap-2">
+                {/* Tabs Section */}
+                <div className="flex-1 overflow-x-auto pl-4 pr-2">
+                    <div className="flex space-x-1">
+                        {activeTabs.map(tab => (
+                            <div 
+                                key={tab._id}
+                                onClick={() => switchToTab(tab._id)}
+                                className={`flex items-center gap-2 px-3 py-2  cursor-pointer transition-colors ${
+                                    activeTabId === tab._id 
+                                        ? 'bg-white dark:bg-gray-700 ' 
+                                        : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                }`}
+                            >
                                 <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
                                     <img 
-                                        src={selectedUser?.profileImage || "/default-avatar.png"} 
-                                        alt={selectedUser?.name} 
+                                        src={tab.profileImage || "/default-avatar.png"} 
+                                        alt={tab.name} 
                                         className="object-cover"
                                     />
                                 </div>
-                                <span>Session Set for {selectedUser?.name}</span>
+                                <span className="max-w-32 truncate">{tab.name}</span>
+                                {hasHistory(tab._id) && (
+                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                                )}
+                                <button 
+                                    onClick={(e) => handleCloseTab(e, tab._id)}
+                                    className="ml-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                                >
+                                    <X size={14} />
+                                </button>
                             </div>
-                        </div>
-                    )}
-
-                    {/* End Session button */}
-                    {promptGiven && !showSessionStarted ? (
-                        <button 
-                            onClick={handleEndSessionClick}
-                            className="text-red-500 font-medium flex items-center gap-1 hover:bg-red-50 py-1 px-2 rounded transition-colors ml-auto"
-                        >
-                            <X size={18} /> End Session
-                        </button>
-                    ) : null}
+                        ))}
+                    </div>
                 </div>
 
                 {/* Fullscreen toggle button */}
@@ -157,16 +175,19 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                             <AlertCircle className="text-red-500" size={24} />
                             <h2 className="text-lg font-semibold">End Session</h2>
                         </div>
-                        <p className="mb-6">Are you sure you want to end the session for {selectedUser?.name}?</p>
+                        <p className="mb-6">
+                            Are you sure you want to end the session for 
+                            {activeTabs.find(tab => tab._id === tabToClose)?.name}?
+                        </p>
                         <div className="flex justify-end gap-3">
                             <button 
-                                onClick={cancelEndSession}
+                                onClick={cancelCloseTab}
                                 className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
                             >
                                 Cancel
                             </button>
                             <button 
-                                onClick={confirmEndSession}
+                                onClick={confirmCloseTab}
                                 className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                             >
                                 End Session
@@ -177,12 +198,12 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
             )}
 
             {/* Chat content area */}
-            <div className={`flex-grow overflow-y-auto  ${isFullScreen ? 'h-[calc(80vh-73px)]' : 'h-[calc(80vh-80px)]'} `}>
-                <ChatInterface 
-                    isFullScreen={isFullScreen} 
-                    promptGiven={promptGiven} 
-                    setPromptGiven={setPromptGiven} 
-                />
+            <div className={`flex-grow overflow-y-auto ${isFullScreen ? 'h-[calc(85vh-73px)]' : 'h-[calc(85vh-80px)]'} `}>
+            <ChatInterface 
+                        isFullScreen={isFullScreen} 
+                        promptGiven={true}
+                        setPromptGiven={() => {}}
+                    />
             </div>
         </div>
     );

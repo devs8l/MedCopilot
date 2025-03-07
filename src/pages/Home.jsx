@@ -4,6 +4,9 @@ import SideBar from "../components/SideBar";
 import Chat from "../components/Chat";
 import { MedContext } from "../context/MedContext";
 import MidHeader from "../components/MidHeader";
+import DatePicker from "../components/DatePicker";
+import DateSort from "../components/DateSort";
+
 
 // Improved Resizer with better event handling and throttling
 const Resizer = ({ onResize, orientation = "vertical", className = "", isExpanded }) => {
@@ -32,7 +35,7 @@ const Resizer = ({ onResize, orientation = "vertical", className = "", isExpande
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isDragging) return;
-      
+
       // Throttle resize for performance
       throttledResize(e, dragInfo.current);
       e.preventDefault();
@@ -116,12 +119,13 @@ const Home = () => {
   const [contentWidth, setContentWidth] = useState(0);
   const containerRef = useRef(null);
   const layoutRef = useRef({ lastChatWidth: 1100 });
+  const {isSearchOpen,isUserSelected} = useContext(MedContext);
 
   // Calculate and set panel widths with constraints
   const calculatePanelWidths = (newChatWidth) => {
     if (containerRef.current) {
       const totalWidth = containerRef.current.offsetWidth;
-      const sidebarWidth = isExpanded ? 350 : 70; // Match with SideBar component's width
+      const sidebarWidth = isExpanded ? 350 : 20; // Match with SideBar component's width
       const availableWidth = totalWidth - sidebarWidth; // Reduced margin for tighter spacing
 
       // Set minimum and maximum widths for chat
@@ -222,7 +226,7 @@ const Home = () => {
     <div ref={containerRef} className={`flex h-full ${isFullScreen ? 'px-0' : 'px-1'} w-full`}>
       {isSwapped ? (
         // Swapped layout
-        <div className="w-full flex h-[80vh] justify-between flex-col sm:flex-row">
+        <div className="w-full flex h-[85vh] justify-between flex-col sm:flex-row">
           {/* Sidebar */}
           <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
@@ -254,27 +258,35 @@ const Home = () => {
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
             <div
-              className="bg-[#FFFFFFCC] dark:bg-[#272626] rounded-lg p-1.5"
+              className="bg-[#FFFFFF66] dark:bg-[#272626] rounded-lg p-1.5"
               style={{ width: `${contentWidth}px` }}
             >
               <MidHeader />
+              <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
+                <DatePicker />
+                <DateSort />
+              </div>
               <Outlet />
             </div>
           )}
         </div>
       ) : (
         // Original layout
-        <div className="w-full flex h-[80vh] flex-col justify-between sm:flex-row">
+        <div className="w-full flex h-[85vh] flex-col justify-between sm:flex-row">
           {/* Sidebar */}
           <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
             <div
-              className="bg-[#ffffffc3] dark:bg-[#272626] rounded-lg p-1.5"
+              className="bg-[#ffffff66] dark:bg-[#272626] rounded-lg p-1.5 overflow-hidden"
               style={{ width: `${contentWidth}px` }}
             >
               <MidHeader />
+              <div className={`flex gap-3 items-center w-full mx-5 mb-3  ${isUserSelected ? 'hidden' : ''} justify-start ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
+                <DatePicker />
+                <DateSort />
+              </div>
               <Outlet />
             </div>
           )}
