@@ -214,20 +214,27 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
         <div className="px-3 pt-3 bg-[#ffffffc8] dark:bg-[#00000099] rounded-lg flex flex-col overflow-hidden">
             <div className="flex items-center justify-between">
                 <h1 className="text-xl text-[#222836] dark:text-white font-semibold mt-4 px-4 mb-2">Chat</h1>
-                <div className={`flex space-x-2 items-center mt-2 justify-center  mr-5 ${isFullScreen ? "hidden" : "w-12"}`}>
+                <div className={`flex space-x-4 items-center mt-2 justify-center  mr-5 `}>
                     <button
                         onClick={() => !isTransitioning && swapPosition(true)}
-                        className={`rounded ${isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
+                        className={`rounded ${isFullScreen ? "hidden" : ""} ${isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
                         disabled={isSwapped || isTransitioning}
                     >
                         <img src="/right.svg" alt="" className="rotate-180 w-6 h-6 " />
                     </button>
                     <button
                         onClick={() => !isTransitioning && swapPosition(false)}
-                        className={` rounded ${!isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
+                        className={` rounded ${isFullScreen ? "hidden" : ""} ${!isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
                         disabled={!isSwapped || isTransitioning}
                     >
                         <img src="/right.svg" className="w-6 h-6" alt="" />
+                    </button>
+                    <button
+                        onClick={() => !isTransitioning && toggleFullScreen()}
+                        className="p-1 rounded hover:bg-gray-100 cursor-pointer ml-auto w-8 h-8 flex items-center justify-center"
+                        disabled={isTransitioning}
+                    >
+                        {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
                     </button>
                 </div>
             </div>
@@ -241,7 +248,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                             onClick={switchToGeneralTab}
                             className={`flex items-center gap-2 px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === 'general'
                                 ? 'bg-white dark:bg-gray-700'
-                                : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                : 'bg-white dark:bg-gray-800  dark:hover:bg-gray-600'
                                 }`}
                         >
                             <div className="w-6 h-6 rounded-full flex items-center justify-center ">
@@ -287,13 +294,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                 </div>
 
                 {/* Fullscreen toggle button */}
-                <button
-                    onClick={() => !isTransitioning && toggleFullScreen()}
-                    className="p-1 rounded hover:bg-gray-100 cursor-pointer ml-auto w-8 h-8 flex items-center justify-center"
-                    disabled={isTransitioning}
-                >
-                    {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
-                </button>
+
             </div>
 
             {/* Confirmation Dialog */}
