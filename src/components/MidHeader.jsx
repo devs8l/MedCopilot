@@ -19,7 +19,7 @@ const MidHeader = () => {
       <div className="flex gap-3 flex-wrap text-sm">
         <Link 
           to="/"
-          className={`flex items-center gap-2 px-4 py-2 ${path === "/"? "bg-white dark:bg-black dark:text-white rounded-sm drop-shadow-lg" : "  rounded-sm drop-shadow-lg dark:text-gray-300"}`}
+          className={`flex items-center gap-2 px-4 py-2 ${path === "/"? "bg-white dark:bg-black dark:text-white rounded-xs drop-shadow-lg" : "  rounded-sm drop-shadow-lg text-[#22283699] dark:text-gray-300"}`}
         >
           <FileText size={20}/>
           Appointments
@@ -27,7 +27,7 @@ const MidHeader = () => {
         
         <Link 
           to="/patients"
-          className={`flex items-center gap-2 px-4 py-2 ${path === "/patients" ? "bg-white dark:bg-black dark:text-white rounded-sm drop-shadow-lg" : "  rounded-sm drop-shadow-lg dark:text-gray-300"}`}
+          className={`flex items-center gap-2 px-4 py-2 ${path === "/patients" ? "bg-white dark:bg-black dark:text-white rounded-xs drop-shadow-lg" : "  rounded-sm drop-shadow-lg text-[#22283699] dark:text-gray-300"}`}
         >
           <User size={20}/>
           Patients
@@ -35,7 +35,7 @@ const MidHeader = () => {
         
         <Link 
           to="/events"
-          className={`flex items-center gap-2 px-4 py-2 ${path === "/events" ? "bg-white dark:bg-black dark:text-white rounded-sm drop-shadow-lg" : "  rounded-sm drop-shadow-lg dark:text-gray-300"}`}
+          className={`flex items-center gap-2 px-4 py-2 ${path === "/events" ? "bg-white dark:bg-black dark:text-white rounded-xs drop-shadow-lg" : "  rounded-sm drop-shadow-lg text-[#22283699] dark:text-gray-300"}`}
         >
           <CalendarMinus2 size={20}/>
           Events

@@ -37,7 +37,8 @@ const Navbar = () => {
                     onClick={() => setIsExpanded(!isExpanded)} 
                     className="rounded-md cursor-pointer mr-1 w-8 h-8 flex items-center justify-center"
                 >
-                    <Menu size={24} />
+                    {isExpanded ? <img src="/ham-c.svg" className='w-5 h-5' alt="" /> :<img src="/ham-e.svg" className='w-5 h-5' alt="" />  }
+                    
                 </button>
 
                 <div className="my-2">
