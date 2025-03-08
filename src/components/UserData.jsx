@@ -277,7 +277,7 @@ const UserData = () => {
         <h2>{userData?.name}</h2>
       </div>
       <h2 className="">   </h2>
-      <div className="p-6 flex flex-col gap-6 rounded-lg bg-[#ffffffc8] dark:bg-[#272727] mx-4 h-[calc(70vh-80px)] overflow-auto">
+      <div className="p-6 flex flex-col gap-6 rounded-lg bg-[#ffffffc8] dark:bg-[#00000099] mx-4 h-[calc(70vh-80px)] overflow-auto">
 
         {/* Profile Section */}
         <div>
@@ -306,7 +306,7 @@ const UserData = () => {
           <button
             className={`flex items-center space-x-2 px-6 py-2 gap-2 ${activeTab === 'chatHistory'
               ? 'bg-white drop-shadow-sm'
-              : ''
+              : 'dark:text-white'
               }`}
             onClick={() => setActiveTab('chatHistory')}
           >
@@ -315,8 +315,8 @@ const UserData = () => {
           </button>
           <button
             className={`flex items-center space-x-2 px-6 py-2 gap-2 ${activeTab === 'reports'
-              ? 'bg-white drop-shadow-sm'
-              : ''
+              ? 'bg-white  drop-shadow-sm'
+              : 'dark:text-white'
               }`}
             onClick={() => setActiveTab('reports')}
           >

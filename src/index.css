@@ -62,8 +62,11 @@
 .bg-custom-gradient {
   background: linear-gradient(223.71deg, #c8deef 21.94%, #c8d7f3 77.39%);
   backdrop-filter: blur(1400px);
+}
+.dark .bg-custom-gradient {
+  background: linear-gradient(223.71deg, rgba(50, 73, 90, 0.3) 21.94%, rgba(34, 57, 104, 0.3) 77.39%);
 
-
+  backdrop-filter: blur(1400px);
 }
 
 

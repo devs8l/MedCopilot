@@ -7,7 +7,7 @@ import { MedContext } from '../context/MedContext';
 
 const SideBar = ({ isExpanded, setIsExpanded, isFullScreen }) => {
     return (
-        <div className={`bg-primary dark:bg-[#161616] flex flex-col gap-3 justify-between  min-h-[80vh] ${isExpanded ? 'w-[320px]' : 'w-0'}`}>
+        <div className={`bg-primary flex flex-col gap-3 justify-between  min-h-[80vh] ${isExpanded ? 'w-[320px]' : 'w-0'}`}>
             {/* Sidebar Top Section */}
             <div className="flex flex-col items-start overflow-hidden h-full  rounded-2xl drop-shadow-md transition-all duration-300">
                 {/* Calendar Section */}

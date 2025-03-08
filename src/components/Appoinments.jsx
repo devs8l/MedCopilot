@@ -38,9 +38,18 @@ const Appoinments = () => {
 
         // Group patients by weekday
         displayedUsers.forEach(user => {
-            const date = new Date(user.appointmentDate);
-            const dayName = days[date.getDay()];
-            groupedPatients[dayName].patients.push(user);
+            if (user.appointmentDate) {
+                try {
+                    const date = new Date(user.appointmentDate);
+                    // Check if date is valid
+                    if (!isNaN(date.getTime())) {
+                        const dayName = days[date.getDay()];
+                        groupedPatients[dayName].patients.push(user);
+                    }
+                } catch (error) {
+                    console.error("Invalid date for user:", user);
+                }
+            }
         });
 
         return { groupedPatients, days };
@@ -51,14 +60,21 @@ const Appoinments = () => {
         const groupedPatients = {};
 
         displayedUsers.forEach(user => {
-            const date = new Date(user.appointmentDate);
-            const dateKey = date.getDate().toString();
-
-            if (!groupedPatients[dateKey]) {
-                groupedPatients[dateKey] = [];
+            if (user.appointmentDate) {
+                try {
+                    const date = new Date(user.appointmentDate);
+                    // Check if date is valid
+                    if (!isNaN(date.getTime())) {
+                        const dateKey = date.getDate().toString();
+                        if (!groupedPatients[dateKey]) {
+                            groupedPatients[dateKey] = [];
+                        }
+                        groupedPatients[dateKey].push(user);
+                    }
+                } catch (error) {
+                    console.error("Invalid date for user:", user);
+                }
             }
-
-            groupedPatients[dateKey].push(user);
         });
 
         return groupedPatients;
@@ -92,21 +108,27 @@ const Appoinments = () => {
         </Link>
     );
 
-    // Render daily view
-    // Modified renderDailyView function for day-wise grouping
+    // Render daily view - FIXED function to handle invalid dates
     const renderDailyView = () => {
         // Group users by date
         const groupedByDate = {};
 
         displayedUsers.forEach(user => {
-            const date = new Date(user.appointmentDate);
-            const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD format
-
-            if (!groupedByDate[dateString]) {
-                groupedByDate[dateString] = [];
+            if (user.appointmentDate) {
+                try {
+                    const date = new Date(user.appointmentDate);
+                    // Check if date is valid before processing
+                    if (!isNaN(date.getTime())) {
+                        const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                        if (!groupedByDate[dateString]) {
+                            groupedByDate[dateString] = [];
+                        }
+                        groupedByDate[dateString].push(user);
+                    }
+                } catch (error) {
+                    console.error("Invalid date for user:", user);
+                }
             }
-
-            groupedByDate[dateString].push(user);
         });
 
         // Sort dates
@@ -301,9 +323,18 @@ const Appoinments = () => {
         });
 
         displayedUsers.forEach(user => {
-            const date = new Date(user.appointmentDate);
-            const monthIndex = date.getMonth();
-            groupedPatients[monthIndex].push(user);
+            if (user.appointmentDate) {
+                try {
+                    const date = new Date(user.appointmentDate);
+                    // Check if date is valid
+                    if (!isNaN(date.getTime())) {
+                        const monthIndex = date.getMonth();
+                        groupedPatients[monthIndex].push(user);
+                    }
+                } catch (error) {
+                    console.error("Invalid date for user:", user);
+                }
+            }
         });
 
         return (
@@ -363,7 +394,7 @@ const Appoinments = () => {
     };
 
     return (
-        <div className="mx-auto  dark:bg-[#272626] px-1 py-1 pb-1 flex flex-col justify-between gap-3 rounded-lg overflow-hidden">
+        <div className="mx-auto  dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-3 rounded-lg overflow-hidden">
             {renderView()}
         </div>
     );

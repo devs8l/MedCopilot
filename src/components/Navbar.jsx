@@ -14,7 +14,6 @@ const Navbar = () => {
         localStorage.getItem("theme") || "light" // Default to "light" instead of checking system preference
     );
 
-
     // Apply theme on mount & when theme state changes
     useEffect(() => {
         if (theme === "dark") {
@@ -31,62 +30,79 @@ const Navbar = () => {
     };
 
     return (
-        <div className={`grid dark:text-white grid-cols-[2fr_1fr] ml-2 bg-[#FFFFFF66] rounded-xl ${isSearchOpen ? 'sm:grid-cols-[1fr_2fr_2fr]' : 'sm:grid-cols-[1fr_2fr_2fr]'} gap-4  mb-2 mt-2 px-5`}>
+        <div className="grid dark:text-white dark:bg-[#00000099] grid-cols-[2fr_1fr] ml-2 bg-[#FFFFFF66] rounded-xl sm:grid-cols-[1fr_2fr_2fr] gap-4 mb-2 mt-2 px-5 h-16">
             <div className="flex items-center gap-10">
                 {/* Sidebar Toggle Button */}
-                <button onClick={() => setIsExpanded(!isExpanded)} className="rounded-md   cursor-pointer mr-1  ">
+                <button 
+                    onClick={() => setIsExpanded(!isExpanded)} 
+                    className="rounded-md cursor-pointer mr-1 w-8 h-8 flex items-center justify-center"
+                >
                     <Menu size={24} />
                 </button>
 
                 <div className="my-2">
                     <h1 className="text-xl font-semibold">MedCopilot</h1>
-                    <p className="text-xs text-gray-600">Product by JNC Tech</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Product by JNC Tech</p>
                 </div>
             </div>
 
-            <div className={`hidden sm:grid md:grid lg:grid  items-center ${isSearchOpen ? "grid-cols-[0.4fr_5.5fr_1fr]" : "grid-cols-[0.2fr_1.6fr_1.5fr]  lg:grid-cols[0.4fr_1.5fr_1.5fr]"} justify-start`}>
-                <Link to={'/'} className={`${isUserSelected ? '' : 'opacity-0 pointer-events-none'}`} onClick={() => { setIsUserSelected(false); setSelectedUser(null);; setSearchQuery(''); }}>
-                    <ChevronLeft />
-                </Link>
-                <div className={`flex items-center w-full ${isUserSelected ? 'hidden' : ''}`}>
-
-                    {!isSearchOpen ? (
-                        <div></div>
-                    ) : (
-                        <div className='flex items-center w-full mr-4 ml-1 '>
-                            <input
-                                type="text"
-                                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-black dark:text-white my-2 rounded-lg px-4 py-2 w-full focus:outline-none"
-                                placeholder="Search..."
-                                autoFocus
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+            <div className="hidden sm:flex md:flex lg:flex items-center justify-between h-full">
+                {/* <div className="w-8 h-8 flex items-center justify-center">
+                    {isUserSelected && (
+                        <Link 
+                            to={'/'} 
+                            className="transition-opacity duration-300 ease-in-out opacity-100 flex items-center justify-center w-full h-full" 
+                            onClick={() => { setIsUserSelected(false); setSelectedUser(null); setSearchQuery(''); }}
+                        >
+                            <ChevronLeft />
+                        </Link>
+                    )}
+                </div> */}
+                
+                <div className="flex-1 flex items-center justify-center relative px-4">
+                    {!isUserSelected && (
+                        <div className={`w-full transition-opacity duration-300 ease-in-out ${isSearchOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                            {isSearchOpen && (
+                                <input
+                                    type="text"
+                                    className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-black dark:text-white rounded-lg px-4 py-2 w-full focus:outline-none"
+                                    placeholder="Search..."
+                                    autoFocus
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            )}
                         </div>
                     )}
                 </div>
-                <div className='flex gap-6 items-center'>
-
+                
+                <div className="w-8 h-8">
+                    {/* Empty space for alignment */}
                 </div>
             </div>
+            
             <div className='flex justify-end items-center gap-8 py-2'>
-                <h1 className='text-md flex'>
+                <h1 className='text-md whitespace-nowrap'>
                     {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', weekday: 'long' })} | {' '}
                     {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </h1>
 
-                {/* <LogOut className='cursor-pointer' onClick={() => {logout();setSelectedUser(null)}} /> */}
-                <button
-                    onClick={() => setIsSearchOpen(!isSearchOpen)}
-                    className={`ease-in-out ${isUserSelected ? 'hidden' : ''} hover:scale-110`}
-                    aria-label={isSearchOpen ? "Close search" : "Open search"}
-                    disabled={isUserSelected === true}
-                >
-                    {isSearchOpen ? <X /> : <Search />}
-                </button>
-                <CircleHelp />
-                <button onClick={toggleTheme} className="p-2 rounded-full  ">
-                    {theme === "dark" ? <Sun className="h-6 w-6 " /> : <Moon className="h-6 w-6 text-gray-800" />}
+                {!isUserSelected && (
+                    <button
+                        onClick={() => setIsSearchOpen(!isSearchOpen)}
+                        className="w-8 h-8 flex items-center justify-center"
+                        aria-label={isSearchOpen ? "Close search" : "Open search"}
+                    >
+                        {isSearchOpen ? <X /> : <Search />}
+                    </button>
+                )}
+                
+                <div className="w-8 h-8 flex items-center justify-center">
+                    <CircleHelp />
+                </div>
+                
+                <button onClick={toggleTheme} className="p-2 rounded-full flex items-center justify-center">
+                    {theme === "dark" ? <Sun className="" /> : <Moon className=" text-gray-800" />}
                 </button>
             </div>
         </div>

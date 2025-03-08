@@ -226,7 +226,7 @@ const Home = () => {
     <div ref={containerRef} className={`flex h-full ${isFullScreen ? 'px-0' : 'px-1'} w-full`}>
       {isSwapped ? (
         // Swapped layout
-        <div className="w-full flex h-[85vh] justify-between flex-col sm:flex-row">
+        <div className="w-full flex h-[86vh] justify-between flex-col sm:flex-row">
           {/* Sidebar */}
           <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
@@ -258,7 +258,7 @@ const Home = () => {
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
             <div
-              className="bg-[#FFFFFF66] dark:bg-[#272626] rounded-lg p-1.5"
+              className="bg-[#FFFFFF66] dark:bg-[#00000099] rounded-lg p-1.5"
               style={{ width: `${contentWidth}px` }}
             >
               <MidHeader />
@@ -272,14 +272,14 @@ const Home = () => {
         </div>
       ) : (
         // Original layout
-        <div className="w-full flex h-[85vh] flex-col justify-between sm:flex-row">
+        <div className="w-full flex h-[86vh] flex-col justify-between sm:flex-row">
           {/* Sidebar */}
           <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
             <div
-              className="bg-[#ffffff66] dark:bg-[#272626] rounded-lg p-1.5 overflow-hidden"
+              className="bg-[#ffffff66] dark:bg-[#00000099] rounded-lg p-1.5 overflow-hidden"
               style={{ width: `${contentWidth}px` }}
             >
               <MidHeader />

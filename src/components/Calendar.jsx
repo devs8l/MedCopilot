@@ -14,11 +14,12 @@ export default function Calendar() {
   };
 
   return (
-    <div className="calendar-container w-full overflow-y-auto overflow-x-hidden ">
+    <div className="calendar-container w-full overflow-y-auto overflow-x-hidden dark:text-white">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar
           value={selectedDate ? dayjs(selectedDate) : null}
           onChange={handleDateChange}
+          className="dark:text-white"
           sx={{
             '.MuiPickersDay-root': {
               fontSize: '0.8rem',

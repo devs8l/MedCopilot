@@ -30,7 +30,7 @@ const App = () => {
           <Route path="/login" element={<Login login={login} />} />
         </Routes>
       ) : (
-        <div className="px-2 bg-custom-gradient dark:bg-[#161616] min-h-screen overflow-x-hidden">
+        <div className="px-2 bg-custom-gradient dark:bg-custom-gradient-d   min-h-screen overflow-x-hidden">
           {isAuthenticated && <Navbar handleLogout={logout} />}
           <Routes>
             <Route path="/" element={<Home />}>

@@ -6,8 +6,18 @@ export const ChatContext = createContext();
 const ChatContextProvider = (props) => {
   const { selectedUser } = useContext(MedContext);
 
-  // Store messages by user ID
-  const [userMessages, setUserMessages] = useState({});
+  // Store messages by user ID, including 'general' for non-patient chat
+  const [userMessages, setUserMessages] = useState({
+    general: [
+      {
+        type: 'bot',
+        content: 'Hi, I am your copilot!',
+        subtext: 'Chat and resolve all your queries',
+        para: 'Or try these prompts to get started',
+        isInitial: true,
+      }
+    ]
+  });
 
   // Current input message
   const [inputMessage, setInputMessage] = useState('');
@@ -24,19 +34,20 @@ const ChatContextProvider = (props) => {
     isInitial: true,
   };
 
-  // Get current user's messages
+  // Get current messages - either selected user or general
   const messages = selectedUser
     ? (userMessages[selectedUser._id] || [defaultInitialMessage])
-    : [defaultInitialMessage];
+    : (userMessages.general || [defaultInitialMessage]);
 
-  // Update current user's messages
+  // Update current messages - either for selected user or general
   const setMessages = (newMessages) => {
-    if (!selectedUser) return;
+    const messageKey = selectedUser ? selectedUser._id : 'general';
 
     setUserMessages(prevUserMessages => ({
       ...prevUserMessages,
-      [selectedUser._id]: typeof newMessages === 'function'
-        ? newMessages(prevUserMessages[selectedUser._id] || [defaultInitialMessage])
+      [messageKey]: typeof newMessages === 'function'
+        ? newMessages(prevUserMessages[messageKey] || 
+          (messageKey === 'general' ? userMessages.general : [defaultInitialMessage]))
         : newMessages
     }));
   };
@@ -79,46 +90,73 @@ const ChatContextProvider = (props) => {
     setIsMessageLoading(true);
 
     try {
-      // First, fetch the patient history
-      if (!selectedUser) {
-        throw new Error('No patient selected');
-      }
+      if (selectedUser) {
+        // Patient-specific flow
+        // First, fetch the patient history
+        const historyData = await fetchPatientHistory(selectedUser._id);
 
-      const historyData = await fetchPatientHistory(selectedUser._id);
-
-      if (!historyData) {
-        throw new Error('Failed to fetch patient history');
-      }
-
-      // Make API call to get medical analysis with history data
-      const response = await fetch(
-        `https://medicalchat-tau.vercel.app/medical_analysis/${encodeURIComponent(message)}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(historyData),
+        if (!historyData) {
+          throw new Error('Failed to fetch patient history');
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        // Make API call to get medical analysis with history data
+        const response = await fetch(
+          `https://medicalchat-tau.vercel.app/medical_analysis/${encodeURIComponent(message)}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(historyData),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Add bot response to messages
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: 'bot',
+            content: data.content || 'No response from medical analysis',
+            isInitial: false,
+          },
+        ]);
+      } else {
+        // General health chat flow - using a different endpoint without patient data
+        const response = await fetch(
+          `https://medicalchat-tau.vercel.app/general_health_chat/${encodeURIComponent(message)}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: message }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Add bot response to messages
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: 'bot',
+            content: data.content || 'No response from general health chat',
+            isInitial: false,
+          },
+        ]);
       }
-
-      const data = await response.json();
-
-      // Add bot response to messages
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: 'bot',
-          content: data.content || 'No response from medical analysis',
-          isInitial: false,
-        },
-      ]);
     } catch (error) {
-      console.error('Error processing medical analysis:', error);
+      console.error('Error processing chat:', error);
 
       // Add error message to messages
       setMessages((prev) => [
@@ -142,8 +180,8 @@ const ChatContextProvider = (props) => {
     // Get the original user message to regenerate the response
     const originalUserMessage = messages[index - 1]?.content;
 
-    if (!originalUserMessage || !selectedUser) {
-      console.error('Cannot regenerate message: No original message or selected user');
+    if (!originalUserMessage) {
+      console.error('Cannot regenerate message: No original message found');
       return;
     }
 
@@ -154,40 +192,71 @@ const ChatContextProvider = (props) => {
       // Show loading state
       setIsMessageLoading(true);
 
-      // Fetch patient history
-      const historyData = await fetchPatientHistory(selectedUser._id);
+      if (selectedUser) {
+        // Patient-specific regeneration
+        // Fetch patient history
+        const historyData = await fetchPatientHistory(selectedUser._id);
 
-      if (!historyData) {
-        throw new Error('Failed to fetch patient history');
-      }
-
-      // Regenerate response using the original message
-      const response = await fetch(
-        `https://medicalchat-tau.vercel.app/medical_analysis/${encodeURIComponent(originalUserMessage)}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(historyData),
+        if (!historyData) {
+          throw new Error('Failed to fetch patient history');
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        // Regenerate response using the original message
+        const response = await fetch(
+          `https://medicalchat-tau.vercel.app/medical_analysis/${encodeURIComponent(originalUserMessage)}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(historyData),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Add regenerated bot response to messages
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            type: 'bot',
+            content: data.content || 'No response from medical analysis',
+            isInitial: false,
+          },
+        ]);
+      } else {
+        // General health chat regeneration
+        const response = await fetch(
+          `https://medicalchat-tau.vercel.app/general_health_chat/${encodeURIComponent(originalUserMessage)}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: originalUserMessage }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Add regenerated bot response to messages
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            type: 'bot',
+            content: data.content || 'No response from general health chat',
+            isInitial: false,
+          },
+        ]);
       }
-
-      const data = await response.json();
-
-      // Add regenerated bot response to messages
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          type: 'bot',
-          content: data.content || 'No response from medical analysis',
-          isInitial: false,
-        },
-      ]);
     } catch (error) {
       console.error('Error regenerating message:', error);
 
@@ -222,9 +291,48 @@ const ChatContextProvider = (props) => {
 
   // Handle clock click (fetch and analyze patient history)
   const handleClockClick = async () => {
-    // Ensure a user is selected
+    // If no user is selected, show a general health tips response
     if (!selectedUser) {
-      console.error('No patient selected');
+      setIsloadingHistory(true);
+      try {
+        const response = await fetch(
+          `https://medicalchat-tau.vercel.app/general_health_chat/${encodeURIComponent("Provide general health tips and wellness advice")}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: "general health tips" }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to get general health tips');
+        }
+
+        const data = await response.json();
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            type: 'bot',
+            content: data.content || 'Here are some general health tips...',
+            isInitial: false,
+          },
+        ]);
+      } catch (error) {
+        console.error('Error fetching general health tips:', error);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            type: 'bot',
+            content: 'Unable to retrieve health tips at this time. Please try again later.',
+            isInitial: false,
+          },
+        ]);
+      } finally {
+        setIsloadingHistory(false);
+      }
       return;
     }
 
@@ -283,9 +391,6 @@ const ChatContextProvider = (props) => {
   };
 
   // Option to clear chat history
-  // Inside the ChatContextProvider component:
-
-  // Updated to support clearing history for a specific user ID
   const clearChatHistory = (userId = null) => {
     if (userId) {
       // Clear history for specific user
@@ -298,6 +403,18 @@ const ChatContextProvider = (props) => {
       setUserMessages(prev => ({
         ...prev,
         [selectedUser._id]: [defaultInitialMessage]
+      }));
+    } else {
+      // Clear general chat history
+      setUserMessages(prev => ({
+        ...prev,
+        general: [{
+          type: 'bot',
+          content: 'Hi, I am your health copilot!',
+          subtext: 'Chat and resolve all your general health queries',
+          para: 'Or try these prompts to get started',
+          isInitial: true,
+        }]
       }));
     }
   };
