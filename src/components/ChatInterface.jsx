@@ -127,7 +127,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
       {/* Messages Container with fixed minimum height */}
       <div 
         ref={messageContainerRef}
-        className={`flex-1 overflow-y-auto p-4 min-h-[200px] transition-all duration-200 ease-in-out ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}
+        className={`flex-1 overflow-y-auto pb-4 pr-4 pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}
       >
         {messages.length === 1 ? (
           <div className="text-center space-y-1">
@@ -235,7 +235,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
       />
 
       {/* Display uploaded files before sending - fixed height to prevent layout shifts */}
-      <div className="min-h-[40px] transition-all duration-200 ease-in-out">
+      <div className="maz-h-[10px] transition-all duration-200 ease-in-out">
         {uploadedFiles.length > 0 && (
           <div className="px-3 py-2">
             <div className="flex flex-wrap gap-2">
@@ -257,7 +257,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
       </div>
 
       {/* Input Area with smooth transitions */}
-      <div className={`py-4 px-0 ${isFullScreen ? 'w-1/3' : 'w-full'} mx-auto transition-all duration-200 ease-in-out`}>
+      <div className={`p-4 px-0 ${isFullScreen ? 'w-1/3' : 'w-full'} mx-auto transition-all duration-200 ease-in-out`}>
         <div className="flex flex-col gap-2 bg-white dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1">
           <input
             type="text"
