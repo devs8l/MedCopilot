@@ -252,7 +252,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                                 }`}
                         >
                             <div className="w-6 h-6 rounded-full flex items-center justify-center ">
-                                <Home size={20} className="" />
+                                <img src="/home.svg" alt="" />
                             </div>
 
                             {hasHistory('general') && (
