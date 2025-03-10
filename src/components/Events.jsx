@@ -2,7 +2,7 @@
 const Events = () => {
     return (
       <div className="p-4">
-        <h3 className="text-lg font-medium mb-4">Upcoming Events</h3>
+        <h3 className="px-1 font-medium mb-4">Upcoming Events</h3>
         <div className="space-y-4">
           {/* This would be replaced with actual event data */}
           <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
