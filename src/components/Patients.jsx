@@ -16,7 +16,7 @@ const Patients = () => {
             <div className="space-y-4 h-[50vh] overflow-auto">
                 {
                     sortedUsers.map((user, index) => (
-                        <div key={index} className="p-4  dark:bg-gray-800 rounded-lg shadow flex items-center space-x-4 mx-4">
+                        <div key={index} className="p-4 bg-[#ffffffa9] dark:bg-gray-800 rounded-lg shadow flex items-center space-x-4 mx-4">
                             <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <img src={user.profileImage} alt="Patient avatar" className="w-full h-full object-cover" />
                             </div>
