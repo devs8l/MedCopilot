@@ -1,11 +1,11 @@
 // components/Events.jsx
 const Events = () => {
     return (
-      <div className="p-4">
-        <h3 className="px-1 font-medium mb-4">Upcoming Events</h3>
+      <div className="p-1">
+        <h3 className="mx-4 font-medium mb-4">Upcoming Events</h3>
         <div className="space-y-4">
           {/* This would be replaced with actual event data */}
-          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+          <div className="p-4 mx-4 bg-white dark:bg-gray-800 rounded-lg shadow">
             <div className="flex justify-between items-center mb-2">
               <h4 className="font-medium">Staff Meeting</h4>
               <span className="text-sm text-blue-500 bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">Meeting</span>
