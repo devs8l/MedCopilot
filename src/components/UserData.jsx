@@ -329,11 +329,11 @@ const UserData = () => {
 
         {/* Action Buttons */}
         <div className="flex">
-          <div className="flex flex-col mb-2 mr-2 group transition-all duration-300 w-11 group-hover:w-48 hover:w-48 overflow-hidden">
+          <div className="flex flex-col mb-2 mr-2 group gap-4 transition-all duration-300 w-11 group-hover:w-48 hover:w-48 overflow-hidden">
             <button
-              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'summary'
+              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'summary'
                 ? 'bg-white  text-blue-600'
-                : 'dark:text-white'
+                : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('summary')}
             >
@@ -344,9 +344,9 @@ const UserData = () => {
             </button>
 
             <button
-              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'prerequisites'
+              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'prerequisites'
                 ? 'bg-white  text-blue-600'
-                : 'dark:text-white '
+                : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('prerequisites')}
             >
@@ -357,9 +357,9 @@ const UserData = () => {
             </button>
 
             <button
-              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'chatHistory'
+              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'chatHistory'
                 ? 'bg-white  text-blue-600'
-                : 'dark:text-white '
+                : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('chatHistory')}
             >
@@ -370,9 +370,9 @@ const UserData = () => {
             </button>
 
             <button
-              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'reports'
+              className={`flex items-center px-3 cursor-pointer py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'reports'
                 ? 'bg-white  text-blue-600'
-                : 'dark:text-white '
+                : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('reports')}
             >
@@ -383,9 +383,9 @@ const UserData = () => {
             </button>
 
             <button
-              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'prescription'
+              className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 ${activeTab === 'prescription'
                 ? 'bg-white  text-blue-600'
-                : 'dark:text-white '
+                : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('prescription')}
             >
@@ -396,9 +396,9 @@ const UserData = () => {
             </button>
 
             <button
-              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'allergies'
+              className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 ${activeTab === 'allergies'
                 ? 'bg-white  text-blue-600'
-                : 'dark:text-white '
+                : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('allergies')}
             >

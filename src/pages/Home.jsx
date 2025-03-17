@@ -130,7 +130,7 @@ const Home = () => {
 
       // Set minimum and maximum widths for chat
       const minChatWidth = Math.min(700, availableWidth * 0.3);
-      const maxChatWidth = Math.min(isUserDetailView ? 800 : 1000, availableWidth * 0.7);
+      const maxChatWidth = Math.min(isUserDetailView ? 950 : 1000, availableWidth * 0.7);
 
       // When toggling sidebar, maintain proportions rather than fixed widths
       let constrainedChatWidth;
