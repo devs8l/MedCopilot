@@ -28,7 +28,7 @@ const UserData = () => {
   const { users, filteredUsers, setIsUserSelected } = useContext(MedContext);
   const { userMessages, isloadingHistory, isSessionActive, elapsedTime, startSession, endSession ,activeSessionUserId} = useContext(ChatContext);
   const [userData, setUserData] = useState(null);
-  const [activeTab, setActiveTab] = useState("chatHistory");
+  const [activeTab, setActiveTab] = useState("summary");
   const [patientHistory, setPatientHistory] = useState(null);
   const [isLoadingReports, setIsLoadingReports] = useState(false);
   const [sessionHistory, setSessionHistory] = useState([]);
