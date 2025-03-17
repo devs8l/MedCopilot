@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { MedContext } from './MedContext';
 
 export const ChatContext = createContext();
@@ -6,17 +6,25 @@ export const ChatContext = createContext();
 const ChatContextProvider = (props) => {
   const { selectedUser } = useContext(MedContext);
 
+  // Default initial message for general chat
+  const defaultGeneralMessage = {
+    type: 'bot',
+    content: 'Hi, I am your copilot!',
+    subtext: 'Chat and resolve all your queries',
+    para: 'Or try these prompts to get started',
+    isInitial: true,
+  };
+
+  // Default initial message for patient chat
+  const defaultPatientMessage = {
+    type: 'bot',
+    content: 'Patient session started',
+    isInitial: true,
+  };
+
   // Store messages by user ID, including 'general' for non-patient chat
   const [userMessages, setUserMessages] = useState({
-    general: [
-      {
-        type: 'bot',
-        content: 'Hi, I am your copilot!',
-        subtext: 'Chat and resolve all your queries',
-        para: 'Or try these prompts to get started',
-        isInitial: true,
-      }
-    ]
+    general: [defaultGeneralMessage]
   });
 
   // Current input message
@@ -25,19 +33,16 @@ const ChatContextProvider = (props) => {
   const [isMessageLoading, setIsMessageLoading] = useState(false);
   const [isloadingHistory, setIsloadingHistory] = useState(false);
 
-  // Default initial message for new users
-  const defaultInitialMessage = {
-    type: 'bot',
-    content: 'Hi, I am your copilot!',
-    subtext: 'Chat and resolve all your queries',
-    para: 'Or try these prompts to get started',
-    isInitial: true,
-  };
+  // Session management
+  const [isSessionActive, setIsSessionActive] = useState(false);
+  const [sessionStartTime, setSessionStartTime] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(3600);
+  const intervalRef = useRef(null);
 
   // Get current messages - either selected user or general
   const messages = selectedUser
-    ? (userMessages[selectedUser._id] || [defaultInitialMessage])
-    : (userMessages.general || [defaultInitialMessage]);
+    ? (userMessages[selectedUser._id] || [isSessionActive ? defaultGeneralMessage : defaultGeneralMessage])
+    : (userMessages.general || [defaultGeneralMessage]);
 
   // Update current messages - either for selected user or general
   const setMessages = (newMessages) => {
@@ -46,8 +51,8 @@ const ChatContextProvider = (props) => {
     setUserMessages(prevUserMessages => ({
       ...prevUserMessages,
       [messageKey]: typeof newMessages === 'function'
-        ? newMessages(prevUserMessages[messageKey] || 
-          (messageKey === 'general' ? userMessages.general : [defaultInitialMessage]))
+        ? newMessages(prevUserMessages[messageKey] ||
+          (messageKey === 'general' ? [defaultGeneralMessage] : [isSessionActive ? defaultPatientMessage : defaultGeneralMessage]))
         : newMessages
     }));
   };
@@ -55,10 +60,10 @@ const ChatContextProvider = (props) => {
   // Load chat history for selected user
   useEffect(() => {
     if (selectedUser && !userMessages[selectedUser._id]) {
-      // Initialize this user's messages with default message if no history exists
+      // Initialize this user's messages with appropriate default message based on session state
       setUserMessages(prev => ({
         ...prev,
-        [selectedUser._id]: [defaultInitialMessage]
+        [selectedUser._id]: [isSessionActive ? defaultPatientMessage : defaultGeneralMessage]
       }));
 
       // Optionally, you could fetch chat history from an API here
@@ -71,7 +76,7 @@ const ChatContextProvider = (props) => {
       //   }
       // });
     }
-  }, [selectedUser]);
+  }, [selectedUser, isSessionActive]);
 
   // Function to handle sending messages
   const sendMessage = async (message, files = []) => {
@@ -392,32 +397,87 @@ const ChatContextProvider = (props) => {
 
   // Option to clear chat history
   const clearChatHistory = (userId = null) => {
+    const clearMessage = isSessionActive && selectedUser
+      ? defaultPatientMessage
+      : defaultGeneralMessage;
+      
     if (userId) {
       // Clear history for specific user
       setUserMessages(prev => ({
         ...prev,
-        [userId]: [defaultInitialMessage]
+        [userId]: [clearMessage]
       }));
     } else if (selectedUser) {
       // Clear history for currently selected user
       setUserMessages(prev => ({
         ...prev,
-        [selectedUser._id]: [defaultInitialMessage]
+        [selectedUser._id]: [clearMessage]
       }));
     } else {
       // Clear general chat history
       setUserMessages(prev => ({
         ...prev,
-        general: [{
-          type: 'bot',
-          content: 'Hi, I am your health copilot!',
-          subtext: 'Chat and resolve all your general health queries',
-          para: 'Or try these prompts to get started',
-          isInitial: true,
-        }]
+        general: [defaultGeneralMessage]
       }));
     }
   };
+
+  // Start session
+
+  const [activeSessionUserId, setActiveSessionUserId] = useState(null);
+
+  const startSession = (userId) => {
+    setIsSessionActive(true);
+    setActiveSessionUserId(userId); // Track which user's session is active
+    setSessionStartTime(Date.now());
+    setElapsedTime(3600);
+  
+    // Update initial message for patient if a patient is selected
+    if (userId) {
+      // Reset chat with patient session message
+      setUserMessages(prev => ({
+        ...prev,
+        [userId]: [defaultPatientMessage]
+      }));
+    }
+  
+    intervalRef.current = setInterval(() => {
+      setElapsedTime((prev) => {
+        if (prev <= 0) {
+          clearInterval(intervalRef.current);
+          endSession();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // End session
+  const endSession = () => {
+    setIsSessionActive(false);
+    setActiveSessionUserId(null); // Reset the active session user
+    setSessionStartTime(null);
+    clearInterval(intervalRef.current);
+    setElapsedTime(3600);
+  
+    // Reset any active patient chat to general welcome message
+    if (activeSessionUserId) {
+      setUserMessages(prev => ({
+        ...prev,
+        [activeSessionUserId]: [defaultGeneralMessage]
+      }));
+    }
+  };
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   const value = {
     messages,
@@ -432,7 +492,13 @@ const ChatContextProvider = (props) => {
     isloadingHistory,
     handleClockClick,
     clearChatHistory,
-    userMessages
+    userMessages,
+    // Session-related state and functions
+    isSessionActive,
+    elapsedTime,
+    startSession,
+    endSession,
+    activeSessionUserId,
   };
 
   return <ChatContext.Provider value={value}>{props.children}</ChatContext.Provider>;

@@ -2,13 +2,31 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
-import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle } from "lucide-react";
+import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer } from "lucide-react";
+
+
+const Stopwatch = ({ elapsedTime }) => {
+  const formatTime = (time) => {
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = time % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="flex items-center ml-4 border border-gray-500 rounded-xl px-3 py-1 ">
+      <Timer className="w-4 h-4 mr-2 text-gray-500" />
+      <span className="text-sm text-gray-500">{formatTime(elapsedTime)}</span>
+    </div>
+  );
+};
 
 const UserData = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { users, filteredUsers, setIsUserSelected } = useContext(MedContext);
-  const { userMessages, isloadingHistory } = useContext(ChatContext);
+  const { userMessages, isloadingHistory, isSessionActive, elapsedTime, startSession, endSession ,activeSessionUserId} = useContext(ChatContext);
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("chatHistory");
   const [patientHistory, setPatientHistory] = useState(null);
@@ -324,6 +342,29 @@ const UserData = () => {
                 </div>
               </div>
             </div>
+
+            <div className="flex items-center">
+              {isSessionActive && activeSessionUserId === userData._id ? (
+                <div className="flex items-center gap-4">
+                  <Stopwatch elapsedTime={elapsedTime} />
+                  <button
+                    onClick={endSession}
+                    className="px-4 py-2 bg-red-500 text-white rounded-md text-sm"
+                  >
+                    End Session
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => startSession(userData._id)}
+                  className="px-4 py-2 bg-blue-500 flex gap-1 items-center justify-center text-white rounded-md text-sm"
+                >
+                  <Play size={15} /> Start Session
+                </button>
+              )}
+            </div>
+
+
           </div>
         </div>
 

@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
     const { selectedUser, setIsUserSelected, setSelectedUser } = useContext(MedContext);
-    const { clearChatHistory, userMessages } = useContext(ChatContext);
+    const { clearChatHistory, userMessages, endSession } = useContext(ChatContext); // Add endSession from ChatContext
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -165,6 +165,9 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
 
             // Clear chat history for this user
             clearChatHistory(tabToClose);
+
+            // End the session for this user
+            endSession(tabToClose); // Add this line to end the session
 
             // If we're closing the active tab, switch to the next available tab or general
             if (activeTabId === tabToClose) {

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useContext } from 'react';
-import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2 } from 'lucide-react';
+import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, X, Loader2 } from 'lucide-react';
 import { MedContext } from '../context/MedContext';
 import { ChatContext } from '../context/ChatContext';
 
@@ -15,8 +15,9 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
     sendMessage,
     regenerateMessage,
     isMessageLoading,
-    handleClockClick,
     isloadingHistory,
+    isSessionActive,
+    activeSessionUserId
   } = useContext(ChatContext);
 
   const fileInputRef = useRef(null);
@@ -24,11 +25,10 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
   const messageContainerRef = useRef(null);
 
   // Different suggestions based on whether a patient is selected
-  const patientSuggestionPrompts = [
-    "Summarize this patient's last visit.",
-    "Show me recent lab results and trends.",
-    "Does this patient have any allergies or chronic conditions?",
-    "Suggest possible causes for the patient's current symptoms."
+  const patientSuggestions = [
+    "Summarize her BP medication for me",
+    "Mention touchpoints from her last visit",
+    "Update me on her recent lab reports"
   ];
 
   const generalSuggestionPrompts = [
@@ -37,9 +37,6 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
     "What foods are good for heart health?",
     "How much exercise is recommended per week?"
   ];
-
-  // Choose which prompts to display based on patient selection
-  const suggestionPrompts = selectedUser ? patientSuggestionPrompts : generalSuggestionPrompts;
 
   // Debounced scroll to prevent jitter
   const debouncedScrollToBottom = () => {
@@ -121,32 +118,60 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
     fileInputRef.current?.click();
   };
 
+  // Check if it's the initial message state (welcome message)
+  const isInitialState = messages.length === 1 && messages[0].isInitial;
+  const isActiveSessionUser = selectedUser && selectedUser._id === activeSessionUserId; 
+  const isPatientSession = !!selectedUser;
+
   return (
-    <div className="flex flex-col h-full w-full mx-auto  shadow-lg transition-opacity duration-200 ease-in-out" 
+    <div className="flex flex-col h-full w-full mx-auto shadow-lg transition-opacity duration-200 ease-in-out" 
          style={{ opacity: isTransitioning ? 0.7 : 1 }}>
       {/* Messages Container with fixed minimum height */}
       <div 
         ref={messageContainerRef}
-        className={`flex-1 overflow-y-auto pb-4 pr-4 pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}
+        className={`flex-1 overflow-y-auto ${isSessionActive && isActiveSessionUser  ? 'justify-start items-end':''} pb-4 pr-4 pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${isInitialState ? 'flex items-center justify-center' : ''}`}
       >
-        {messages.length === 1 ? (
-          <div className="text-center space-y-1">
-            <div className="text-xl font-semibold dark:text-white">{messages[0].content}</div>
-            <p className="text-sm text-gray-600">{messages[0].subtext}</p>
-            <p className="text-sm text-gray-600 mb-10 mt-10">{messages[0].para}</p>
+        {isInitialState ? (
+          <>
+            {/* Show patient welcome message if session is active and patient is selected */}
+            {isSessionActive && isActiveSessionUser  ? (
+              <div className="w-[50%] p-4 flex flex-col gap-2 rounded-lg">
+                <div className="text-center mb-4">
+                  <p className="text-md text-left font-medium text-gray-700">Chat session started for {selectedUser.name || 'Patient'}! Ask a question or use these prompts to get started</p>
+                </div>
+                <div className="flex flex-col space-y-2">
+                  {patientSuggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      className="py-1 text-blue-500  border w-[80%] border-blue-200 rounded-full hover:bg-blue-50 transition-colors text-center"
+                      onClick={() => setInputMessage(suggestion)}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              /* Show general welcome message if no session is active or no patient is selected */
+              <div className="text-center space-y-1">
+                <div className="text-xl font-semibold dark:text-white">{messages[0].content}</div>
+                <p className="text-sm text-gray-600">{messages[0].subtext}</p>
+                <p className="text-sm text-gray-600 mb-10 mt-10">{messages[0].para}</p>
 
-            <div className="grid grid-cols-2 gap-4 w-2/3 m-auto">
-              {suggestionPrompts.map((prompt, index) => (
-                <button
-                  key={index}
-                  className="p-4 text-sm text-[#52A1FF] border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-left"
-                  onClick={() => setInputMessage(prompt)}
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-          </div>
+                <div className="grid grid-cols-2 gap-4 w-2/3 m-auto">
+                  {generalSuggestionPrompts.map((prompt, index) => (
+                    <button
+                      key={index}
+                      className="p-4 text-sm text-[#52A1FF] border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-left"
+                      onClick={() => setInputMessage(prompt)}
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           <div className="space-y-6">
             {messages.map((message, index) => (
@@ -167,7 +192,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                               onClick={() => handleDocumentClick(file)}
                             >
                               <div className="flex items-center">
-                                <img src="/doc.svg" className='w-3 h-3 mr-1' alt="" />
+                                <img src="/doc.svg" className="w-3 h-3 mr-1" alt="" />
                                 <span className="text-sm truncate max-w-[200px]">{file.name}</span>
                               </div>
                             </div>
@@ -235,7 +260,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
       />
 
       {/* Display uploaded files before sending - fixed height to prevent layout shifts */}
-      <div className="maz-h-[10px] transition-all duration-200 ease-in-out">
+      <div className="max-h-[100px] transition-all duration-200 ease-in-out">
         {uploadedFiles.length > 0 && (
           <div className="px-3 py-2">
             <div className="flex flex-wrap gap-2">
@@ -277,26 +302,8 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
               >
                 <img src="/doc.svg" className='w-4 h-4' alt="" />
               </button>
-              <button
-                onClick={handleSendMessage}
-                className="p-2 px-4 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
-                disabled={isTransitioning}
-              >
-                <Lightbulb color={'#9B9EA2'} size={20} /><span className='text-[#9B9EA2]'>Think</span>
-              </button>
             </div>
             <div className='flex'>
-              <button
-                onClick={() => handleClockClick()}
-                className="p-3 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
-                disabled={isTransitioning || isloadingHistory}
-              >
-                {isloadingHistory ? (
-                  <Loader2 className="animate-spin" color={'#9B9EA2'} size={20} />
-                ) : (
-                  <History color={'#9B9EA2'} size={20} />
-                )}
-              </button>
               <button
                 onClick={handleSendMessage}
                 className="p-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
