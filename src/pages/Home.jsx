@@ -120,7 +120,7 @@ const Home = () => {
   const containerRef = useRef(null);
   const layoutRef = useRef({ lastChatWidth: 1100 });
   const {isSearchOpen,isUserSelected} = useContext(MedContext);
-
+  const isUserDetailView = location.pathname.includes('/user/');
   // Calculate and set panel widths with constraints
   const calculatePanelWidths = (newChatWidth) => {
     if (containerRef.current) {
@@ -129,8 +129,8 @@ const Home = () => {
       const availableWidth = totalWidth - sidebarWidth; // Reduced margin for tighter spacing
 
       // Set minimum and maximum widths for chat
-      const minChatWidth = Math.min(300, availableWidth * 0.3);
-      const maxChatWidth = Math.min(1200, availableWidth * 0.7);
+      const minChatWidth = Math.min(700, availableWidth * 0.3);
+      const maxChatWidth = Math.min(isUserDetailView ? 800 : 1000, availableWidth * 0.7);
 
       // When toggling sidebar, maintain proportions rather than fixed widths
       let constrainedChatWidth;
@@ -166,7 +166,7 @@ const Home = () => {
     if (!isFullScreen) {
       calculatePanelWidths();
     }
-  }, [windowWidth, isExpanded, isFullScreen]);
+  }, [windowWidth, isExpanded, isFullScreen,location.pathname]);
 
   useEffect(() => {
     // Save chat width when going fullscreen

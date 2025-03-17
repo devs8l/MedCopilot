@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
-import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList } from "lucide-react";
+import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle } from "lucide-react";
 
 const UserData = () => {
   const { id } = useParams();
@@ -10,7 +10,7 @@ const UserData = () => {
   const { users, filteredUsers, setIsUserSelected } = useContext(MedContext);
   const { userMessages, isloadingHistory } = useContext(ChatContext);
   const [userData, setUserData] = useState(null);
-  const [activeTab, setActiveTab] = useState("chatHistory"); // Changed default to 'chatHistory'
+  const [activeTab, setActiveTab] = useState("chatHistory");
   const [patientHistory, setPatientHistory] = useState(null);
   const [isLoadingReports, setIsLoadingReports] = useState(false);
   const [sessionHistory, setSessionHistory] = useState([]);
@@ -27,22 +27,16 @@ const UserData = () => {
 
   // Find user data
   useEffect(() => {
-    // First try to find in filteredUsers
     let user = filteredUsers.find((u) => u._id === id);
-
-    // If not found, look in the full users array
     if (!user) {
       user = users.find((u) => u._id === id);
     }
-
-    // Set the user data
     if (user) {
       setUserData(user);
     }
   }, [id, filteredUsers, users]);
 
   // Function to fetch patient history for reports tab
-  // In UserData.js, modify your fetchPatientHistory function:
   const fetchPatientHistory = async () => {
     if (!userData) return;
 
@@ -64,11 +58,9 @@ const UserData = () => {
         }
       );
 
-      // Extract the JSON data from the response
       if (!analysisResult.ok) throw new Error('Failed to analyze history');
       const analysisData = await analysisResult.json();
 
-      // Save both the raw history data and the analysis
       setPatientHistory({
         rawData: historyData,
         analysis: analysisData.content || 'No analysis available'
@@ -94,32 +86,23 @@ const UserData = () => {
       const messages = userMessages[userData._id].filter(msg => !msg.isInitial);
       const chatEvents = [];
 
-      // Create session entries from user messages
       let sessionDate = new Date();
       let currentSessionMessages = [];
       let lastSessionDate = null;
 
       for (let i = 0; i < messages.length; i++) {
         if (messages[i].type === 'user') {
-          // Store session start time in localStorage or generate a reasonably consistent one
           const storedDate = localStorage.getItem(`sessionStarted_${userData._id}_${i}`);
           if (storedDate) {
             sessionDate = new Date(storedDate);
           } else {
-            // If no stored date, create one based on message index
-            // This ensures consistent dates between renders
             sessionDate = new Date();
             sessionDate.setDate(sessionDate.getDate() - (messages.length - i) / 2);
-            // Store for future reference
             localStorage.setItem(`sessionStarted_${userData._id}_${i}`, sessionDate.toISOString());
           }
 
-          // If this is a new day compared to the last session, create a new session
-          if (!lastSessionDate ||
-            sessionDate.toDateString() !== lastSessionDate.toDateString()) {
+          if (!lastSessionDate || sessionDate.toDateString() !== lastSessionDate.toDateString()) {
             lastSessionDate = sessionDate;
-
-            // Create a new session entry
             currentSessionMessages = [messages[i].content];
 
             chatEvents.push({
@@ -133,10 +116,8 @@ const UserData = () => {
               status: "completed"
             });
           } else {
-            // Add message to current session
             currentSessionMessages.push(messages[i].content);
 
-            // Update the last event with the new content
             if (chatEvents.length > 0) {
               const lastEvent = chatEvents[chatEvents.length - 1];
               lastEvent.content.push(messages[i].content);
@@ -148,7 +129,6 @@ const UserData = () => {
         }
       }
 
-      // Sort by date (newest first)
       chatEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
       setSessionHistory(chatEvents);
@@ -172,100 +152,146 @@ const UserData = () => {
 
   // Render different content based on active tab
   const renderTabContent = () => {
-    if (activeTab === 'chatHistory') {
-      if (sessionHistory.length === 0) {
-        return (
-          <div className="flex flex-col items-center justify-center h-40 text-gray-500">
-            <Info className="w-8 h-8 mb-2" />
-            <p>No chat history available for this patient</p>
-          </div>
-        );
-      }
-
-      return (
-        <div className="space-y-4">
-          
-          {sessionHistory.map((session, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg p-4 drop-shadow-sm flex justify-between items-center"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm ">{session.date}</h3>
-                </div>
-                <p className="text-sm text-gray-600 mt-1">{session.description}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {session.content.length} message{session.content.length !== 1 ? 's' : ''}
-                </p>
-              </div>
-              <div className="text-right">
-
-                <div className="flex items-center justify-end mt-1">
-                  {getStatusIcon(session.status)}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    } else if (activeTab === 'reports') {
-      if (isLoadingReports) {
-        return (
-          <div className="flex flex-col items-center justify-center h-40">
-            <Loader className="w-8 h-8 animate-spin text-blue-500 mb-2" />
-            <p>Loading patient reports...</p>
-          </div>
-        );
-      }
-
-      // Find the AI analysis message (from handleClockClick)
-      const analysisMessage = userData ?
-        userMessages[userData._id]?.find(msg =>
-          msg.type === 'bot' &&
-          !msg.isInitial &&
-          msg.content.includes('history')
-        ) : null;
-
-      return (
-        <div className="space-y-4">
-          <h3 className="font-semibold text-lg">Patient Reports</h3>
-
-          {/* Show AI Analysis if available */}
-          {analysisMessage && (
-            <div className="bg-white rounded-lg p-4 drop-shadow-sm mb-4">
-              <h4 className="font-medium text-blue-600 mb-2">AI Analysis</h4>
-              <div className="text-sm whitespace-pre-wrap">
-                {analysisMessage.content}
-              </div>
-            </div>
-          )}
-
-          {/* Show raw patient history data */}
-          {patientHistory ? (
-            <div className="bg-white rounded-lg p-4 drop-shadow-sm">
-              <h4 className="font-medium text-blue-600 mb-2">Patient History</h4>
-              <div className="text-sm whitespace-pre-wrap">
-                {patientHistory.analysis}
-              </div>
-
-              {/* Optionally display raw data in a structured format */}
-
-            </div>
-          ) : (
+    switch (activeTab) {
+      case 'chatHistory':
+        if (sessionHistory.length === 0) {
+          return (
             <div className="flex flex-col items-center justify-center h-40 text-gray-500">
-              <AlertCircle className="w-8 h-8 mb-2" />
-              <p>Unable to load patient reports</p>
-              <button
-                onClick={fetchPatientHistory}
-                className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md text-sm"
-              >
-                Retry
-              </button>
+              <Info className="w-8 h-8 mb-2" />
+              <p>No chat history available for this patient</p>
             </div>
-          )}
-        </div>
-      );
+          );
+        }
+
+        return (
+          <div className="space-y-4">
+            {sessionHistory.map((session, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg p-4 drop-shadow-sm flex justify-between items-center"
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm ">{session.date}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">{session.description}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {session.content.length} message{session.content.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center justify-end mt-1">
+                    {getStatusIcon(session.status)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+
+      case 'summary':
+        if (isLoadingReports) {
+          return (
+            <div className="flex flex-col items-center justify-center h-40">
+              <Loader className="w-8 h-8 animate-spin text-blue-500 mb-2" />
+              <p>Loading patient reports...</p>
+            </div>
+          );
+        }
+
+        const analysisMessage = userData ?
+          userMessages[userData._id]?.find(msg =>
+            msg.type === 'bot' &&
+            !msg.isInitial &&
+            msg.content.includes('history')
+          ) : null;
+
+        return (
+          <div className="space-y-4">
+            {/* <h3 className="font-semibold text-lg">Patient Reports</h3> */}
+
+            {analysisMessage && (
+              <div className="bg-white rounded-lg p-4 drop-shadow-sm mb-4">
+                <h4 className="font-medium text-blue-600 mb-2">AI Analysis</h4>
+                <div className="text-sm whitespace-pre-wrap">
+                  {analysisMessage.content}
+                </div>
+              </div>
+            )}
+
+            {patientHistory ? (
+              <div className=" rounded-lg px-4">
+                <h4 className="font-medium  mb-2">Summary from Past</h4>
+                <div className="text-sm text-gray-500 whitespace-pre-wrap">
+                  {patientHistory.analysis}
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-40 text-gray-500">
+                <AlertCircle className="w-8 h-8 mb-2" />
+                <p>Unable to load patient reports</p>
+                <button
+                  onClick={fetchPatientHistory}
+                  className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md text-sm"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'prerequisites':
+        return (
+          <div className="px-4">
+            <h2 className="text-md">Today’s Prerequisite</h2>
+            <p className="text-gray-500">Past Reports</p>
+          </div>
+        );
+
+      case 'prescription':
+        return (
+          <div className="px-4">
+            <h2 className="text-md">Prescription</h2>
+            <p className="text-gray-500">Prescription details will be displayed here.</p>
+          </div>
+        );
+
+      case 'allergies':
+        return (
+          <div className="px-4">
+            <h2 className="text-md">Allergies</h2>
+            {userData?.allergies && userData.allergies.length > 0 ? (
+              <ul className="list-disc text-gray-500 list-inside">
+                {userData.allergies.map((allergy, index) => (
+                  <li key={index}>{allergy}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No allergies recorded.</p>
+            )}
+          </div>
+        );
+
+      case 'reports':
+        return (
+          <div className="px-4">
+            <h2 className="text-md ">Past reports</h2>
+            <div className="text-gray-500">
+              <p>Summary from last visit, 5th March (Wednesday)</p>
+              <p>Everything’s looking good! Her recent readings were consistently within the 120-135/75-85 range, her medication and activity logs are in order. I don’t see any need for changes or adjustments at this time.</p>
+              <ul className="list-disc list-inside mt-2">
+                <li>Readings: 120-135/75-85 (good range).</li>
+                <li>Meds/activity: OK.</li>
+                <li>Model & alerts: Working fine.</li>
+                <li>No changes needed. 😊</li>
+              </ul>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
@@ -301,33 +327,92 @@ const UserData = () => {
           </div>
         </div>
 
-        {/* Action Buttons - Removed Medical Events tab */}
-        <div className="flex space-x-4 mb-2">
-          <button
-            className={`flex items-center space-x-2 px-6 py-2 gap-2 ${activeTab === 'chatHistory'
-              ? 'bg-white drop-shadow-sm'
-              : 'dark:text-white'
-              }`}
-            onClick={() => setActiveTab('chatHistory')}
-          >
-            <Clock className="w-4 h-4" />
-            <span className="text-sm">Chat History</span>
-          </button>
-          <button
-            className={`flex items-center space-x-2 px-6 py-2 gap-2 ${activeTab === 'reports'
-              ? 'bg-white  drop-shadow-sm'
-              : 'dark:text-white'
-              }`}
-            onClick={() => setActiveTab('reports')}
-          >
-            <ClipboardList className="w-4 h-4" />
-            <span className="text-sm">Past Reports</span>
-          </button>
-        </div>
+        {/* Action Buttons */}
+        <div className="flex">
+          <div className="flex flex-col mb-2 mr-2 group transition-all duration-300 w-11 group-hover:w-48 hover:w-48 overflow-hidden">
+            <button
+              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'summary'
+                ? 'bg-white  text-blue-600'
+                : 'dark:text-white'
+                }`}
+              onClick={() => setActiveTab('summary')}
+            >
+              <div className="flex-shrink-0">
+                <Sparkle className={`transition-all duration-200 ${activeTab === 'summary' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+              </div>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Summary</span>
+            </button>
 
-        {/* Tab Content */}
-        <div className="flex-1">
-          {renderTabContent()}
+            <button
+              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'prerequisites'
+                ? 'bg-white  text-blue-600'
+                : 'dark:text-white '
+                }`}
+              onClick={() => setActiveTab('prerequisites')}
+            >
+              <div className="flex-shrink-0">
+                <BookOpen className={`transition-all duration-200 ${activeTab === 'prerequisites' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+              </div>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Today's Prerequisite</span>
+            </button>
+
+            <button
+              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'chatHistory'
+                ? 'bg-white  text-blue-600'
+                : 'dark:text-white '
+                }`}
+              onClick={() => setActiveTab('chatHistory')}
+            >
+              <div className="flex-shrink-0">
+                <Clock className={`transition-all duration-200 ${activeTab === 'chatHistory' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+              </div>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Chat History</span>
+            </button>
+
+            <button
+              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'reports'
+                ? 'bg-white  text-blue-600'
+                : 'dark:text-white '
+                }`}
+              onClick={() => setActiveTab('reports')}
+            >
+              <div className="flex-shrink-0">
+                <ClipboardList className={`transition-all duration-200 ${activeTab === 'reports' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+              </div>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Past Reports</span>
+            </button>
+
+            <button
+              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'prescription'
+                ? 'bg-white  text-blue-600'
+                : 'dark:text-white '
+                }`}
+              onClick={() => setActiveTab('prescription')}
+            >
+              <div className="flex-shrink-0">
+                <Pill className={`transition-all duration-200 ${activeTab === 'prescription' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+              </div>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Prescription</span>
+            </button>
+
+            <button
+              className={`flex items-center px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'allergies'
+                ? 'bg-white  text-blue-600'
+                : 'dark:text-white '
+                }`}
+              onClick={() => setActiveTab('allergies')}
+            >
+              <div className="flex-shrink-0">
+                <AlertTriangle className={`transition-all duration-200 ${activeTab === 'allergies' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+              </div>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Allergies</span>
+            </button>
+          </div>
+
+          {/* Tab Content */}
+          <div className="flex-1">
+            {renderTabContent()}
+          </div>
         </div>
       </div>
     </div>

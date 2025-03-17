@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { MedContext } from "../context/MedContext";
 import { Link } from "react-router-dom";
-import { ChevronDown, Clock } from "lucide-react";
+import { ChartSpline, ChevronDown, Clock, Droplets, Repeat } from "lucide-react";
 
 const Appoinments = () => {
     const {
@@ -86,27 +86,56 @@ const Appoinments = () => {
     };
 
     // Render a single patient card
-    const renderPatientCard = (user) => (
-        <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
-            <div className="grid grid-cols-[2fr_1fr] items-center gap-1 p-6  hover:bg-gray-50  transition-colors duration-150 cursor-pointer mx-4  border-b-1 border-[#2228365a]">
-
-                <div className="grid grid-cols-[3rem_auto] items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
-                        <img src={user.profileImage} className="w-full h-full object-cover" alt={user.name} />
+    const renderPatientCard = (user) => {
+        const [isHovered, setIsHovered] = useState(false);
+    
+        return (
+            <Link
+                to={`/user/${user._id}`}
+                key={user._id}
+                onClick={() => handleUserClick(user)}
+                className="block"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <div className={`grid grid-cols-[2fr_1fr] items-center gap-1 p-5 rounded-sm hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer mx-4 border-1 mb-4 border-[#2228365a] ${isHovered ? 'bg-white shadow-md' : 'bg-[#ffffff5d]'}`}>
+                    <div className="grid grid-cols-[3rem_auto] items-center gap-4">
+                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
+                            <img src={user.profileImage} className="w-full h-full object-cover" alt={user.name} />
+                        </div>
+                        <div>
+                            <h3 className="font-medium text-gray-900">{user.name}</h3>
+                            <p className="text-sm text-gray-500">#{user._id.slice(-7)}</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 className="font-medium text-gray-900">{user.name}</h3>
-                        <p className="text-sm text-gray-500">#{user._id.slice(-7)}</p>
+                    <div className="flex gap-2 items-center">
+                        <Clock size={15} />
+                        <span className="text-sm text-gray-500">{user.time}</span>
+                    </div>
+    
+                    {/* Expanded content wrapper - conditionally rendered */}
+                    <div className={`col-span-2 overflow-hidden transition-all duration-300 ease-in-out ${isHovered ? 'max-h-96' : 'max-h-0'}`}>
+                        <div className="mt-2 pt-4 ml-16">
+                            <div className="flex flex-col gap-3">
+                                <div>
+                                    <h4 className="text-md font-medium text-gray-800">Visiting for</h4>
+                                    <div className="flex gap-2 mt-2">
+                                        <button className="flex gap-1 text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-3 py-1"><Repeat size={15} />Routine</button>
+                                        <button className="flex gap-1 text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-3 py-1"><ChartSpline size={15} />Blood Pressure</button>
+                                        <button className="flex gap-1 text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-3 py-1"><Droplets size={15} />Sugar</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="text-md font-medium mt-4 text-gray-800">Additional Comments</h4>
+                                    <p className="text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, modi.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="flex gap-2 items-center">
-                    <Clock size={15} />
-                    <span className="text-sm text-gray-500">{user.time}</span>
-                </div>
-                {/* <ChevronDown size={20} /> */}
-            </div>
-        </Link>
-    );
+            </Link>
+        );
+    };
 
     // Render daily view - FIXED function to handle invalid dates
     const renderDailyView = () => {
