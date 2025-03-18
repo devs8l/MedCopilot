@@ -26,7 +26,7 @@ const UserData = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { users, filteredUsers, setIsUserSelected } = useContext(MedContext);
-  const { userMessages, isloadingHistory, isSessionActive, elapsedTime, startSession, endSession ,activeSessionUserId} = useContext(ChatContext);
+  const { userMessages, isloadingHistory, isSessionActive, elapsedTime, startSession, endSession, activeSessionUserId } = useContext(ChatContext);
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("summary");
   const [patientHistory, setPatientHistory] = useState(null);
@@ -51,7 +51,7 @@ const UserData = () => {
     }
     if (user) {
       setUserData(user);
-      
+
       // Check if patient history exists in local storage
       const cachedHistory = localStorage.getItem(`patientHistory_${user._id}`);
       if (cachedHistory) {
@@ -70,7 +70,7 @@ const UserData = () => {
   // Function to fetch patient history for reports tab
   const fetchPatientHistory = async () => {
     if (!userData) return;
-  
+
     setIsLoadingReports(true);
     try {
       const response = await fetch(
@@ -78,7 +78,7 @@ const UserData = () => {
       );
       if (!response.ok) throw new Error('Failed to fetch history');
       const historyData = await response.json();
-  
+
       const analysisResult = await fetch(
         `https://medicalchat-tau.vercel.app/medical_analysis/Provide a comprehensive overview of this patient's medical history`,
         {
@@ -89,22 +89,22 @@ const UserData = () => {
           body: JSON.stringify(historyData),
         }
       );
-  
+
       if (!analysisResult.ok) throw new Error('Failed to analyze history');
       const analysisData = await analysisResult.json();
-  
+
       const historyObj = {
         rawData: historyData,
         analysis: analysisData.content || 'No analysis available',
         timestamp: new Date().toISOString() // Add timestamp for cache invalidation if needed
       };
-      
+
       // Save to state
       setPatientHistory(historyObj);
-      
+
       // Save to local storage
       localStorage.setItem(`patientHistory_${userData._id}`, JSON.stringify(historyObj));
-  
+
     } catch (error) {
       console.error('Error fetching history:', error);
     } finally {
@@ -237,68 +237,68 @@ const UserData = () => {
           </div>
         );
 
-        case 'summary':
-          if (isLoadingReports) {
-            return (
-              <div className="flex flex-col items-center justify-center h-40">
-                <Loader className="w-8 h-8 animate-spin text-blue-500 mb-2" />
-                <p>Loading patient reports...</p>
-              </div>
-            );
-          }
-        
-          const analysisMessage = userData ?
-            userMessages[userData._id]?.find(msg =>
-              msg.type === 'bot' &&
-              !msg.isInitial &&
-              msg.content.includes('history')
-            ) : null;
-        
+      case 'summary':
+        if (isLoadingReports) {
           return (
-            <div className="space-y-4">
-              {analysisMessage && (
-                <div className="bg-white rounded-lg p-4 drop-shadow-sm mb-4">
-                  <h4 className="font-medium text-blue-600 mb-2">AI Analysis</h4>
-                  <div className="text-sm whitespace-pre-wrap">
-                    {analysisMessage.content}
-                  </div>
-                </div>
-              )}
-        
-              {patientHistory ? (
-                <div className="rounded-lg px-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium">Summary from Past</h4>
-                    <button
-                      onClick={clearCachedData}
-                      className="text-xs text-blue-500 hover:text-blue-700"
-                    >
-                      Refresh
-                    </button>
-                  </div>
-                  <div className="text-sm text-gray-500 whitespace-pre-wrap">
-                    {patientHistory.analysis}
-                  </div>
-                  {patientHistory.timestamp && (
-                    <p className="text-xs text-gray-400 mt-2">
-                      Last updated: {new Date(patientHistory.timestamp).toLocaleString()}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-40 text-gray-500">
-                  <AlertCircle className="w-8 h-8 mb-2" />
-                  <p>Unable to load patient reports</p>
-                  <button
-                    onClick={fetchPatientHistory}
-                    className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md text-sm"
-                  >
-                    Retry
-                  </button>
-                </div>
-              )}
+            <div className="flex flex-col items-center justify-center h-40">
+              <Loader className="w-8 h-8 animate-spin text-blue-500 mb-2" />
+              <p>Loading patient reports...</p>
             </div>
           );
+        }
+
+        const analysisMessage = userData ?
+          userMessages[userData._id]?.find(msg =>
+            msg.type === 'bot' &&
+            !msg.isInitial &&
+            msg.content.includes('history')
+          ) : null;
+
+        return (
+          <div className="space-y-4">
+            {analysisMessage && (
+              <div className="bg-white rounded-lg p-4 drop-shadow-sm mb-4">
+                <h4 className="font-medium text-blue-600 mb-2">AI Analysis</h4>
+                <div className="text-sm whitespace-pre-wrap">
+                  {analysisMessage.content}
+                </div>
+              </div>
+            )}
+
+            {patientHistory ? (
+              <div className="rounded-lg px-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-medium">Summary from Past</h4>
+                  <button
+                    onClick={clearCachedData}
+                    className="text-xs text-blue-500 hover:text-blue-700"
+                  >
+                    Refresh
+                  </button>
+                </div>
+                <div className="text-sm text-gray-500 whitespace-pre-wrap">
+                  {patientHistory.analysis}
+                </div>
+                {patientHistory.timestamp && (
+                  <p className="text-xs text-gray-400 mt-2">
+                    Last updated: {new Date(patientHistory.timestamp).toLocaleString()}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-40 text-gray-500">
+                <AlertCircle className="w-8 h-8 mb-2" />
+                <p>Unable to load patient reports</p>
+                <button
+                  onClick={fetchPatientHistory}
+                  className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md text-sm"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+          </div>
+        );
 
       case 'prerequisites':
         return (
@@ -413,79 +413,97 @@ const UserData = () => {
         <div className="flex">
           <div className="flex flex-col mb-2 mr-2 group gap-4 transition-all duration-300 w-11 group-hover:w-48 hover:w-48 overflow-hidden">
             <button
-              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'summary'
-                ? 'bg-white  text-blue-600'
+              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'summary'
+                ? 'bg-white text-blue-600'
                 : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('summary')}
             >
               <div className="flex-shrink-0">
-                <Sparkle className={`transition-all duration-200 ${activeTab === 'summary' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+                <Sparkle className={`transition-all duration-200 ${activeTab === 'summary'
+                    ? 'w-5 h-5 text-blue-600'
+                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Summary</span>
             </button>
 
             <button
-              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'prerequisites'
-                ? 'bg-white  text-blue-600'
+              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'prerequisites'
+                ? 'bg-white text-blue-600'
                 : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('prerequisites')}
             >
               <div className="flex-shrink-0">
-                <BookOpen className={`transition-all duration-200 ${activeTab === 'prerequisites' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+                <BookOpen className={`transition-all duration-200 ${activeTab === 'prerequisites'
+                    ? 'w-5 h-5 text-blue-600'
+                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Today's Prerequisite</span>
             </button>
 
             <button
-              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'chatHistory'
-                ? 'bg-white  text-blue-600'
+              className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'chatHistory'
+                ? 'bg-white text-blue-600'
                 : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('chatHistory')}
             >
               <div className="flex-shrink-0">
-                <Clock className={`transition-all duration-200 ${activeTab === 'chatHistory' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+                <Clock className={`transition-all duration-200 ${activeTab === 'chatHistory'
+                    ? 'w-5 h-5 text-blue-600'
+                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Chat History</span>
             </button>
 
             <button
-              className={`flex items-center px-3 cursor-pointer py-2 gap-2 rounded-sm transition-all duration-200 ${activeTab === 'reports'
-                ? 'bg-white  text-blue-600'
+              className={`flex items-center px-3 cursor-pointer py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'reports'
+                ? 'bg-white text-blue-600'
                 : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('reports')}
             >
               <div className="flex-shrink-0">
-                <ClipboardList className={`transition-all duration-200 ${activeTab === 'reports' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+                <ClipboardList className={`transition-all duration-200 ${activeTab === 'reports'
+                    ? 'w-5 h-5 text-blue-600'
+                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Past Reports</span>
             </button>
 
             <button
-              className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 ${activeTab === 'prescription'
-                ? 'bg-white  text-blue-600'
+              className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'prescription'
+                ? 'bg-white text-blue-600'
                 : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('prescription')}
             >
               <div className="flex-shrink-0">
-                <Pill className={`transition-all duration-200 ${activeTab === 'prescription' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+                <Pill className={`transition-all duration-200 ${activeTab === 'prescription'
+                    ? 'w-5 h-5 text-blue-600'
+                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Prescription</span>
             </button>
 
             <button
-              className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 ${activeTab === 'allergies'
-                ? 'bg-white  text-blue-600'
+              className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'allergies'
+                ? 'bg-white text-blue-600'
                 : 'dark:text-white bg-[#ffffffc2]'
                 }`}
               onClick={() => setActiveTab('allergies')}
             >
               <div className="flex-shrink-0">
-                <AlertTriangle className={`transition-all duration-200 ${activeTab === 'allergies' ? 'w-5 h-5 text-blue-600' : 'w-4 h-4'}`} />
+                <AlertTriangle className={`transition-all duration-200 ${activeTab === 'allergies'
+                    ? 'w-5 h-5 text-blue-600'
+                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Allergies</span>
             </button>
