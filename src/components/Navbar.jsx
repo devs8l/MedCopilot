@@ -98,13 +98,13 @@ const Navbar = () => {
                     </button>
                 )}
                 
-                <div className="w-8 h-8 flex items-center justify-center">
+                {/* <div className="w-8 h-8 flex items-center justify-center">
                     <CircleHelp />
                 </div>
                 
                 <button onClick={toggleTheme} className="p-2 rounded-full flex items-center justify-center">
                     {theme === "dark" ? <Sun className="" /> : <Moon className=" text-gray-800" />}
-                </button>
+                </button> */}
             </div>
         </div>
     );
