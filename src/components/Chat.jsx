@@ -306,10 +306,10 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-md w-full shadow-lg">
                         <div className="flex items-center gap-3 mb-4">
                             <AlertCircle className="text-red-500" size={24} />
-                            <h2 className="text-lg font-semibold dark:text-white">End Session</h2>
+                            <h2 className="text-lg font-semibold dark:text-white">End Chat</h2>
                         </div>
                         <p className="mb-6 dark:text-gray-300">
-                            Are you sure you want to end the session for{' '}
+                            Are you sure you want to end the chat for{' '}
                             {activeTabs.find(tab => tab._id === tabToClose)?.name}?
                         </p>
                         <div className="flex justify-end gap-3">
@@ -323,7 +323,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                                 onClick={confirmCloseTab}
                                 className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                             >
-                                End Session
+                                End Chat
                             </button>
                         </div>
                     </div>

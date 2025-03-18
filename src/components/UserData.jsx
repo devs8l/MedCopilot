@@ -51,13 +51,26 @@ const UserData = () => {
     }
     if (user) {
       setUserData(user);
+      
+      // Check if patient history exists in local storage
+      const cachedHistory = localStorage.getItem(`patientHistory_${user._id}`);
+      if (cachedHistory) {
+        try {
+          setPatientHistory(JSON.parse(cachedHistory));
+        } catch (error) {
+          console.error('Error parsing cached history:', error);
+          setPatientHistory(null);
+        }
+      } else {
+        setPatientHistory(null); // Reset patient history when a new patient is selected
+      }
     }
   }, [id, filteredUsers, users]);
 
   // Function to fetch patient history for reports tab
   const fetchPatientHistory = async () => {
     if (!userData) return;
-
+  
     setIsLoadingReports(true);
     try {
       const response = await fetch(
@@ -65,6 +78,7 @@ const UserData = () => {
       );
       if (!response.ok) throw new Error('Failed to fetch history');
       const historyData = await response.json();
+  
       const analysisResult = await fetch(
         `https://medicalchat-tau.vercel.app/medical_analysis/Provide a comprehensive overview of this patient's medical history`,
         {
@@ -75,15 +89,22 @@ const UserData = () => {
           body: JSON.stringify(historyData),
         }
       );
-
+  
       if (!analysisResult.ok) throw new Error('Failed to analyze history');
       const analysisData = await analysisResult.json();
-
-      setPatientHistory({
+  
+      const historyObj = {
         rawData: historyData,
-        analysis: analysisData.content || 'No analysis available'
-      });
-
+        analysis: analysisData.content || 'No analysis available',
+        timestamp: new Date().toISOString() // Add timestamp for cache invalidation if needed
+      };
+      
+      // Save to state
+      setPatientHistory(historyObj);
+      
+      // Save to local storage
+      localStorage.setItem(`patientHistory_${userData._id}`, JSON.stringify(historyObj));
+  
     } catch (error) {
       console.error('Error fetching history:', error);
     } finally {
@@ -93,10 +114,10 @@ const UserData = () => {
 
   // Load reports data when tab changes to 'reports'
   useEffect(() => {
-    if (activeTab === 'reports' && userData && !patientHistory) {
+    if (activeTab === 'summary' && userData && !patientHistory) {
       fetchPatientHistory();
     }
-  }, [activeTab, userData]);
+  }, [activeTab, userData, patientHistory]); // Added patientHistory dependency
 
   // Format and store chat history data when user messages change
   useEffect(() => {
@@ -153,6 +174,15 @@ const UserData = () => {
     }
   }, [userData, userMessages]);
 
+  // Function to clear cached data - useful for debugging or forcing a refresh
+  const clearCachedData = () => {
+    if (userData) {
+      localStorage.removeItem(`patientHistory_${userData._id}`);
+      setPatientHistory(null);
+      fetchPatientHistory();
+    }
+  };
+
   if (!userData) {
     return <h2 className="text-center text-gray-500 flex w-full h-full items-center justify-center"><Ellipsis /></h2>;
   }
@@ -207,62 +237,73 @@ const UserData = () => {
           </div>
         );
 
-      case 'summary':
-        if (isLoadingReports) {
+        case 'summary':
+          if (isLoadingReports) {
+            return (
+              <div className="flex flex-col items-center justify-center h-40">
+                <Loader className="w-8 h-8 animate-spin text-blue-500 mb-2" />
+                <p>Loading patient reports...</p>
+              </div>
+            );
+          }
+        
+          const analysisMessage = userData ?
+            userMessages[userData._id]?.find(msg =>
+              msg.type === 'bot' &&
+              !msg.isInitial &&
+              msg.content.includes('history')
+            ) : null;
+        
           return (
-            <div className="flex flex-col items-center justify-center h-40">
-              <Loader className="w-8 h-8 animate-spin text-blue-500 mb-2" />
-              <p>Loading patient reports...</p>
+            <div className="space-y-4">
+              {analysisMessage && (
+                <div className="bg-white rounded-lg p-4 drop-shadow-sm mb-4">
+                  <h4 className="font-medium text-blue-600 mb-2">AI Analysis</h4>
+                  <div className="text-sm whitespace-pre-wrap">
+                    {analysisMessage.content}
+                  </div>
+                </div>
+              )}
+        
+              {patientHistory ? (
+                <div className="rounded-lg px-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-medium">Summary from Past</h4>
+                    <button
+                      onClick={clearCachedData}
+                      className="text-xs text-blue-500 hover:text-blue-700"
+                    >
+                      Refresh
+                    </button>
+                  </div>
+                  <div className="text-sm text-gray-500 whitespace-pre-wrap">
+                    {patientHistory.analysis}
+                  </div>
+                  {patientHistory.timestamp && (
+                    <p className="text-xs text-gray-400 mt-2">
+                      Last updated: {new Date(patientHistory.timestamp).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-40 text-gray-500">
+                  <AlertCircle className="w-8 h-8 mb-2" />
+                  <p>Unable to load patient reports</p>
+                  <button
+                    onClick={fetchPatientHistory}
+                    className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md text-sm"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
             </div>
           );
-        }
-
-        const analysisMessage = userData ?
-          userMessages[userData._id]?.find(msg =>
-            msg.type === 'bot' &&
-            !msg.isInitial &&
-            msg.content.includes('history')
-          ) : null;
-
-        return (
-          <div className="space-y-4">
-            {/* <h3 className="font-semibold text-lg">Patient Reports</h3> */}
-
-            {analysisMessage && (
-              <div className="bg-white rounded-lg p-4 drop-shadow-sm mb-4">
-                <h4 className="font-medium text-blue-600 mb-2">AI Analysis</h4>
-                <div className="text-sm whitespace-pre-wrap">
-                  {analysisMessage.content}
-                </div>
-              </div>
-            )}
-
-            {patientHistory ? (
-              <div className=" rounded-lg px-4">
-                <h4 className="font-medium  mb-2">Summary from Past</h4>
-                <div className="text-sm text-gray-500 whitespace-pre-wrap">
-                  {patientHistory.analysis}
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-40 text-gray-500">
-                <AlertCircle className="w-8 h-8 mb-2" />
-                <p>Unable to load patient reports</p>
-                <button
-                  onClick={fetchPatientHistory}
-                  className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md text-sm"
-                >
-                  Retry
-                </button>
-              </div>
-            )}
-          </div>
-        );
 
       case 'prerequisites':
         return (
           <div className="px-4">
-            <h2 className="text-md">Today’s Prerequisite</h2>
+            <h2 className="text-md">Today's Prerequisite</h2>
             <p className="text-gray-500">Past Reports</p>
           </div>
         );
@@ -297,7 +338,7 @@ const UserData = () => {
             <h2 className="text-md ">Past reports</h2>
             <div className="text-gray-500">
               <p>Summary from last visit, 5th March (Wednesday)</p>
-              <p>Everything’s looking good! Her recent readings were consistently within the 120-135/75-85 range, her medication and activity logs are in order. I don’t see any need for changes or adjustments at this time.</p>
+              <p>Everything's looking good! Her recent readings were consistently within the 120-135/75-85 range, her medication and activity logs are in order. I don't see any need for changes or adjustments at this time.</p>
               <ul className="list-disc list-inside mt-2">
                 <li>Readings: 120-135/75-85 (good range).</li>
                 <li>Meds/activity: OK.</li>
