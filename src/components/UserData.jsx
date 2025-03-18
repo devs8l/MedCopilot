@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
-import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer } from "lucide-react";
+import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer, ChartSpline } from "lucide-react";
+import Chart from "./Chart";
 
 
 const Stopwatch = ({ elapsedTime }) => {
@@ -111,6 +112,39 @@ const UserData = () => {
       setIsLoadingReports(false);
     }
   };
+
+
+  //charts sec
+  const [healthMetricsData, setHealthMetricsData] = useState(null);
+  const [isLoadingHealthMetrics, setIsLoadingHealthMetrics] = useState(false);
+
+  const fetchHealthMetrics = async () => {
+    if (!userData) return;
+
+    setIsLoadingHealthMetrics(true);
+    try {
+      const response = await fetch(
+        `https://medicalchat-backend-mongodb.vercel.app/patients/${userData._id}/health-metrics`
+      );
+      if (!response.ok) throw new Error('Failed to fetch health metrics');
+      const metricsData = await response.json();
+      setHealthMetricsData(metricsData);
+    } catch (error) {
+      console.error('Error fetching health metrics:', error);
+      setHealthMetricsData(null);
+    } finally {
+      setIsLoadingHealthMetrics(false);
+    }
+  };
+
+
+  useEffect(() => {
+    if (activeTab === 'Trends' && userData) {
+      fetchHealthMetrics();
+    }
+  }, [activeTab, userData?._id]);
+
+
 
   // Load reports data when tab changes to 'reports'
   useEffect(() => {
@@ -348,6 +382,21 @@ const UserData = () => {
             </div>
           </div>
         );
+      case 'Trends':
+        return (
+          <div className="px-10">
+            <div className="text-gray-500">
+              {isLoadingHealthMetrics ? (
+                <div className="flex flex-col items-center justify-center h-40">
+                  <Loader className="w-8 h-8 animate-spin text-blue-500 mb-2" />
+                  <p>Loading health metrics...</p>
+                </div>
+              ) : (
+                <Chart rawData={healthMetricsData || []} />
+              )}
+            </div>
+          </div>
+        );
 
       default:
         return null;
@@ -411,7 +460,7 @@ const UserData = () => {
 
         {/* Action Buttons */}
         <div className="flex">
-          <div className="flex flex-col mb-2 mr-2 group gap-4 transition-all duration-300 w-11 group-hover:w-48 hover:w-48 overflow-hidden">
+          <div className="flex flex-col mb-2 mr-2  group gap-4 transition-all duration-300 w-11 group-hover:w-48 hover:w-48 overflow-hidden">
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'summary'
                 ? 'bg-white text-blue-600'
@@ -421,8 +470,8 @@ const UserData = () => {
             >
               <div className="flex-shrink-0">
                 <Sparkle className={`transition-all duration-200 ${activeTab === 'summary'
-                    ? 'w-5 h-5 text-blue-600'
-                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Summary</span>
@@ -437,8 +486,8 @@ const UserData = () => {
             >
               <div className="flex-shrink-0">
                 <BookOpen className={`transition-all duration-200 ${activeTab === 'prerequisites'
-                    ? 'w-5 h-5 text-blue-600'
-                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Today's Prerequisite</span>
@@ -453,13 +502,28 @@ const UserData = () => {
             >
               <div className="flex-shrink-0">
                 <Clock className={`transition-all duration-200 ${activeTab === 'chatHistory'
-                    ? 'w-5 h-5 text-blue-600'
-                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Chat History</span>
             </button>
 
+            <button
+              className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'Trends'
+                ? 'bg-white text-blue-600'
+                : 'dark:text-white bg-[#ffffffc2]'
+                }`}
+              onClick={() => setActiveTab('Trends')}
+            >
+              <div className="flex-shrink-0">
+                <ChartSpline className={`transition-all duration-200 ${activeTab === 'Trends'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
+              </div>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Trends</span>
+            </button>
             <button
               className={`flex items-center px-3 cursor-pointer py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'reports'
                 ? 'bg-white text-blue-600'
@@ -469,8 +533,8 @@ const UserData = () => {
             >
               <div className="flex-shrink-0">
                 <ClipboardList className={`transition-all duration-200 ${activeTab === 'reports'
-                    ? 'w-5 h-5 text-blue-600'
-                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Past Reports</span>
@@ -485,8 +549,8 @@ const UserData = () => {
             >
               <div className="flex-shrink-0">
                 <Pill className={`transition-all duration-200 ${activeTab === 'prescription'
-                    ? 'w-5 h-5 text-blue-600'
-                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Prescription</span>
@@ -501,12 +565,14 @@ const UserData = () => {
             >
               <div className="flex-shrink-0">
                 <AlertTriangle className={`transition-all duration-200 ${activeTab === 'allergies'
-                    ? 'w-5 h-5 text-blue-600'
-                    : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Allergies</span>
             </button>
+
+
           </div>
 
           {/* Tab Content */}
