@@ -14,7 +14,7 @@ const Appointments = () => {
         weekBounds,
         setSelectedUser
     } = useContext(MedContext);
-
+    const [hoveredUserId, setHoveredUserId] = useState(null);
     const displayedUsers = searchQuery ? searchFilteredUsers : filteredUsers;
 
     // Function to group patients by day of week
@@ -83,21 +83,22 @@ const Appointments = () => {
     const handleUserClick = (user) => {
         setSelectedUser(user); // Store the selected user in context
         setIsUserSelected(true);
+        console.log("Selected user:", user);
+        
     };
 
     // Render a single patient card
-    const renderPatientCard = (user) => {
-        const [isHovered, setIsHovered] = useState(false);
-        console.log("user------>",user);
     
+    const renderPatientCard = (user) => {
+        const isHovered = hoveredUserId === user._id;
         return (
             <Link
                 to={`/user/${user._id}`}
                 key={user._id}
                 onClick={() => handleUserClick(user)}
                 className="block"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseEnter={() => setHoveredUserId(user._id)}
+                onMouseLeave={() => setHoveredUserId(null)}
             >
                 <div className={`grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center gap-1 p-3 sm:p-5 rounded-sm hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 border border-[#2228365a] ${isHovered ? 'bg-white shadow-md' : 'bg-[#ffffff5d]'} mb-3 sm:mb-4`}>
                     <div className="grid grid-cols-[2.5rem_auto] sm:grid-cols-[3rem_auto] items-center gap-2 sm:gap-4">
