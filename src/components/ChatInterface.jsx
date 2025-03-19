@@ -32,10 +32,10 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
   ];
 
   const generalSuggestionPrompts = [
-    "What are the symptoms of seasonal allergies?",
-    "How can I improve my sleep quality?",
-    "What foods are good for heart health?",
-    "How much exercise is recommended per week?"
+    "Summary of my patient list for today",
+    "Which patients need urgent attention or follow ups?",
+    "What patterns should i be aware in today’s patients?",
+    "Any missed appointments or cancellations today?"
   ];
 
   // Choose which prompts to display based on patient selection
@@ -122,24 +122,24 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
   };
 
   return (
-    <div className="flex flex-col h-full w-full mx-auto  shadow-lg transition-opacity duration-200 ease-in-out" 
+    <div className="flex flex-col h-full w-full mx-auto shadow-lg transition-opacity duration-200 ease-in-out" 
          style={{ opacity: isTransitioning ? 0.7 : 1 }}>
       {/* Messages Container with fixed minimum height */}
       <div 
         ref={messageContainerRef}
-        className={`flex-1 overflow-y-auto pb-4 pr-4 pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}
+        className={`flex-1 overflow-y-auto pb-1 sm:pb-1 md:pb-2 lg:pb-3 xl:pb-4 pr-1 sm:pr-2 md:pr-3 lg:pr-4 xl:pr-4 pl-1 sm:pl-2 md:pl-3 lg:pl-4 xl:pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}
       >
         {messages.length === 1 ? (
           <div className="text-center space-y-1">
-            <div className="text-xl font-semibold dark:text-white">{messages[0].content}</div>
-            <p className="text-sm text-gray-600">{messages[0].subtext}</p>
-            <p className="text-sm text-gray-600 mb-10 mt-10">{messages[0].para}</p>
+            <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl font-semibold dark:text-white">{messages[0].content}</div>
+            <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-gray-600">{messages[0].subtext}</p>
+            <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-gray-600 mb-2 sm:mb-3 md:mb-4 lg:mb-6 xl:mb-8 mt-2 sm:mt-3 md:mt-4 lg:mt-6 xl:mt-8">{messages[0].para}</p>
 
-            <div className="grid grid-cols-2 gap-4 w-2/3 m-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-4 w-full sm:w-2/3 md:w-2/3 lg:w-2/3 xl:w-2/3 m-auto">
               {suggestionPrompts.map((prompt, index) => (
                 <button
                   key={index}
-                  className="p-4 text-sm text-[#52A1FF] border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-left"
+                  className="p-1 sm:p-2 md:p-3 lg:p-4 xl:p-4 text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-[#52A1FF] border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-left"
                   onClick={() => setInputMessage(prompt)}
                 >
                   {prompt}
@@ -148,27 +148,27 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-5 xl:space-y-6">
             {messages.map((message, index) => (
               <div key={index} className="space-y-1">
                 {/* User messages always render normally */}
                 {message.type === 'user' && (
                   <div className="flex justify-end">
-                    <div className="bg-blue-500 text-white max-w-[80%] rounded-lg p-3">
-                      <p>{message.content}</p>
+                    <div className="bg-blue-500 text-white max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm">{message.content}</p>
 
                       {/* Display files for user messages if they exist */}
                       {message.files && message.files.length > 0 && (
-                        <div className="mt-2 space-y-2">
+                        <div className="mt-1 sm:mt-1 md:mt-2 lg:mt-2 xl:mt-2 space-y-1 sm:space-y-1 md:space-y-2 lg:space-y-2 xl:space-y-2">
                           {message.files.map((file, fileIndex) => (
                             <div
                               key={fileIndex}
-                              className="p-2 rounded flex justify-between items-center cursor-pointer hover:bg-opacity-30"
+                              className="p-1 sm:p-1 md:p-2 lg:p-2 xl:p-2 rounded flex justify-between items-center cursor-pointer hover:bg-opacity-30"
                               onClick={() => handleDocumentClick(file)}
                             >
                               <div className="flex items-center">
                                 <img src="/doc.svg" className='w-3 h-3 mr-1' alt="" />
-                                <span className="text-sm truncate max-w-[200px]">{file.name}</span>
+                                <span className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm truncate max-w-[100px] sm:max-w-[120px] md:max-w-[150px] lg:max-w-[180px] xl:max-w-[200px]">{file.name}</span>
                               </div>
                             </div>
                           ))}
@@ -181,25 +181,25 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                 {/* For bot messages, check loading state */}
                 {message.type === 'bot' && !message.isInitial && (
                   <div className="flex justify-start">
-                    <div className="bg-white text-gray-800 max-w-[80%] rounded-lg p-3">
-                      <p>{message.content}</p>
+                    <div className="bg-white text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm">{message.content}</p>
 
                       {/* Action buttons for bot messages */}
-                      <div className="flex justify-start space-x-4 text-gray-500 ml-2 mt-4">
+                      <div className="flex justify-start space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4 xl:space-x-4 text-gray-500 ml-1 sm:ml-1 md:ml-2 lg:ml-2 xl:ml-2 mt-1 sm:mt-2 md:mt-3 lg:mt-4 xl:mt-4">
                         <button onClick={() => regenerateMessage(index)} className="hover:text-blue-500">
-                          <RefreshCcw size={18} />
+                          <RefreshCcw size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
                         </button>
                         <button onClick={() => handleCopy(message.content)} className="hover:text-green-500">
-                          <Clipboard size={18} />
+                          <Clipboard size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
                         </button>
                         <button onClick={() => console.log('Forward')} className="hover:text-yellow-500">
-                          <ArrowRight size={18} />
+                          <ArrowRight size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
                         </button>
                         <button onClick={() => console.log('Liked')} className="hover:text-blue-500">
-                          <ThumbsUp size={18} />
+                          <ThumbsUp size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
                         </button>
                         <button onClick={() => console.log('Disliked')} className="hover:text-red-500">
-                          <ThumbsDown size={18} />
+                          <ThumbsDown size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
                         </button>
                       </div>
                     </div>
@@ -211,9 +211,9 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
             {/* Separate loader div that appears only when loading */}
             {isMessageLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 text-gray-800 max-w-[80%] rounded-xl p-3 flex items-center space-x-2">
-                  <Loader2 className="animate-spin text-gray-500" size={20} />
-                  <span className="text-sm text-gray-500">
+                <div className="bg-gray-100 text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-xl p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 flex items-center space-x-1 sm:space-x-1 md:space-x-2 lg:space-x-2 xl:space-x-2">
+                  <Loader2 className="animate-spin text-gray-500" size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
+                  <span className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-gray-500">
                     {selectedUser ? "MedCopilot is preparing a detailed response..." : "Health Copilot is preparing a response..."}
                   </span>
                 </div>
@@ -235,19 +235,19 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
       />
 
       {/* Display uploaded files before sending - fixed height to prevent layout shifts */}
-      <div className="maz-h-[10px] transition-all duration-200 ease-in-out">
+      <div className="max-h-[10px] transition-all duration-200 ease-in-out">
         {uploadedFiles.length > 0 && (
-          <div className="px-3 py-2">
-            <div className="flex flex-wrap gap-2">
+          <div className="px-1 sm:px-2 md:px-3 lg:px-3 xl:px-3 py-1 sm:py-1 md:py-2 lg:py-2 xl:py-2">
+            <div className="flex flex-wrap gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2">
               {uploadedFiles.map((file, index) => (
-                <div key={index} className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1">
-                  <span className="text-xs truncate max-w-[150px]">{file.name}</span>
+                <div key={index} className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-1 sm:px-2 md:px-3 lg:px-3 xl:px-3 py-1">
+                  <span className="text-xs truncate max-w-[60px] sm:max-w-[80px] md:max-w-[100px] lg:max-w-[120px] xl:max-w-[150px]">{file.name}</span>
                   <button
                     onClick={() => handleRemoveFile(index)}
-                    className="ml-2 text-gray-500 hover:text-red-500"
+                    className="ml-1 sm:ml-1 md:ml-2 lg:ml-2 xl:ml-2 text-gray-500 hover:text-red-500"
                     disabled={isTransitioning}
                   >
-                    <X size={14} />
+                    <X size={10} sm:size={12} md:size={14} lg:size={14} xl:size={14} />
                   </button>
                 </div>
               ))}
@@ -257,52 +257,34 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
       </div>
 
       {/* Input Area with smooth transitions */}
-      <div className={`p-4 px-0 ${isFullScreen ? 'w-1/3' : 'w-full'} mx-auto transition-all duration-200 ease-in-out`}>
-        <div className="flex flex-col gap-2 bg-white dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1">
+      <div className={`p-1 sm:py-2 md:py-3 lg:py-3 xl:py-4 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-full'} mx-auto transition-all duration-200 ease-in-out`}>
+        <div className="flex flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-white dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1">
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isTransitioning && handleSendMessage()}
             placeholder={selectedUser ? "How can MedCopilot help with this patient?" : "Ask Health Copilot any general health questions"}
-            className="flex-1 p-4 rounded-lg focus:outline-none dark:bg-[#27313C] dark:text-white"
+            className="flex-1 p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 rounded-lg focus:outline-none dark:bg-[#27313C] dark:text-white"
             disabled={isTransitioning}
           />
-          <div className='flex justify-between items-center p-4'>
+          <div className='flex justify-between items-center p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3'>
             <div className='flex'>
               <button
                 onClick={triggerFileUpload}
-                className="p-3 mr-2 border-[#9B9EA2] border text-white rounded-full cursor-pointer transition-colors"
+                className="p-1 sm:p-1 md:p-2 lg:p-2 xl:p-2 mr-1 sm:mr-1 md:mr-2 lg:mr-2 xl:mr-2 border-[#9B9EA2] border text-white rounded-full cursor-pointer transition-colors"
                 disabled={isTransitioning}
               >
-                <img src="/doc.svg" className='w-4 h-4' alt="" />
-              </button>
-              <button
-                onClick={handleSendMessage}
-                className="p-2 px-4 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
-                disabled={isTransitioning}
-              >
-                <Lightbulb color={'#9B9EA2'} size={20} /><span className='text-[#9B9EA2]'>Think</span>
+                <img src="/doc.svg" className='w-3 h-3 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-4 lg:h-4 xl:w-4 xl:h-4' alt="" />
               </button>
             </div>
             <div className='flex'>
               <button
-                onClick={() => handleClockClick()}
-                className="p-3 mr-2 border-[#9B9EA2] border text-white flex rounded-full cursor-pointer gap-2 items-center transition-colors"
-                disabled={isTransitioning || isloadingHistory}
-              >
-                {isloadingHistory ? (
-                  <Loader2 className="animate-spin" color={'#9B9EA2'} size={20} />
-                ) : (
-                  <History color={'#9B9EA2'} size={20} />
-                )}
-              </button>
-              <button
                 onClick={handleSendMessage}
-                className="p-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
+                className="p-1 sm:p-1 md:p-2 lg:p-2 xl:p-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
                 disabled={isTransitioning}
               >
-                <ArrowUp size={25} />
+                <ArrowUp size={14} sm:size={16} md:size={18} lg:size={18} xl:size={18} />
               </button>
             </div>
           </div>

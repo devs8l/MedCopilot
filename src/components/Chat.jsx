@@ -7,47 +7,36 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
     const { selectedUser, setIsUserSelected, setSelectedUser } = useContext(MedContext);
-    const { clearChatHistory, userMessages, endSession } = useContext(ChatContext); // Add endSession from ChatContext
+    const { clearChatHistory, userMessages, endSession } = useContext(ChatContext);
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Add a state for transition animation
     const [isTransitioning, setIsTransitioning] = useState(false);
-
-    // Create a ref to track ongoing transitions to prevent overlapping animations
     const transitionTimeoutRef = useRef(null);
 
-    // Store active tabs
     const [activeTabs, setActiveTabs] = useState(() => {
         const storedTabs = localStorage.getItem('activeTabs');
         return storedTabs ? JSON.parse(storedTabs) : [];
     });
 
-    // Current active tab (user ID or 'general')
     const [activeTabId, setActiveTabId] = useState(() => {
-        // Initialize with 'general' unless we're on a user route
         return location.pathname.startsWith('/user/') ? location.pathname.split('/')[2] : 'general';
     });
 
-    // Dialog state
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [tabToClose, setTabToClose] = useState(null);
 
-    // Helper function to safely handle transitions and prevent overlapping ones
     const safeTransition = (callback, duration = 300) => {
         if (isTransitioning) return false;
 
-        // Clear any existing timeout
         if (transitionTimeoutRef.current) {
             clearTimeout(transitionTimeoutRef.current);
         }
 
         setIsTransitioning(true);
 
-        // Execute callback
         callback();
 
-        // Set timeout to clear transitioning state
         transitionTimeoutRef.current = setTimeout(() => {
             setIsTransitioning(false);
             transitionTimeoutRef.current = null;
@@ -56,48 +45,37 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
         return true;
     };
 
-    // Check URL for user ID on component mount and route changes
     useEffect(() => {
-        if (isTransitioning) return; // Skip during transitions to prevent jitter
+        if (isTransitioning) return;
 
         const isUserRoute = location.pathname.startsWith('/user/');
 
         if (isUserRoute) {
             const userId = location.pathname.split('/')[2];
-
-            // If we're on a user route, set the appropriate state
-            if (userId) {
-                // Find the user in active tabs
-                const userTab = activeTabs.find(tab => tab._id === userId);
-                if (userTab) {
-                    setSelectedUser(userTab);
-                    setActiveTabId(userId);
-                    setIsUserSelected(true);
-                }
+            const userTab = activeTabs.find(tab => tab._id === userId);
+            if (userTab) {
+                setSelectedUser(userTab);
+                setActiveTabId(userId);
+                setIsUserSelected(true);
             }
         } else if (location.pathname === '/') {
-            // If we're on the home route, ensure we're in general chat mode
             setSelectedUser(null);
             setActiveTabId('general');
             setIsUserSelected(false);
         }
     }, [location.pathname, activeTabs, setSelectedUser, setIsUserSelected, isTransitioning]);
 
-    // Effect to track if user is newly selected
     useEffect(() => {
-        if (isTransitioning) return; // Skip during transitions
+        if (isTransitioning) return;
 
         if (selectedUser && !activeTabs.find(tab => tab._id === selectedUser._id)) {
-            // Add new user to tabs without causing a layout shift
             safeTransition(() => {
                 setActiveTabs(prev => [...prev, selectedUser]);
-                // Set local storage
                 localStorage.setItem(`sessionStarted_${selectedUser._id}`, "true");
             });
         }
     }, [selectedUser, activeTabs]);
 
-    // Save active tabs to localStorage with debounce to reduce writes
     useEffect(() => {
         const debounce = setTimeout(() => {
             localStorage.setItem('activeTabs', JSON.stringify(activeTabs));
@@ -106,22 +84,17 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
         return () => clearTimeout(debounce);
     }, [activeTabs]);
 
-    // Function to directly navigate to general chat without relying on state changes
     const switchToGeneralTab = () => {
         if (activeTabId === 'general') return;
 
         safeTransition(() => {
-            // Batch state updates
             setSelectedUser(null);
             setActiveTabId('general');
             setIsUserSelected(false);
-
-            // Navigate
             navigate('/');
         });
     };
 
-    // Function to switch between tabs with URL navigation
     const switchToTab = (userId) => {
         if (userId === activeTabId) return;
 
@@ -131,7 +104,6 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
             } else {
                 const userToSelect = activeTabs.find(tab => tab._id === userId);
                 if (userToSelect) {
-                    // Batch state updates
                     setSelectedUser(userToSelect);
                     setActiveTabId(userId);
                     setIsUserSelected(true);
@@ -141,35 +113,24 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
         });
     };
 
-    // Function to close tab with confirmation
     const handleCloseTab = (e, userId) => {
-        e.stopPropagation(); // Prevent tab switching when clicking close button
+        e.stopPropagation();
         setTabToClose(userId);
         setShowConfirmDialog(true);
     };
 
-    // Confirm closing tab with improved tab switching logic
     const confirmCloseTab = () => {
         if (!tabToClose) return;
 
         safeTransition(() => {
-            // Find the index of the tab being closed
             const tabIndex = activeTabs.findIndex(tab => tab._id === tabToClose);
-
-            // Remove from active tabs
             const updatedTabs = activeTabs.filter(tab => tab._id !== tabToClose);
 
-            // Clear localStorage for this user session
             localStorage.removeItem(`promptGiven_${tabToClose}`);
             localStorage.removeItem(`sessionStarted_${tabToClose}`);
-
-            // Clear chat history for this user
             clearChatHistory(tabToClose);
+            endSession(tabToClose);
 
-            // End the session for this user
-            endSession(tabToClose); // Add this line to end the session
-
-            // If we're closing the active tab, switch to the next available tab or general
             if (activeTabId === tabToClose) {
                 if (updatedTabs.length > 0) {
                     let nextTabIndex = tabIndex;
@@ -178,14 +139,11 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     }
 
                     const nextTab = updatedTabs[nextTabIndex];
-                    // Update state first in a single batch
                     setSelectedUser(nextTab);
                     setActiveTabId(nextTab._id);
                     setIsUserSelected(true);
-                    // Then navigate
                     navigate(`/user/${nextTab._id}`);
                 } else {
-                    // No tabs left, switch to general chat
                     setSelectedUser(null);
                     setActiveTabId('general');
                     setIsUserSelected(false);
@@ -193,7 +151,6 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                 }
             }
 
-            // Update tabs state
             setActiveTabs(updatedTabs);
             setShowConfirmDialog(false);
             setTabToClose(null);
@@ -205,7 +162,6 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
         setTabToClose(null);
     };
 
-    // Determine if a tab has chat history
     const hasHistory = (userId) => {
         if (userId === 'general') {
             return userMessages.general && userMessages.general.length > 1;
@@ -214,47 +170,47 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
     };
 
     return (
-        <div className="px-3 pt-3 bg-[#ffffffc8] dark:bg-[#00000099] rounded-lg flex flex-col overflow-hidden">
+        <div className="px-2 sm:px-3 pt-2 sm:pt-3 bg-[#ffffffc8] dark:bg-[#00000099] rounded-lg flex flex-col overflow-hidden">
             <div className="flex items-center justify-between">
-                <h1 className="text-xl text-[#222836] dark:text-white font-semibold mt-4 px-4 mb-2">Chat</h1>
-                <div className={`flex space-x-4 items-center mt-2 justify-center  mr-5 `}>
+                <h1 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mt-2 sm:mt-4 px-2 sm:px-4 mb-1 sm:mb-2">Chat</h1>
+                <div className={`flex space-x-2 sm:space-x-4 items-center mt-1 sm:mt-2 justify-center mr-2 sm:mr-5`}>
                     <button
                         onClick={() => !isTransitioning && swapPosition(true)}
                         className={`rounded ${isFullScreen ? "hidden" : ""} ${isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
                         disabled={isSwapped || isTransitioning}
                     >
-                        <img src="/right.svg" alt="" className="rotate-180 w-6 h-6 " />
+                        <img src="/right.svg" alt="" className="rotate-180 w-4 sm:w-6 h-4 sm:h-6" />
                     </button>
                     <button
                         onClick={() => !isTransitioning && swapPosition(false)}
-                        className={` rounded ${isFullScreen ? "hidden" : ""} ${!isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
+                        className={`rounded ${isFullScreen ? "hidden" : ""} ${!isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
                         disabled={!isSwapped || isTransitioning}
                     >
-                        <img src="/right.svg" className="w-6 h-6" alt="" />
+                        <img src="/right.svg" className="w-4 sm:w-6 h-4 sm:h-6" alt="" />
                     </button>
                     <button
                         onClick={() => !isTransitioning && toggleFullScreen()}
-                        className="p-1 rounded hover:bg-gray-100 cursor-pointer ml-auto w-8 h-8 flex items-center justify-center"
+                        className="p-1 rounded hover:bg-gray-100 cursor-pointer ml-auto w-6 sm:w-8 h-6 sm:h-8 flex items-center justify-center"
                         disabled={isTransitioning}
                     >
-                        {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
+                        {isFullScreen ? <Minimize size={16} sm:size={20} /> : <Maximize size={16} sm:size={20} />}
                     </button>
                 </div>
             </div>
-            {/* Header with tabs and buttons - Fixed heights to prevent jitter */}
-            <div className={`px-4 py-2 flex items-center justify-between rounded-xl  ${isFullScreen ? 'bg-[#FFFFFFCC]' : ''} dark:text-white relative`}>
-                {/* Tabs Section - Fixed heights and widths to prevent layout shifts */}
-                <div className="flex-1 overflow-x-auto scrollbar-hide ">
+
+            {/* Header with tabs and buttons */}
+            <div className={`px-2 sm:px-4 py-1 sm:py-2 flex items-center justify-between rounded-xl ${isFullScreen ? 'bg-[#FFFFFFCC]' : ''} dark:text-white relative`}>
+                <div className="flex-1 overflow-x-auto scrollbar-hide">
                     <div className="flex space-x-1 h-full">
-                        {/* General Chat Tab - Always present */}
+                        {/* General Chat Tab */}
                         <div
                             onClick={switchToGeneralTab}
-                            className={`flex items-center gap-2 px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === 'general'
+                            className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === 'general'
                                 ? 'bg-white dark:bg-gray-700'
-                                : 'bg-white dark:bg-gray-800  dark:hover:bg-gray-600'
+                                : 'bg-white dark:bg-gray-800 dark:hover:bg-gray-600'
                                 }`}
                         >
-                            <div className="w-6 h-6 rounded-full flex items-center justify-center ">
+                            <div className="w-4 sm:w-6 h-4 sm:h-6 rounded-full flex items-center justify-center">
                                 <img src="/home.svg" alt="" />
                             </div>
 
@@ -268,19 +224,19 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                             <div
                                 key={tab._id}
                                 onClick={() => switchToTab(tab._id)}
-                                className={`flex items-center gap-2 px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === tab._id
+                                className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === tab._id
                                     ? 'bg-white dark:bg-gray-700'
                                     : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600'
                                     }`}
                             >
-                                <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
+                                <div className="w-4 sm:w-6 h-4 sm:h-6 rounded-full flex items-center justify-center overflow-hidden">
                                     <img
                                         src={tab.profileImage || "/default-avatar.png"}
                                         alt={tab.name}
                                         className="object-cover w-full h-full"
                                     />
                                 </div>
-                                <span className="max-w-32 truncate text-sm">{tab.name}</span>
+                                <span className="max-w-20 sm:max-w-32 truncate text-xs sm:text-sm">{tab.name}</span>
                                 {hasHistory(tab._id) && (
                                     <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                                 )}
@@ -289,15 +245,12 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                                     className="ml-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
                                     disabled={isTransitioning}
                                 >
-                                    <X size={14} />
+                                    <X size={12} sm:size={14} />
                                 </button>
                             </div>
                         ))}
                     </div>
                 </div>
-
-                {/* Fullscreen toggle button */}
-
             </div>
 
             {/* Confirmation Dialog */}
@@ -305,7 +258,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                 <div className="fixed inset-0 bg-[#0000008c] flex items-center justify-center z-50">
                     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-md w-full shadow-lg">
                         <div className="flex items-center gap-3 mb-4">
-                            <AlertCircle className="text-red-500" size={24} />
+                            <AlertCircle className="text-red-500" size={20} sm:size={24} />
                             <h2 className="text-lg font-semibold dark:text-white">End Chat</h2>
                         </div>
                         <p className="mb-6 dark:text-gray-300">
@@ -315,13 +268,13 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={cancelCloseTab}
-                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white"
+                                className="px-3 sm:px-4 py-1 sm:py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmCloseTab}
-                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                                className="px-3 sm:px-4 py-1 sm:py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                             >
                                 End Chat
                             </button>
@@ -330,8 +283,8 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                 </div>
             )}
 
-            {/* Chat content area - Fixed and calculated heights to prevent jitter */}
-            <div className="flex-grow overflow-y-auto h-[calc(83vh-80px)] transition-opacity duration-300 ease-in-out">
+            {/* Chat content area */}
+            <div className="flex-grow overflow-y-auto h-[calc(80vh-80px)] sm:h-[calc(83vh-80px)] transition-opacity duration-300 ease-in-out">
                 <ChatInterface
                     isFullScreen={isFullScreen}
                     promptGiven={true}

@@ -4,14 +4,14 @@ import { MedContext } from '../context/MedContext';
 
 const DatePicker = () => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const {selectedDate,setSelectedDate,isUserSelected,setIsUserSelected} = useContext(MedContext)
+  const { selectedDate, setSelectedDate, isUserSelected, setIsUserSelected } = useContext(MedContext);
 
   const formatDate = (date) => {
-    const options = { 
+    const options = {
       day: 'numeric',
       month: 'short',
       weekday: 'short',
-      year: 'numeric'
+      year: 'numeric',
     };
     return selectedDate.toLocaleDateString('en-US', options);
   };
@@ -24,7 +24,7 @@ const DatePicker = () => {
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'July', 'August', 'September', 'October', 'November', 'December',
   ];
 
   const generateYearOptions = () => {
@@ -54,25 +54,24 @@ const DatePicker = () => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const days = [];
-    
+
     for (let i = 0; i < firstDay.getDay(); i++) {
-      days.push(<td key={`empty-${i}`} className="p-2"></td>);
+      days.push(<td key={`empty-${i}`} className="p-1 sm:p-2"></td>);
     }
-    
+
     for (let i = 1; i <= lastDay.getDate(); i++) {
       const currentDate = new Date(year, month, i);
       const isSelected = i === selectedDate.getDate();
       days.push(
-        <td 
+        <td
           key={i}
           onClick={() => {
             const newDate = new Date(year, month, i);
             newDate.setHours(12, 0, 0, 0); // Ensures no timezone shift
-        
             setSelectedDate(newDate);
             setIsCalendarOpen(false);
-        }}
-          className={`p-2 text-center cursor-pointer hover:bg-gray-100 ${
+          }}
+          className={`p-1 sm:p-2 text-center cursor-pointer hover:bg-gray-100 ${
             isSelected ? 'bg-blue-500 text-white hover:bg-blue-600' : ''
           }`}
         >
@@ -80,7 +79,7 @@ const DatePicker = () => {
         </td>
       );
     }
-    
+
     const weeks = [];
     let week = [];
     days.forEach((day, i) => {
@@ -90,24 +89,24 @@ const DatePicker = () => {
         week = [];
       }
     });
-    
+
     return weeks;
   };
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-4 bg-[#ffffff96] text-sm text-[#000000b2] dark:bg-[#22283666] dark:text-white  rounded-md px-1">
+      <div className="flex items-center gap-2 sm:gap-4 bg-[#ffffff96] text-xs sm:text-sm text-[#000000b2] dark:bg-[#22283666] dark:text-white rounded-md px-1 sm:px-2">
         <button
           onClick={() => changeDate(-1)}
-          className={`p-1 rounded ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'}`}
+          className={`p-1 rounded ${isUserSelected ? 'cursor-not-allowed' : 'cursor-pointer'}`}
           disabled={isUserSelected === true}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
         </button>
 
         <button
           onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-          className={`py-2 text-center ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'}  rounded`}
+          className={`py-1 sm:py-2 text-center ${isUserSelected ? 'cursor-not-allowed' : 'cursor-pointer'} rounded`}
           disabled={isUserSelected === true}
         >
           {formatDate(selectedDate)}
@@ -115,21 +114,20 @@ const DatePicker = () => {
 
         <button
           onClick={() => changeDate(1)}
-          className={`p-1 rounded ${isUserSelected ? 'cursor-not-allowed':'cursor-pointer'}`}
+          className={`p-1 rounded ${isUserSelected ? 'cursor-not-allowed' : 'cursor-pointer'}`}
           disabled={isUserSelected === true}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
         </button>
       </div>
-      
 
       {isCalendarOpen && (
-        <div className="absolute top-full mt-2 bg-white border-1 border-gray-100  rounded-2xl shadow-lg p-4 z-20">
-          <div className="flex items-center gap-2 mb-4 justify-between">
+        <div className="absolute top-full mt-2 bg-white border-1 border-gray-100 rounded-2xl shadow-lg p-2 sm:p-4 z-20">
+          <div className="flex items-center gap-2 mb-2 sm:mb-4 justify-between">
             <select
               value={selectedDate.getMonth()}
               onChange={handleMonthChange}
-              className="px-3 py-1 border-1 border-gray-100 rounded"
+              className="px-2 sm:px-3 py-1 border-1 border-gray-100 rounded text-xs sm:text-sm"
             >
               {months.map((month, index) => (
                 <option key={month} value={index}>
@@ -141,9 +139,9 @@ const DatePicker = () => {
             <select
               value={selectedDate.getFullYear()}
               onChange={handleYearChange}
-              className="px-3 py-1 border-1 border-gray-100 rounded"
+              className="px-2 sm:px-3 py-1 border-1 border-gray-100 rounded text-xs sm:text-sm"
             >
-              {generateYearOptions().map(year => (
+              {generateYearOptions().map((year) => (
                 <option key={year} value={year}>
                   {year}
                 </option>
@@ -154,16 +152,14 @@ const DatePicker = () => {
           <table className="w-full">
             <thead>
               <tr>
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                  <th key={day} className="p-2 text-gray-600">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                  <th key={day} className="p-1 sm:p-2 text-gray-600 text-xs sm:text-sm">
                     {day}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {generateCalendar()}
-            </tbody>
+            <tbody>{generateCalendar()}</tbody>
           </table>
         </div>
       )}

@@ -3,7 +3,7 @@ import { MedContext } from "../context/MedContext";
 import { Link } from "react-router-dom";
 import { ChartSpline, ChevronDown, Clock, Droplets, Repeat } from "lucide-react";
 
-const Appoinments = () => {
+const Appointments = () => {
     const {
         filteredUsers,
         searchQuery,
@@ -98,36 +98,42 @@ const Appoinments = () => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <div className={`grid grid-cols-[2fr_1fr] items-center gap-1 p-5 rounded-sm hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer mx-4 border-1 mb-4 border-[#2228365a] ${isHovered ? 'bg-white shadow-md' : 'bg-[#ffffff5d]'}`}>
-                    <div className="grid grid-cols-[3rem_auto] items-center gap-4">
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
+                <div className={`grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center gap-1 p-3 sm:p-5 rounded-sm hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 border border-[#2228365a] ${isHovered ? 'bg-white shadow-md' : 'bg-[#ffffff5d]'} mb-3 sm:mb-4`}>
+                    <div className="grid grid-cols-[2.5rem_auto] sm:grid-cols-[3rem_auto] items-center gap-2 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
                             <img src={user.profileImage} className="w-full h-full object-cover" alt={user.name} />
                         </div>
                         <div>
-                            <h3 className="font-medium text-gray-900">{user.name}</h3>
-                            <p className="text-sm text-gray-500">#{user._id.slice(-7)}</p>
+                            <h3 className="font-medium text-sm sm:text-base text-gray-900">{user.name}</h3>
+                            <p className="text-xs sm:text-sm text-gray-500">#{user._id.slice(-7)}</p>
                         </div>
                     </div>
-                    <div className="flex gap-2 items-center">
-                        <Clock size={15} />
-                        <span className="text-sm text-gray-500">{user.time}</span>
+                    <div className="flex gap-2 items-center mt-2 sm:mt-0">
+                        <Clock size={14} className="" />
+                        <span className="text-xs sm:text-sm text-gray-500">{user.time}</span>
                     </div>
     
                     {/* Expanded content wrapper - conditionally rendered */}
-                    <div className={`col-span-2 overflow-hidden transition-all duration-300 ease-in-out ${isHovered ? 'max-h-96' : 'max-h-0'}`}>
-                        <div className="mt-2 pt-4 ml-16">
-                            <div className="flex flex-col gap-3">
+                    <div className={`col-span-1 sm:col-span-2 overflow-hidden transition-all duration-300 ease-in-out ${isHovered ? 'max-h-96' : 'max-h-0'}`}>
+                        <div className="mt-2 pt-3 sm:pt-4 ml-10 sm:ml-16">
+                            <div className="flex flex-col gap-2 sm:gap-3">
                                 <div>
-                                    <h4 className="text-md font-medium text-gray-800">Visiting for</h4>
-                                    <div className="flex gap-2 mt-2">
-                                        <button className="flex gap-1 text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-3 py-1"><Repeat size={15} />Routine</button>
-                                        <button className="flex gap-1 text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-3 py-1"><ChartSpline size={15} />Blood Pressure</button>
-                                        <button className="flex gap-1 text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-3 py-1"><Droplets size={15} />Sugar</button>
+                                    <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-1">
+                                            <Repeat size={12} className="" />Routine
+                                        </button>
+                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-1">
+                                            <ChartSpline size={12} className="" />Blood Pressure
+                                        </button>
+                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-1">
+                                            <Droplets size={12} className="" />Sugar
+                                        </button>
                                     </div>
                                 </div>
                                 <div>
-                                    <h4 className="text-md font-medium mt-4 text-gray-800">Additional Comments</h4>
-                                    <p className="text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, modi.</p>
+                                    <h4 className="text-sm sm:text-md font-medium mt-3 sm:mt-4 text-gray-800">Additional Comments</h4>
+                                    <p className="text-xs sm:text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, modi.</p>
                                 </div>
                             </div>
                         </div>
@@ -164,7 +170,7 @@ const Appoinments = () => {
         const sortedDates = Object.keys(groupedByDate).sort();
 
         return (
-            <div className="space-y-4 flex-grow overflow-y-auto overflow-hidden max-h-[55vh]">
+            <div className="space-y-2 sm:space-y-4 flex-grow overflow-y-auto overflow-hidden max-h-[45vh] sm:max-h-[55vh]">
                 {sortedDates.length > 0 ? (
                     sortedDates.map(dateString => {
                         const date = new Date(dateString);
@@ -175,8 +181,8 @@ const Appoinments = () => {
                         });
 
                         return (
-                            <div key={dateString} className="mb-6">
-                                <h3 className="text-base font-medium mb-2 pl-5">{formattedDate}</h3>
+                            <div key={dateString} className="mb-4 sm:mb-6">
+                                <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedDate}</h3>
                                 <div className="space-y-0">
                                     {groupedByDate[dateString].map(user => renderPatientCard(user))}
                                 </div>
@@ -184,7 +190,7 @@ const Appoinments = () => {
                         );
                     })
                 ) : (
-                    <p className="text-center text-gray-500">No appointments found for this date.</p>
+                    <p className="text-center text-sm text-gray-500">No appointments found for this date.</p>
                 )}
             </div>
         );
@@ -200,9 +206,9 @@ const Appoinments = () => {
 
         return (
             <>
-                <div className="sticky top-0 bg-[#f7f7f7] dark:bg-[#464444] font-semibold  text-gray-700 rounded-xl px-5 py-5 z-10">
-                    <h2 className="text-lg font-semibold mb-2">Week of {formattedStartDate} - {formattedEndDate}</h2>
-                    <div className="grid grid-cols-7 gap-2">
+                <div className="sticky top-0 bg-[#f7f7f7] dark:bg-[#464444] font-semibold text-gray-700 rounded-xl px-3 sm:px-5 py-3 sm:py-5 z-10">
+                    <h2 className="text-base sm:text-lg font-semibold mb-2">Week of {formattedStartDate} - {formattedEndDate}</h2>
+                    <div className="grid grid-cols-7 gap-1 sm:gap-2 text-xs sm:text-sm">
                         {days.map(day => {
                             const dayData = groupedPatients[day];
                             const dayDate = new Date(dayData.date);
@@ -216,8 +222,8 @@ const Appoinments = () => {
                     </div>
                 </div>
 
-                <div className="flex-grow overflow-y-auto overflow-hidden h-[50vh]">
-                    <div className="grid grid-cols-7 gap-2">
+                <div className="flex-grow overflow-y-auto overflow-hidden h-[40vh] sm:h-[50vh]">
+                    <div className="grid grid-cols-7 gap-1 sm:gap-2">
                         {days.map(day => {
                             const dayData = groupedPatients[day];
                             const isToday = dayData.dateString === new Date().toISOString().split('T')[0];
@@ -225,18 +231,17 @@ const Appoinments = () => {
                             return (
                                 <div
                                     key={day}
-                                    className={`border rounded-lg p-2 ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-gray-50 dark:bg-[#2a2a2a]'} min-h-[200px] overflow-y-auto`}
+                                    className={`border rounded-lg p-1 sm:p-2 ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-gray-50 dark:bg-[#2a2a2a]'} min-h-[150px] sm:min-h-[200px] overflow-y-auto`}
                                 >
-                                    <h3 className="font-medium text-center border-b pb-2 mb-2">{day}</h3>
+                                    <h3 className="font-medium text-xs sm:text-sm text-center border-b pb-1 sm:pb-2 mb-1 sm:mb-2">{day.substring(0, 3)}</h3>
                                     {dayData.patients.length > 0 ? (
-                                        <div className="space-y-3">
+                                        <div className="space-y-2 sm:space-y-3">
                                             {dayData.patients.map(user => (
                                                 <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
-                                                    <div className="p-2 hover:bg-gray-100 dark:hover:bg-[#3a3a3a] rounded-lg">
-                                                        <div className="flex items-center gap-2">
-
+                                                    <div className="p-1 sm:p-2 hover:bg-gray-100 dark:hover:bg-[#3a3a3a] rounded-lg">
+                                                        <div className="flex items-center gap-1 sm:gap-2">
                                                             <div>
-                                                                <h4 className="font-medium text-sm">{user.name}</h4>
+                                                                <h4 className="font-medium text-xs sm:text-sm">{user.name}</h4>
                                                                 <p className="text-xs text-gray-500">{user.time}</p>
                                                             </div>
                                                         </div>
@@ -245,7 +250,7 @@ const Appoinments = () => {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-center text-gray-500 text-sm">No appointments</p>
+                                        <p className="text-center text-gray-500 text-xs">No appointments</p>
                                     )}
                                 </div>
                             );
@@ -293,30 +298,31 @@ const Appoinments = () => {
 
         return (
             <>
-                <div className="sticky top-0  dark:bg-[#464444] font-semibold text-gray-700 rounded-xl px-5 py-5 z-10">
-                    <h2 className="text-lg font-semibold mb-2">{monthName} {year}</h2>
-                    <div className="grid grid-cols-7 gap-2">
+                <div className="sticky top-0 dark:bg-[#464444] font-semibold text-gray-700 rounded-xl px-3 sm:px-5 py-3 sm:py-5 z-10">
+                    <h2 className="text-base sm:text-lg font-semibold mb-2">{monthName} {year}</h2>
+                    <div className="grid grid-cols-7 gap-1 sm:gap-2 text-xs sm:text-sm">
                         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                             <div key={day} className="text-center">
-                                <span>{day}</span>
+                                <span className="hidden xs:inline">{day}</span>
+                                <span className="xs:hidden">{day.charAt(0)}</span>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[45vh]">
+                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[35vh] sm:max-h-[45vh]">
                     {weeks.map((week, weekIndex) => (
-                        <div key={`week-${weekIndex}`} className="grid grid-cols-7 gap-2 mb-2">
+                        <div key={`week-${weekIndex}`} className="grid grid-cols-7 gap-1 sm:gap-2 mb-1 sm:mb-2">
                             {week.map((day, dayIndex) => (
                                 <div
                                     key={`day-${weekIndex}-${dayIndex}`}
-                                    className={`border rounded-lg p-2 ${day ? 'bg-gray-50 dark:bg-[#2a2a2a]' : 'bg-gray-100 dark:bg-[#333333] opacity-50'} min-h-[100px] overflow-y-auto`}
+                                    className={`border rounded-lg p-1 sm:p-2 ${day ? 'bg-gray-50 dark:bg-[#2a2a2a]' : 'bg-gray-100 dark:bg-[#333333] opacity-50'} min-h-[70px] sm:min-h-[100px] overflow-y-auto`}
                                 >
                                     {day && (
                                         <>
-                                            <h3 className="font-medium text-center border-b pb-1 mb-1">{day}</h3>
+                                            <h3 className="font-medium text-xs text-center border-b pb-1 mb-1">{day}</h3>
                                             {groupedPatients[day] && groupedPatients[day].length > 0 ? (
-                                                <div className="space-y-2">
+                                                <div className="space-y-1 sm:space-y-2">
                                                     {groupedPatients[day].map(user => (
                                                         <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
                                                             <div className="p-1 hover:bg-gray-100 dark:hover:bg-[#3a3a3a] rounded text-xs">
@@ -368,19 +374,19 @@ const Appoinments = () => {
 
         return (
             <>
-                <div className="sticky top-0 dark:bg-[#464444] font-semibold text-gray-700 rounded-xl px-5 py-5 z-10">
-                    <h2 className="text-lg font-semibold mb-2">Yearly Calendar - {year}</h2>
+                <div className="sticky top-0 dark:bg-[#464444] font-semibold text-gray-700 rounded-xl px-3 sm:px-5 py-3 sm:py-5 z-10">
+                    <h2 className="text-base sm:text-lg font-semibold mb-2">Yearly Calendar - {year}</h2>
                 </div>
 
-                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[50vh]">
-                    <div className="grid grid-cols-3 gap-4">
+                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[40vh] sm:max-h-[50vh]">
+                    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
                         {months.map((month, index) => (
-                            <div key={month} className="border rounded-lg p-3 bg-gray-50 dark:bg-[#2a2a2a]">
-                                <h3 className="font-medium border-b pb-2 mb-2">{month}</h3>
+                            <div key={month} className="border rounded-lg p-2 sm:p-3 bg-gray-50 dark:bg-[#2a2a2a]">
+                                <h3 className="font-medium text-sm border-b pb-1 sm:pb-2 mb-1 sm:mb-2">{month}</h3>
                                 {groupedPatients[index].length > 0 ? (
-                                    <div className="space-y-2">
-                                        <p className="text-sm font-medium">{groupedPatients[index].length} appointments</p>
-                                        <div className="space-y-1 max-h-[150px] overflow-y-auto">
+                                    <div className="space-y-1 sm:space-y-2">
+                                        <p className="text-xs sm:text-sm font-medium">{groupedPatients[index].length} appointments</p>
+                                        <div className="space-y-1 max-h-[100px] sm:max-h-[150px] overflow-y-auto">
                                             {groupedPatients[index].slice(0, 5).map(user => (
                                                 <Link to={`/user/${user._id}`} key={user._id} onClick={() => handleUserClick(user)} className="block">
                                                     <div className="p-1 hover:bg-gray-100 dark:hover:bg-[#3a3a3a] rounded text-xs">
@@ -397,7 +403,7 @@ const Appoinments = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <p className="text-center text-gray-500 text-sm">No appointments</p>
+                                    <p className="text-center text-gray-500 text-xs sm:text-sm">No appointments</p>
                                 )}
                             </div>
                         ))}
@@ -423,10 +429,10 @@ const Appoinments = () => {
     };
 
     return (
-        <div className="mx-auto  dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-3 rounded-lg overflow-hidden">
+        <div className="mx-auto dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-2 sm:gap-3 rounded-lg overflow-hidden">
             {renderView()}
         </div>
     );
 };
 
-export default Appoinments;
+export default Appointments;
