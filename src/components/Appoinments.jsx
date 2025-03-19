@@ -88,6 +88,7 @@ const Appointments = () => {
     // Render a single patient card
     const renderPatientCard = (user) => {
         const [isHovered, setIsHovered] = useState(false);
+        console.log("user------>",user);
     
         return (
             <Link
@@ -111,6 +112,8 @@ const Appointments = () => {
                     <div className="flex gap-2 items-center mt-2 sm:mt-0">
                         <Clock size={14} className="" />
                         <span className="text-xs sm:text-sm text-gray-500">{user.time}</span>
+                        
+                        
                     </div>
     
                     {/* Expanded content wrapper - conditionally rendered */}

@@ -212,7 +212,7 @@ const Home = () => {
     }
     
     const totalWidth = containerRef.current.offsetWidth;
-    const sidebarWidth = isExpanded ? 350 : 70;
+    const sidebarWidth = isExpanded ? 350 : 17;
     return `${totalWidth - sidebarWidth}px`;
   };
 
@@ -360,10 +360,10 @@ const Home = () => {
               width: isFullScreen ? getFullScreenWidth() : `${chatWidth}px`,
               flexShrink: 0,
               marginLeft: isFullScreen ? '0' : '0px',
-              left: isFullScreen ? (isExpanded ? '350px' : '70px') : null, // Adjust position when fullscreen
+              left: isFullScreen ? (isExpanded ? '350px' : '16px') : null, // Adjust position when fullscreen
               position: isFullScreen ? 'absolute' : 'relative',
             }}
-            className={isFullScreen ? 'h-full' : ''}
+            className={isFullScreen ? 'w-full' : ''}
           >
             <Chat
               swapPosition={handleSwapPosition}
@@ -434,10 +434,10 @@ const Home = () => {
               maxWidth: '100vw',  // Prevent overflow
               flexShrink: 0,
               marginLeft: isFullScreen ? '0' : '0px',
-              left: isFullScreen ? (isExpanded ? '350px' : '70px') : null, // Adjust position when fullscreen
+              left: isFullScreen ? (isExpanded ? '350px' : '16px') : null, // Adjust position when fullscreen
               position: isFullScreen ? 'absolute' : 'relative',
             }}
-            className={isFullScreen ? 'h-full' : ''}
+            className={isFullScreen ? 'w-full' : ''}
           >
             <Chat
               swapPosition={handleSwapPosition}

@@ -264,7 +264,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isTransitioning && handleSendMessage()}
-            placeholder={selectedUser ? "How can MedCopilot help with this patient?" : "Ask Health Copilot any general health questions"}
+            placeholder={selectedUser ? "How can MedCopilot help with this patient?" : "Get key insights on your patient schedule and priorities for today"}
             className="flex-1 p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 rounded-lg focus:outline-none dark:bg-[#27313C] dark:text-white"
             disabled={isTransitioning}
           />
