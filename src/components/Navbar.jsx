@@ -1,4 +1,4 @@
-import { Menu, Moon, Sun, Search, CircleHelp, ChevronLeft, X, LogOut } from 'lucide-react';
+import { Menu, Moon, Sun, Search, CircleHelp, ChevronLeft, X, LogOut, User, CircleCheck, UserX, ClockAlert, Bell, Bolt } from 'lucide-react';
 import React, { useState, useEffect, useContext } from 'react';
 import DatePicker from './DatePicker';
 import DateSort from './DateSort';
@@ -46,7 +46,7 @@ const Navbar = () => {
         <>
             <div className="flex flex-col w-full">
                 {/* Main Navbar */}
-                <div className="dark:text-white dark:bg-[#00000099] bg-[#FFFFFF66] rounded-xl px-3 sm:px-5 py-2 m-2 shadow-sm">
+                <div className="dark:text-white  rounded-xl  py-2 m-2 ">
                     <div className="flex items-center justify-between">
                         {/* Left Section - Logo and Toggle */}
                         <div className="flex items-center gap-2 sm:gap-4">
@@ -64,6 +64,21 @@ const Navbar = () => {
                             <div className="my-1">
                                 <h1 className="text-lg sm:text-xl font-semibold">MedCopilot</h1>
                                 <p className="text-xs text-gray-600 dark:text-gray-400">Product by JNC Tech</p>
+                            </div>
+
+                            <div className='flex gap-2 sm:gap-4 px-8'>
+                                <button className='py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-2 px-3'>
+                                    <User size={15}/>
+                                    <h1>15</h1>
+                                </button>
+                                <button className='py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-2 px-3'>
+                                    <ClockAlert  size={15}/> 
+                                    <h1>1</h1>
+                                </button>
+                                <button className='py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-2 px-3'>
+                                    <CircleCheck  size={15}/>
+                                    <h1>3</h1>
+                                </button>
                             </div>
                         </div>
 
@@ -86,7 +101,7 @@ const Navbar = () => {
                         </div>
 
                         {/* Right Section - Date and Actions */}
-                        <div className='flex items-center gap-2 sm:gap-4'>
+                        <div className='flex items-center gap-4 sm:gap-6'>
                             <h1 className='text-xs sm:text-sm md:text-md hidden sm:inline whitespace-nowrap truncate'>
                                 {new Date().toLocaleDateString('en-US', { 
                                     day: 'numeric', 
@@ -115,6 +130,9 @@ const Navbar = () => {
                                     {isSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
                                 </button>
                             )}
+                            <CircleHelp className="w-5 h-5" />
+                            <Bell className="w-5 h-5"/>
+                            <Bolt className="w-5 h-5"/>
                             
                             {/* Mobile menu toggle button */}
                             <button 
@@ -181,7 +199,7 @@ const Navbar = () => {
             </div>
             
             {/* Add slide-down animation */}
-            <style jsx>{`
+            <style jsx="true">{`
                 @keyframes slideDown {
                     from { transform: translateY(-20px); opacity: 0; }
                     to { transform: translateY(0); opacity: 1; }

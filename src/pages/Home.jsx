@@ -206,11 +206,11 @@ const Home = () => {
   // Dynamic width calculation for fullscreen mode based on sidebar state
   const getFullScreenWidth = () => {
     if (!containerRef.current) return '100%';
-    
+
     if (isMobile) {
       return '100%';
     }
-    
+
     const totalWidth = containerRef.current.offsetWidth;
     const sidebarWidth = isExpanded ? 350 : 17;
     return `${totalWidth - sidebarWidth}px`;
@@ -257,13 +257,13 @@ const Home = () => {
   const renderMobileTabs = () => {
     return (
       <div className="flex h-14  dark:bg-gray-800 z-20">
-        <button 
+        <button
           className={`flex-1 flex items-center justify-center ${activeTab === 'content' ? 'text-blue-600 dark:text-blue-400 border-t-2 border-blue-600 dark:border-blue-400' : 'text-gray-500'}`}
           onClick={() => toggleMobileView('content')}
         >
           <span>Patients</span>
         </button>
-        <button 
+        <button
           className={`flex-1 flex items-center justify-center ${activeTab === 'chat' ? 'text-blue-600 dark:text-blue-400 border-t-2 border-blue-600 dark:border-blue-400' : 'text-gray-500'}`}
           onClick={() => toggleMobileView('chat')}
         >
@@ -276,7 +276,7 @@ const Home = () => {
   // Render mobile sidebar button
   const renderMobileSidebarButton = () => {
     return (
-      <button 
+      <button
         className="fixed top-4 left-4 z-30 bg-white dark:bg-gray-800 p-2 rounded-full shadow-md"
         onClick={toggleMobileSidebar}
       >
@@ -293,7 +293,7 @@ const Home = () => {
       <div className={`fixed inset-0 z-50 bg-[#ffffff34] bg-opacity-50 transition-opacity ${isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={toggleMobileSidebar}>
         <div className={`absolute top-0 left-0 bottom-0 w-80 bg-white dark:bg-gray-900 transform transition-transform duration-300 ${isExpanded ? 'translate-x-0' : '-translate-x-full'}`} onClick={e => e.stopPropagation()}>
           <div className="p-4 flex justify-end">
-            <button onClick={()=>setIsExpanded(false)}>
+            <button onClick={() => setIsExpanded(false)}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -312,11 +312,11 @@ const Home = () => {
       <div ref={containerRef} className="flex flex-col h-full w-full">
         {/* Mobile Sidebar Button */}
         {/* {renderMobileSidebarButton()} */}
-        
+
         {/* Mobile Sidebar Overlay */}
         {renderMobileSidebar()}
         {renderMobileTabs()}
-        
+
         {/* Content View */}
         <div className={`h-full w-full pb-16 transition-opacity duration-300 ${activeTab === 'content' ? 'opacity-100 z-10' : 'opacity-0 z-0 hidden'}`}>
           <div className="bg-[#FFFFFF66] dark:bg-[#00000099] rounded-lg p-1.5 h-full">
@@ -328,7 +328,7 @@ const Home = () => {
             <Outlet />
           </div>
         </div>
-        
+
         {/* Chat View */}
         <div className={`h-full w-full pb-16 transition-opacity duration-300 ${activeTab === 'chat' ? 'opacity-100 z-10' : 'opacity-0 z-0 hidden'}`}>
           <Chat
@@ -339,9 +339,9 @@ const Home = () => {
             isMobile={true}
           />
         </div>
-        
+
         {/* Mobile Navigation Tabs */}
-        
+
       </div>
     );
   }
@@ -384,16 +384,19 @@ const Home = () => {
 
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
-            <div
-              className="bg-[#FFFFFF66] dark:bg-[#00000099] rounded-lg p-1.5"
-              style={{ width: `${contentWidth}px` }}
-            >
+            <div className="flex flex-col">
               <MidHeader />
-              <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
-                <DatePicker />
-                <DateSort />
+              <div
+                className="bg-[#FFFFFF66] dark:bg-[#00000099] h-full rounded-lg p-1.5"
+                style={{ width: `${contentWidth}px` }}
+              >
+
+                <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
+                  <DatePicker />
+                  <DateSort />
+                </div>
+                <Outlet />
               </div>
-              <Outlet />
             </div>
           )}
         </div>
@@ -405,16 +408,19 @@ const Home = () => {
 
           {/* Content area with no transition for direct response */}
           {!isFullScreen && (
-            <div
-              className="bg-[#ffffff66] dark:bg-[#00000099] rounded-lg p-1.5 overflow-hidden"
-              style={{ width: `${contentWidth}px` }}
-            >
+            <div className="flex flex-col">
               <MidHeader />
-              <div className={`flex gap-3 items-center w-full mx-5 mb-3 ${isUserSelected ? 'hidden' : ''} justify-start ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
-                <DatePicker />
-                <DateSort />
+              <div
+                className="bg-[#FFFFFF66] dark:bg-[#00000099] h-full rounded-lg p-1.5"
+                style={{ width: `${contentWidth}px` }}
+              >
+
+                <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
+                  <DatePicker />
+                  <DateSort />
+                </div>
+                <Outlet />
               </div>
-              <Outlet />
             </div>
           )}
 

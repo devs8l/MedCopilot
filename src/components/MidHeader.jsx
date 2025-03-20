@@ -13,8 +13,8 @@ const MidHeader = () => {
   };
   
   return (
-    <div className="w-full mb-2 sm:mb-4 p-3 sm:p-5 overflow-auto">
-      <h2 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mb-2 sm:mb-4">{getTitle()}</h2>
+    <div className="w-full mb-2 sm:mb-3 ">
+      {/* <h2 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mb-2 sm:mb-4">{getTitle()}</h2> */}
       
       <div className="flex gap-2 sm:gap-3 flex-wrap text-xs sm:text-sm">
         <Link 

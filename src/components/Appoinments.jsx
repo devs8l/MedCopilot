@@ -174,7 +174,7 @@ const Appointments = () => {
         const sortedDates = Object.keys(groupedByDate).sort();
 
         return (
-            <div className="space-y-2 sm:space-y-4 flex-grow overflow-y-auto overflow-hidden max-h-[45vh] sm:max-h-[55vh]">
+            <div className="space-y-2 sm:space-y-4 flex-grow overflow-y-auto overflow-hidden max-h-[50vh] sm:max-h-[65vh]">
                 {sortedDates.length > 0 ? (
                     sortedDates.map(dateString => {
                         const date = new Date(dateString);
@@ -314,7 +314,7 @@ const Appointments = () => {
                     </div>
                 </div>
 
-                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[35vh] sm:max-h-[45vh]">
+                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[35vh] sm:max-h-[55vh]">
                     {weeks.map((week, weekIndex) => (
                         <div key={`week-${weekIndex}`} className="grid grid-cols-7 gap-1 sm:gap-2 mb-1 sm:mb-2">
                             {week.map((day, dayIndex) => (
@@ -382,7 +382,7 @@ const Appointments = () => {
                     <h2 className="text-base sm:text-lg font-semibold mb-2">Yearly Calendar - {year}</h2>
                 </div>
 
-                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[40vh] sm:max-h-[50vh]">
+                <div className="flex-grow overflow-y-auto overflow-hidden max-h-[40vh] sm:max-h-[60vh]">
                     <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
                         {months.map((month, index) => (
                             <div key={month} className="border rounded-lg p-2 sm:p-3 bg-gray-50 dark:bg-[#2a2a2a]">

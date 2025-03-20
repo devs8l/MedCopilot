@@ -405,73 +405,74 @@ const UserData = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-2 text-sm px-6 items-center text-[#222836]">
+      <div className="flex gap-2 text-xl font-bold px-6 py-5 items-center text-[#222836]">
         <h2 className="">Appointments</h2>
         <ChevronRight size={15} />
         <h2>{userData?.name}</h2>
       </div>
       <h2 className="">   </h2>
-      <div className="p-6 flex flex-col gap-6 rounded-lg bg-[#ffffffc8] dark:bg-[#00000099] mx-4 h-[calc(70vh-80px)] overflow-auto">
-
-        {/* Profile Section */}
-        <div>
-          <div className="flex items-start justify-between">
-            <div className="flex items-start space-x-4">
-              <img
-                src={userData?.profileImage || "/api/placeholder/80/80"}
-                className="w-16 h-16 rounded-full object-cover"
-                alt={userData?.name}
-              />
-              <div className="flex flex-col gap-5">
-                <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-semibold">{userData?.name}</h2>
-                  <div className="grid grid-cols-[2fr_1fr] gap-4">
-                    <p className="text-sm text-gray-500">#{userData?._id?.slice(-6)}</p>
-                    <p className="text-sm text-gray-500">{userData?.time}</p>
-                  </div>
+      <div>
+        <div className="flex items-start mx-6 justify-between">
+          <div className="flex items-start space-x-4">
+            <img
+              src={userData?.profileImage || "/api/placeholder/80/80"}
+              className="w-16 h-16 rounded-full object-cover"
+              alt={userData?.name}
+            />
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-2">
+                <h2 className="text-xl font-semibold">{userData?.name}</h2>
+                <div className="grid grid-cols-[2fr_1fr] gap-4">
+                  <p className="text-sm text-gray-500">#{userData?._id?.slice(-6)}</p>
+                  <p className="text-sm text-gray-500">{userData?.time}</p>
                 </div>
               </div>
             </div>
-
-            <div className="flex items-center">
-              {isSessionActive && activeSessionUserId === userData._id ? (
-                <div className="flex items-center gap-4">
-                  <Stopwatch elapsedTime={elapsedTime} />
-                  <button
-                    onClick={endSession}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md text-sm"
-                  >
-                    End Session
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => startSession(userData._id)}
-                  className="px-4 py-2 bg-blue-500 flex gap-1 items-center justify-center text-white rounded-md text-sm"
-                >
-                  <Play size={15} /> Start Session
-                </button>
-              )}
-            </div>
-
-
           </div>
+
+          <div className="flex items-center">
+            {isSessionActive && activeSessionUserId === userData._id ? (
+              <div className="flex items-center gap-4">
+                <Stopwatch elapsedTime={elapsedTime} />
+                <button
+                  onClick={endSession}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md text-sm"
+                >
+                  End Session
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => startSession(userData._id)}
+                className="px-4 py-2 bg-blue-500 flex gap-1 items-center justify-center text-white rounded-md text-sm"
+              >
+                <Play size={15} /> Start Session
+              </button>
+            )}
+          </div>
+
+
         </div>
+      </div>
+      <div className="p-6 flex flex-col gap-6 rounded-lg bg-[#ffffff] dark:bg-[#00000099] mx-4 h-[calc(65vh-80px)] overflow-auto">
+
+        {/* Profile Section */}
+
 
         {/* Action Buttons */}
         <div className="flex">
-          <div className="flex flex-col mb-2 mr-2  group gap-4 transition-all duration-300 w-11 group-hover:w-48 hover:w-48 overflow-hidden">
+          <div className="flex flex-col mb-2 mr-2  group gap-4 transition-all duration-300 w-11 group-hover:w-48 hover:w-48 ">
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'summary'
-                ? 'bg-white text-blue-600'
-                : 'dark:text-white bg-[#ffffffc2]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77]'
                 }`}
               onClick={() => setActiveTab('summary')}
             >
               <div className="flex-shrink-0">
                 <Sparkle className={`transition-all duration-200 ${activeTab === 'summary'
-                  ? 'w-5 h-5 text-blue-600'
-                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  ? 'w-5 h-5 text-blue-600 '
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5 '
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Summary</span>
@@ -479,15 +480,15 @@ const UserData = () => {
 
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'prerequisites'
-                ? 'bg-white text-blue-600'
-                : 'dark:text-white bg-[#ffffffc2]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77]'
                 }`}
               onClick={() => setActiveTab('prerequisites')}
             >
               <div className="flex-shrink-0">
                 <BookOpen className={`transition-all duration-200 ${activeTab === 'prerequisites'
                   ? 'w-5 h-5 text-blue-600'
-                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Today's Prerequisite</span>
@@ -495,15 +496,15 @@ const UserData = () => {
 
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'chatHistory'
-                ? 'bg-white text-blue-600'
-                : 'dark:text-white bg-[#ffffffc2]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77]'
                 }`}
               onClick={() => setActiveTab('chatHistory')}
             >
               <div className="flex-shrink-0">
                 <Clock className={`transition-all duration-200 ${activeTab === 'chatHistory'
                   ? 'w-5 h-5 text-blue-600'
-                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5 '
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Chat History</span>
@@ -511,30 +512,30 @@ const UserData = () => {
 
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'Trends'
-                ? 'bg-white text-blue-600'
-                : 'dark:text-white bg-[#ffffffc2]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77]'
                 }`}
               onClick={() => setActiveTab('Trends')}
             >
               <div className="flex-shrink-0">
                 <ChartSpline className={`transition-all duration-200 ${activeTab === 'Trends'
                   ? 'w-5 h-5 text-blue-600'
-                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Trends</span>
             </button>
             <button
               className={`flex items-center px-3 cursor-pointer py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'reports'
-                ? 'bg-white text-blue-600'
-                : 'dark:text-white bg-[#ffffffc2]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] '
                 }`}
               onClick={() => setActiveTab('reports')}
             >
               <div className="flex-shrink-0">
                 <ClipboardList className={`transition-all duration-200 ${activeTab === 'reports'
-                  ? 'w-5 h-5 text-blue-600'
-                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  ? 'w-5 h-5 text-blue-600 '
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Past Reports</span>
@@ -542,15 +543,15 @@ const UserData = () => {
 
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'prescription'
-                ? 'bg-white text-blue-600'
-                : 'dark:text-white bg-[#ffffffc2]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77]'
                 }`}
               onClick={() => setActiveTab('prescription')}
             >
               <div className="flex-shrink-0">
                 <Pill className={`transition-all duration-200 ${activeTab === 'prescription'
                   ? 'w-5 h-5 text-blue-600'
-                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Prescription</span>
@@ -558,15 +559,15 @@ const UserData = () => {
 
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'allergies'
-                ? 'bg-white text-blue-600'
-                : 'dark:text-white bg-[#ffffffc2]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] '
                 }`}
               onClick={() => setActiveTab('allergies')}
             >
               <div className="flex-shrink-0">
                 <AlertTriangle className={`transition-all duration-200 ${activeTab === 'allergies'
                   ? 'w-5 h-5 text-blue-600'
-                  : 'w-4 h-4 group-hover/button:w-5 group-hover/button:h-5'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
                   }`} />
               </div>
               <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Allergies</span>

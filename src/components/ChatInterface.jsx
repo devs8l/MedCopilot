@@ -122,7 +122,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
   };
 
   return (
-    <div className="flex flex-col h-full w-full mx-auto shadow-lg transition-opacity duration-200 ease-in-out" 
+    <div className="flex flex-col h-full w-full mx-auto shadow-lg  transition-opacity duration-200 ease-in-out" 
          style={{ opacity: isTransitioning ? 0.7 : 1 }}>
       {/* Messages Container with fixed minimum height */}
       <div 
@@ -258,14 +258,14 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
 
       {/* Input Area with smooth transitions */}
       <div className={`p-1 sm:py-2 md:py-3 lg:py-3 xl:py-4 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-full'} mx-auto transition-all duration-200 ease-in-out`}>
-        <div className="flex flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-white dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1">
+        <div className="flex flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#48547004] border border-gray-200 dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1">
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isTransitioning && handleSendMessage()}
             placeholder={selectedUser ? "How can MedCopilot help with this patient?" : "Get key insights on your patient schedule and priorities for today"}
-            className="flex-1 p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 rounded-lg focus:outline-none dark:bg-[#27313C] dark:text-white"
+            className="flex-1 p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 rounded-lg focus:outline-none bg- dark:bg-[#27313C] dark:text-white"
             disabled={isTransitioning}
           />
           <div className='flex justify-between items-center p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3'>
