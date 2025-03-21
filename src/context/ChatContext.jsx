@@ -122,12 +122,15 @@ const ChatContextProvider = (props) => {
 
         const data = await response.json();
 
+        // Format the API response
+        const formattedContent = formatMedicalResponse(data.content);
+
         // Add bot response to messages
         setMessages((prev) => [
           ...prev,
           {
             type: 'bot',
-            content: data.content || 'No response from medical analysis',
+            content: formattedContent || 'No response from medical analysis',
             isInitial: false,
           },
         ]);
@@ -150,12 +153,15 @@ const ChatContextProvider = (props) => {
 
         const data = await response.json();
 
+        // Format the API response
+        const formattedContent = formatMedicalResponse(data.content);
+
         // Add bot response to messages
         setMessages((prev) => [
           ...prev,
           {
             type: 'bot',
-            content: data.content || 'No response from general health chat',
+            content: formattedContent || 'No response from general health chat',
             isInitial: false,
           },
         ]);
@@ -178,6 +184,50 @@ const ChatContextProvider = (props) => {
 
     // Clear input and files after sending
     setUploadedFiles([]);
+  };
+
+  // Helper function to format the medical response
+  const formatMedicalResponse = (response) => {
+    if (!response) return 'No data available.';
+
+    // Split the response by new lines to handle line breaks
+    const lines = response.split('\n');
+
+    // Format each line
+    const formattedLines = lines.map((line) => {
+      // Trim whitespace
+      line = line.trim();
+
+      // If the line starts with a bullet (•, -, or *), treat it as a list item
+      if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
+        // Remove the bullet and wrap the line in <li> tags
+        line = line.slice(1).trim(); // Remove the bullet
+        return `<li>${line}</li>`;
+      }
+
+      // If the line is not empty, process it
+      if (line) {
+        // Replace double stars (**) with <strong> tags for bold text
+        line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Wrap the line in a div for proper spacing
+        return `<div>${line}</div>`;
+      }
+
+      return ''; // Skip empty lines
+    });
+
+    // Check if there are any list items
+    const hasListItems = formattedLines.some((line) => line.startsWith('<li>'));
+
+    // If there are list items, wrap them in a <ul> tag
+    if (hasListItems) {
+      const listItems = formattedLines.filter((line) => line.startsWith('<li>')).join('');
+      const nonListItems = formattedLines.filter((line) => !line.startsWith('<li>')).join('');
+      return `${nonListItems}<ul class="custom-bullet">${listItems}</ul>`;
+    }
+
+    // Join the lines into a single string
+    return formattedLines.join('');
   };
 
   // Function to regenerate specific message
@@ -400,7 +450,7 @@ const ChatContextProvider = (props) => {
     const clearMessage = isSessionActive && selectedUser
       ? defaultPatientMessage
       : defaultGeneralMessage;
-      
+
     if (userId) {
       // Clear history for specific user
       setUserMessages(prev => ({
@@ -433,24 +483,27 @@ const ChatContextProvider = (props) => {
     setElapsedTime(3600);
   
     // Update initial message for patient if a patient is selected
-    if (userId) {
-      // Reset chat with patient session message
-      setUserMessages(prev => ({
-        ...prev,
-        [userId]: [defaultPatientMessage]
-      }));
-    }
+    // if (userId) {
+    //   // Add session start message to the existing chat history
+    //   setUserMessages(prev => ({
+    //     ...prev,
+    //     [userId]: [
+    //       ...(prev[userId] || []), // Preserve existing messages
+    //       defaultPatientMessage, // Add session start message
+    //     ]
+    //   }));
+    // }
   
-    intervalRef.current = setInterval(() => {
-      setElapsedTime((prev) => {
-        if (prev <= 0) {
-          clearInterval(intervalRef.current);
-          endSession();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    // intervalRef.current = setInterval(() => {
+    //   setElapsedTime((prev) => {
+    //     if (prev <= 0) {
+    //       clearInterval(intervalRef.current);
+    //       endSession();
+    //       return 0;
+    //     }
+    //     return prev - 1;
+    //   });
+    // }, 1000);
   };
 
   // End session
@@ -462,14 +515,16 @@ const ChatContextProvider = (props) => {
     setElapsedTime(3600);
   
     // Reset any active patient chat to general welcome message
-    if (activeSessionUserId) {
-      setUserMessages(prev => ({
-        ...prev,
-        [activeSessionUserId]: [defaultGeneralMessage]
-      }));
-    }
+    // if (activeSessionUserId) {
+    //   setUserMessages(prev => ({
+    //     ...prev,
+    //     [activeSessionUserId]: [
+    //       ...(prev[activeSessionUserId] || []), // Preserve existing messages
+    //       defaultGeneralMessage, // Add general welcome message
+    //     ]
+    //   }));
+    // }
   };
-
   // Cleanup interval on unmount
   useEffect(() => {
     return () => {
@@ -499,6 +554,7 @@ const ChatContextProvider = (props) => {
     startSession,
     endSession,
     activeSessionUserId,
+    formatMedicalResponse
   };
 
   return <ChatContext.Provider value={value}>{props.children}</ChatContext.Provider>;

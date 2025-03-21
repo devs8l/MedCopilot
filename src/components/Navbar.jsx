@@ -10,8 +10,10 @@ const Navbar = () => {
     const { searchQuery, setSearchQuery, isUserSelected, setIsUserSelected, logout, isExpanded, setIsExpanded, setSelectedUser } = useContext(MedContext);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isIconsDropdownOpen, setIsIconsDropdownOpen] = useState(false);
     const searchInputRef = useRef(null);
     const mobileMenuRef = useRef(null);
+    const iconsDropdownRef = useRef(null);
 
     // Dark mode state
     const [theme, setTheme] = useState(
@@ -36,14 +38,15 @@ const Navbar = () => {
     // Close mobile menu when screen size changes to desktop
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth > 768 && isMobileMenuOpen) {
-                setIsMobileMenuOpen(false);
+            if (window.innerWidth > 768) {
+                if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+                if (isIconsDropdownOpen) setIsIconsDropdownOpen(false);
             }
         };
 
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, [isMobileMenuOpen]);
+    }, [isMobileMenuOpen, isIconsDropdownOpen]);
 
     // Focus search input when search is opened
     useEffect(() => {
@@ -52,12 +55,17 @@ const Navbar = () => {
         }
     }, [isSearchOpen]);
 
-    // Close mobile menu when clicking outside
+    // Close menus when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) && 
                 !event.target.closest('[data-menu-toggle]')) {
                 setIsMobileMenuOpen(false);
+            }
+            
+            if (iconsDropdownRef.current && !iconsDropdownRef.current.contains(event.target) &&
+                !event.target.closest('[data-icons-toggle]')) {
+                setIsIconsDropdownOpen(false);
             }
         };
 
@@ -73,6 +81,7 @@ const Navbar = () => {
             if (event.key === 'Escape') {
                 if (isSearchOpen) setIsSearchOpen(false);
                 if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+                if (isIconsDropdownOpen) setIsIconsDropdownOpen(false);
             }
         };
 
@@ -80,7 +89,7 @@ const Navbar = () => {
         return () => {
             document.removeEventListener('keydown', handleEscKey);
         };
-    }, [isSearchOpen, isMobileMenuOpen]);
+    }, [isSearchOpen, isMobileMenuOpen, isIconsDropdownOpen]);
 
     // Format date for different screen sizes
     const formatDate = () => {
@@ -125,7 +134,8 @@ const Navbar = () => {
                                 <p className="text-xs text-gray-600 dark:text-gray-400 hidden xs:block">Product by JNC Tech</p>
                             </div>
 
-                            <div className="flex gap-1 sm:gap-2 md:gap-4 px-2 sm:px-4 md:px-8 overflow-x-auto no-scrollbar">
+                            {/* Stats buttons - hidden on mobile, visible on desktop */}
+                            <div className="hidden md:flex gap-1 sm:gap-2 md:gap-4 px-2 sm:px-4 md:px-8 overflow-x-auto no-scrollbar">
                                 <button className="py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 whitespace-nowrap">
                                     <User size={12} className="sm:w-4 sm:h-4 md:w-5 md:h-5"/>
                                     <h1 className="text-xs sm:text-sm">15</h1>
@@ -171,25 +181,94 @@ const Navbar = () => {
                                 {date} | {time}
                             </div>
 
-                            {/* Search toggle button */}
-                            {!isUserSelected && (
-                                <button
-                                    onClick={() => setIsSearchOpen(!isSearchOpen)}
-                                    className="w-8 h-8 flex items-center justify-center"
-                                    aria-label={isSearchOpen ? "Close search" : "Open search"}
-                                    data-menu-toggle
-                                >
-                                    {isSearchOpen ? 
-                                        <X className="w-4 h-4 sm:w-5 sm:h-5" /> : 
-                                        <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    }
-                                </button>
-                            )}
+                            {/* DESKTOP: Search toggle button and action icons */}
+                            <div className="hidden md:flex items-center gap-2 sm:gap-4">
+                                {!isUserSelected && (
+                                    <button
+                                        onClick={() => setIsSearchOpen(!isSearchOpen)}
+                                        className="w-8 h-8 flex items-center justify-center"
+                                        aria-label={isSearchOpen ? "Close search" : "Open search"}
+                                    >
+                                        {isSearchOpen ? 
+                                            <X className="w-4 h-4 sm:w-5 sm:h-5" /> : 
+                                            <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+                                        }
+                                    </button>
+                                )}
+                                
+                                {/* Action icons - desktop view */}
+                                <CircleHelp className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <NotificationPopup />
+                                <Bolt className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </div>
                             
-                            {/* Action icons - responsive sizing */}
-                            <CircleHelp className="w-4 h-4 sm:w-5 sm:h-5" />
-                            <NotificationPopup />
-                            <Bolt className="w-4 h-4 sm:w-5 sm:h-5" />
+                            {/* MOBILE: Icons dropdown toggle */}
+                            <div className="md:hidden relative">
+                                <button 
+                                    className="w-8 h-8 flex items-center justify-center"
+                                    onClick={() => setIsIconsDropdownOpen(!isIconsDropdownOpen)}
+                                    aria-label="Toggle icons menu"
+                                    data-icons-toggle
+                                >
+                                    <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </button>
+                                
+                                {/* Icons dropdown for mobile */}
+                                {isIconsDropdownOpen && (
+                                    <div 
+                                        ref={iconsDropdownRef}
+                                        className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-900 rounded-xl shadow-md p-3 z-50 animate-slideDown w-48"
+                                    >
+                                        <div className="flex flex-col space-y-3">
+                                            {/* Stats in dropdown */}
+                                            <div className="flex gap-2 justify-between">
+                                                <button className="py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-1 px-2 flex-1">
+                                                    <User size={12} className="w-4 h-4"/>
+                                                    <h1 className="text-xs">15</h1>
+                                                </button>
+                                                <button className="py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-1 px-2 flex-1">
+                                                    <ClockAlert size={12} className="w-4 h-4"/> 
+                                                    <h1 className="text-xs">1</h1>
+                                                </button>
+                                                <button className="py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-1 px-2 flex-1">
+                                                    <CircleCheck size={12} className="w-4 h-4"/>
+                                                    <h1 className="text-xs">3</h1>
+                                                </button>
+                                            </div>
+                                            
+                                            {/* Search button in dropdown */}
+                                            {!isUserSelected && (
+                                                <div 
+                                                    className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
+                                                    onClick={() => {
+                                                        setIsSearchOpen(!isSearchOpen);
+                                                        setIsIconsDropdownOpen(false);
+                                                    }}
+                                                >
+                                                    <Search className="w-4 h-4" />
+                                                    <span className="text-sm">Search</span>
+                                                </div>
+                                            )}
+                                            
+                                            {/* Action icons in dropdown */}
+                                            <div className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer">
+                                                <CircleHelp className="w-4 h-4" />
+                                                <span className="text-sm">Help</span>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer">
+                                                <Bolt className="w-4 h-4" />
+                                                <span className="text-sm">Actions</span>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer" onClick={toggleTheme}>
+                                                {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                                                <span className="text-sm">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                             
                             {/* Mobile menu toggle button */}
                             <button 
@@ -203,15 +282,6 @@ const Navbar = () => {
                                     <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
                                 }
                             </button>
-                            
-                            {/* Desktop theme toggle - hidden for now as per original */}
-                            <div className="hidden md:flex items-center gap-4">
-                                {/* Uncomment if needed
-                                <button onClick={toggleTheme} className="p-2 rounded-full flex items-center justify-center">
-                                    {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5 text-gray-800" />}
-                                </button>
-                                */}
-                            </div>
                         </div>
                     </div>
                     
@@ -237,16 +307,6 @@ const Navbar = () => {
                         className="md:hidden bg-white dark:bg-gray-900 m-2 mt-0 rounded-xl shadow-md p-4 animate-slideDown z-40"
                     >
                         <div className="flex flex-col space-y-4">
-                            <div className="flex items-center gap-2" onClick={toggleTheme}>
-                                {theme === "dark" ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
-                                <span className="text-sm">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
-                            </div>
-                            
-                            <div className="flex items-center gap-2">
-                                <CircleHelp className="w-4 h-4 sm:w-5 sm:h-5" />
-                                <span className="text-sm">Help Center</span>
-                            </div>
-                            
                             <div className="flex items-center gap-2">
                                 <User className="w-4 h-4 sm:w-5 sm:h-5" />
                                 <span className="text-sm">Profile</span>

@@ -17,6 +17,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
     isMessageLoading,
     handleClockClick,
     isloadingHistory,
+    formatMedicalResponse
   } = useContext(ChatContext);
 
   const fileInputRef = useRef(null);
@@ -181,25 +182,29 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                 {/* For bot messages, check loading state */}
                 {message.type === 'bot' && !message.isInitial && (
                   <div className="flex justify-start">
-                    <div className=" text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
-                      <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm">{message.content}</p>
+                    <div className="text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
+                      {/* Render formatted content using dangerouslySetInnerHTML */}
+                      <div
+                        className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm"
+                        dangerouslySetInnerHTML={{ __html: formatMedicalResponse(message.content) }}
+                      />
 
                       {/* Action buttons for bot messages */}
                       <div className="flex justify-start space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4 xl:space-x-4 text-gray-500 sm:mt-2 md:mt-3 lg:mt-4 xl:mt-4">
                         <button onClick={() => regenerateMessage(index)} className="hover:text-blue-500">
-                          <RefreshCcw size={15}   />
+                          <RefreshCcw size={15} />
                         </button>
                         <button onClick={() => handleCopy(message.content)} className="hover:text-green-500">
-                          <Clipboard size={15}   />
+                          <Clipboard size={15} />
                         </button>
                         <button onClick={() => console.log('Forward')} className="hover:text-yellow-500">
-                          <ArrowRight size={15}   />
+                          <ArrowRight size={15} />
                         </button>
                         <button onClick={() => console.log('Liked')} className="hover:text-blue-500">
-                          <ThumbsUp size={15}  />
+                          <ThumbsUp size={15} />
                         </button>
                         <button onClick={() => console.log('Disliked')} className="hover:text-red-500">
-                          <ThumbsDown size={15}  />
+                          <ThumbsDown size={15} />
                         </button>
                       </div>
                     </div>

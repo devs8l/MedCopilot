@@ -74,14 +74,16 @@ const UserData = () => {
 
     setIsLoadingReports(true);
     try {
+      // Fetch raw patient history data
       const response = await fetch(
         `https://medicalchat-backend-mongodb.vercel.app/patients/${userData._id}/history`
       );
       if (!response.ok) throw new Error('Failed to fetch history');
       const historyData = await response.json();
 
+      // Request full medical analysis from the API
       const analysisResult = await fetch(
-        `https://medicalchat-tau.vercel.app/medical_analysis/Provide a comprehensive overview of this patient's medical history`,
+        `https://medicalchat-tau.vercel.app/full_medical_analysis/Give me the patient full medical analysis`,
         {
           method: 'POST',
           headers: {
@@ -94,10 +96,11 @@ const UserData = () => {
       if (!analysisResult.ok) throw new Error('Failed to analyze history');
       const analysisData = await analysisResult.json();
 
+      // Create the history object with raw data and formatted analysis
       const historyObj = {
         rawData: historyData,
-        analysis: analysisData.content || 'No analysis available',
-        timestamp: new Date().toISOString() // Add timestamp for cache invalidation if needed
+        analysis: analysisData,
+        timestamp: new Date().toISOString(), // Add timestamp for cache invalidation
       };
 
       // Save to state
@@ -105,7 +108,6 @@ const UserData = () => {
 
       // Save to local storage
       localStorage.setItem(`patientHistory_${userData._id}`, JSON.stringify(historyObj));
-
     } catch (error) {
       console.error('Error fetching history:', error);
     } finally {
@@ -234,6 +236,7 @@ const UserData = () => {
 
   // Render different content based on active tab
   const renderTabContent = () => {
+    const { details = [], summary = "No summary available", recommendations = [] } = patientHistory?.analysis || {};
     switch (activeTab) {
       case 'chatHistory':
         if (sessionHistory.length === 0) {
@@ -271,6 +274,7 @@ const UserData = () => {
           </div>
         );
 
+
       case 'summary':
         if (isLoadingReports) {
           return (
@@ -290,7 +294,7 @@ const UserData = () => {
 
         return (
           <div className="space-y-4">
-            
+
 
             {patientHistory ? (
               <div className="rounded-lg px-4">
@@ -304,7 +308,7 @@ const UserData = () => {
                   </button>
                 </div>
                 <div className="text-sm text-gray-500 whitespace-pre-wrap">
-                  {patientHistory.analysis}
+                  {summary}
                 </div>
                 {patientHistory.timestamp && (
                   <p className="text-xs text-gray-400 mt-2">
@@ -336,20 +340,30 @@ const UserData = () => {
         );
 
       case 'prescription':
+        const medications = details.find((category) => category.category === "Medications")?.findings || [];
         return (
           <div className="px-4">
             <h2 className="text-md">Prescription</h2>
-            <p className="text-gray-500">Prescription details will be displayed here.</p>
+            {medications.length > 0 ? (
+              <ul className="list-disc text-gray-500 list-inside">
+                {medications.map((medication, index) => (
+                  <li key={index}>{medication}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No medications prescribed.</p>
+            )}
           </div>
         );
 
       case 'allergies':
+        const allergies = details.find((category) => category.category === "Allergies")?.findings || [];
         return (
           <div className="px-4">
             <h2 className="text-md">Allergies</h2>
-            {userData?.allergies && userData.allergies.length > 0 ? (
+            {allergies.length > 0 ? (
               <ul className="list-disc text-gray-500 list-inside">
-                {userData.allergies.map((allergy, index) => (
+                {allergies.map((allergy, index) => (
                   <li key={index}>{allergy}</li>
                 ))}
               </ul>
@@ -360,19 +374,25 @@ const UserData = () => {
         );
 
       case 'reports':
+        const pastReports = details.filter(
+          (category) =>
+            category.category !== "Medications" &&
+            category.category !== "Allergies" &&
+            category.category !== "Miscellaneous"
+        );
         return (
           <div className="px-4">
-            <h2 className="text-md ">Past reports</h2>
-            <div className="text-gray-500">
-              <p>Summary from last visit, 5th March (Wednesday)</p>
-              <p>Everything's looking good! Her recent readings were consistently within the 120-135/75-85 range, her medication and activity logs are in order. I don't see any need for changes or adjustments at this time.</p>
-              <ul className="list-disc list-inside mt-2">
-                <li>Readings: 120-135/75-85 (good range).</li>
-                <li>Meds/activity: OK.</li>
-                <li>Model & alerts: Working fine.</li>
-                <li>No changes needed. 😊</li>
-              </ul>
-            </div>
+            <h2 className="text-md">Past Reports</h2>
+            {pastReports.map((report, index) => (
+              <div key={index} className="mb-4">
+                <h3 className="font-medium">{report.category}</h3>
+                <ul className="list-disc text-gray-500 list-inside">
+                  {report.findings.map((finding, idx) => (
+                    <li key={idx}>{finding}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         );
       case 'Trends':
@@ -407,11 +427,12 @@ const UserData = () => {
 
     return `${String(newHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   };
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between px-6 gap-10">
         <div className="flex gap-5 text-xl font-bold  py-5 items-center text-[#222836]">
-          <h2 className="">Appointments</h2>
+          <h2 className="cursor-pointer" onClick={() => navigate("/")}>Appointments</h2>
           <ChevronRight size={15} />
           <h2>{userData?.name}</h2>
         </div>
