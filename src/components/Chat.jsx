@@ -171,15 +171,15 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
 
     return (
         <div>
-            <div className={`  flex items-center justify-between rounded-xl ${isFullScreen ? 'bg-[#FFFFFFCC]' : ''} dark:text-white relative`}>
-                <div className="flex-1 overflow-x-auto scrollbar-hide">
-                    <div className="flex  px-2 h-full   border-[#ffff] ">
+            <div className={`  flex items-center  justify-between rounded-xl ${isFullScreen ? 'bg-[#FFFFFFCC]' : ''} dark:text-white relative`}>
+                <div className="flex-1 overflow-x-auto scrollbar-hide ">
+                    <div className="flex h-full gap-2">
                         {/* General Chat Tab */}
                         <div
                             onClick={switchToGeneralTab}
-                            className={`flex items-center gap-1 sm:gap-2 rounded-t-xl px-2 sm:px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === 'general'
-                                ? 'bg-white dark:bg-gray-700'
-                                : ' dark:bg-gray-800 dark:hover:bg-gray-600 rounded-b-xl'
+                            className={`flex items-center gap-1 sm:gap-2  pt-2 pb-2 rounded-t-md px-2 sm:px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === 'general'
+                                ? 'bg-white dark:bg-gray-700  pb-4'
+                                : ' bg-[#FFFFFF33] dark:bg-gray-800 dark:hover:bg-gray-600 rounded-md'
                                 }`}
                         >
                             <div className="w-4 sm:w-6 h-4 sm:h-6 rounded-full flex items-center justify-center">
@@ -196,9 +196,9 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                             <div
                                 key={tab._id}
                                 onClick={() => switchToTab(tab._id)}
-                                className={`flex items-center gap-1 sm:gap-2 rounded-t-xl px-2 sm:px-3 h-full py-1 cursor-pointer whitespace-nowrap ${activeTabId === tab._id
-                                    ? 'bg-white dark:bg-gray-700'
-                                    : ' dark:bg-gray-800  dark:hover:bg-gray-600'
+                                className={`flex items-center gap-1 sm:gap-2 rounded-t-md pt-2 pb-2 px-2 sm:px-3 h-full py-1 cursor-pointer whitespace-nowrap ${activeTabId === tab._id
+                                    ? 'bg-white dark:bg-gray-700 pb-4'
+                                    : ' bg-[#FFFFFF33] dark:bg-gray-800  dark:hover:bg-gray-600 rounded-md'
                                     }`}
                             >
                                 <div className="w-4 sm:w-6 h-4 sm:h-6 rounded-full flex items-center justify-center overflow-hidden">
@@ -224,7 +224,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     </div>
                 </div>
             </div>
-            <div className="px-2 sm:px-3  sm:pt-3 bg-[#ffffff] dark:bg-[#00000099] rounded-lg  flex flex-col overflow-hidden">
+            <div className={`px-2 sm:px-3  sm:pt-3  bg-[#ffffff] dark:bg-[#00000099]  ${activeTabId === 'general'?"rounded-r-lg rounded-b-lg":"rounded-lg" }  flex flex-col overflow-hidden`}>
 
                 <div className="flex items-center justify-between">
                     <h1 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mt-2 sm:mt-4 px-2 sm:px-4 mb-1 sm:mb-2">

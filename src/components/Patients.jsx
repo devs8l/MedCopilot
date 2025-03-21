@@ -13,7 +13,7 @@ const Patients = () => {
     return (
         <div className="p-1">
             {/* <h3 className="mx-4 font-semibold mb-4 text-md ">Your Patients</h3> */}
-            <div className="space-y-4 h-full overflow-auto">
+            <div className="space-y-4 h-[75vh] overflow-auto">
                 {
                     sortedUsers.map((user, index) => (
                         <div key={index} className="p-4 bg-[#ffffffa9] dark:bg-gray-800 rounded-lg shadow flex items-center space-x-4 mx-4">

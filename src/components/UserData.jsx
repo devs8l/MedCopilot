@@ -290,14 +290,7 @@ const UserData = () => {
 
         return (
           <div className="space-y-4">
-            {analysisMessage && (
-              <div className="bg-white rounded-lg p-4 drop-shadow-sm mb-4">
-                <h4 className="font-medium text-blue-600 mb-2">AI Analysis</h4>
-                <div className="text-sm whitespace-pre-wrap">
-                  {analysisMessage.content}
-                </div>
-              </div>
-            )}
+            
 
             {patientHistory ? (
               <div className="rounded-lg px-4">

@@ -154,7 +154,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                 {/* User messages always render normally */}
                 {message.type === 'user' && (
                   <div className="flex justify-end">
-                    <div className="bg-blue-500 text-white max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
+                    <div className="bg-[#c8ddef80] text-gray-700 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
                       <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm">{message.content}</p>
 
                       {/* Display files for user messages if they exist */}
@@ -181,25 +181,25 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                 {/* For bot messages, check loading state */}
                 {message.type === 'bot' && !message.isInitial && (
                   <div className="flex justify-start">
-                    <div className="bg-[#48547004] border border-gray-1 00 text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
+                    <div className=" text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
                       <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm">{message.content}</p>
 
                       {/* Action buttons for bot messages */}
-                      <div className="flex justify-start space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4 xl:space-x-4 text-gray-500 ml-1 sm:ml-1 md:ml-2 lg:ml-2 xl:ml-2 mt-1 sm:mt-2 md:mt-3 lg:mt-4 xl:mt-4">
+                      <div className="flex justify-start space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4 xl:space-x-4 text-gray-500 sm:mt-2 md:mt-3 lg:mt-4 xl:mt-4">
                         <button onClick={() => regenerateMessage(index)} className="hover:text-blue-500">
-                          <RefreshCcw size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
+                          <RefreshCcw size={15}   />
                         </button>
                         <button onClick={() => handleCopy(message.content)} className="hover:text-green-500">
-                          <Clipboard size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
+                          <Clipboard size={15}   />
                         </button>
                         <button onClick={() => console.log('Forward')} className="hover:text-yellow-500">
-                          <ArrowRight size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
+                          <ArrowRight size={15}   />
                         </button>
                         <button onClick={() => console.log('Liked')} className="hover:text-blue-500">
-                          <ThumbsUp size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
+                          <ThumbsUp size={15}  />
                         </button>
                         <button onClick={() => console.log('Disliked')} className="hover:text-red-500">
-                          <ThumbsDown size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
+                          <ThumbsDown size={15}  />
                         </button>
                       </div>
                     </div>
