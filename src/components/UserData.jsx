@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
-import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer, ChartSpline } from "lucide-react";
+import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer, ChartSpline, Calendar } from "lucide-react";
 import Chart from "./Chart";
 
 
@@ -405,10 +405,19 @@ const UserData = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-2 text-xl font-bold px-6 py-5 items-center text-[#222836]">
-        <h2 className="">Appointments</h2>
-        <ChevronRight size={15} />
-        <h2>{userData?.name}</h2>
+      <div className="flex items-center gap-10">
+        <div className="flex gap-5 text-xl font-bold px-6 py-5 items-center text-[#222836]">
+          <h2 className="">Appointments</h2>
+          <ChevronRight size={15} />
+          <h2>{userData?.name}</h2>
+        </div>
+        <div className="flex items-center py-3 gap-4">
+          <div className="flex items-center gap-1">
+            <Calendar size={15} className="text-gray-500"/>
+            <p className="text-sm text-gray-500">Today</p>
+          </div>
+          <p className="text-sm text-gray-500 ">{userData?.time}</p>
+        </div>
       </div>
       <h2 className="">   </h2>
       <div>
@@ -416,15 +425,15 @@ const UserData = () => {
           <div className="flex items-start space-x-4">
             <img
               src={userData?.profileImage || "/api/placeholder/80/80"}
-              className="w-16 h-16 rounded-full object-cover"
+              className="w-13 h-13 rounded-full object-cover"
               alt={userData?.name}
             />
             <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold">{userData?.name}</h2>
-                <div className="grid grid-cols-[2fr_1fr] gap-4">
+                <h2 className="text-sm font-semibold">Name:  {userData?.name}</h2>
+                <div className="flex gap-1">
+                  <h2 className="text-sm font-semibold">Patient ID: </h2>
                   <p className="text-sm text-gray-500">#{userData?._id?.slice(-6)}</p>
-                  <p className="text-sm text-gray-500">{userData?.time}</p>
                 </div>
               </div>
             </div>
@@ -436,7 +445,7 @@ const UserData = () => {
                 <Stopwatch elapsedTime={elapsedTime} />
                 <button
                   onClick={endSession}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md text-sm"
+                  className="px-4 py-2 border border-red-500 text-red-500 rounded-xs text-sm"
                 >
                   End Session
                 </button>
@@ -444,9 +453,9 @@ const UserData = () => {
             ) : (
               <button
                 onClick={() => startSession(userData._id)}
-                className="px-4 py-2 bg-blue-500 flex gap-1 items-center justify-center text-white rounded-md text-sm"
+                className="px-4 py-2 bg-[#1AE86C] flex gap-3 items-center justify-center text-white rounded-xs text-sm"
               >
-                <Play size={15} /> Start Session
+                <Play size={13} /> Start Session
               </button>
             )}
           </div>
@@ -454,7 +463,7 @@ const UserData = () => {
 
         </div>
       </div>
-      <div className="p-6 flex flex-col gap-6 rounded-lg bg-[#ffffff] dark:bg-[#00000099] mx-4 h-[calc(65vh-80px)] overflow-auto">
+      <div className="p-4 flex flex-col gap-6 rounded-sm   bg-[#ffffff] dark:bg-[#00000099] mx-1 h-[calc(65vh-80px)] overflow-auto">
 
         {/* Profile Section */}
 
@@ -465,7 +474,7 @@ const UserData = () => {
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'summary'
                 ? 'bg-white text-blue-600 shadow-sm'
-                : 'dark:text-white bg-[#ffffff77]'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('summary')}
             >
@@ -481,7 +490,7 @@ const UserData = () => {
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'prerequisites'
                 ? 'bg-white text-blue-600 shadow-sm'
-                : 'dark:text-white bg-[#ffffff77]'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('prerequisites')}
             >
@@ -497,7 +506,7 @@ const UserData = () => {
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'chatHistory'
                 ? 'bg-white text-blue-600 shadow-sm'
-                : 'dark:text-white bg-[#ffffff77]'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('chatHistory')}
             >
@@ -513,7 +522,7 @@ const UserData = () => {
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'Trends'
                 ? 'bg-white text-blue-600 shadow-sm'
-                : 'dark:text-white bg-[#ffffff77]'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('Trends')}
             >
@@ -528,7 +537,7 @@ const UserData = () => {
             <button
               className={`flex items-center px-3 cursor-pointer py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'reports'
                 ? 'bg-white text-blue-600 shadow-sm'
-                : 'dark:text-white bg-[#ffffff77] '
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86] '
                 }`}
               onClick={() => setActiveTab('reports')}
             >
@@ -544,7 +553,7 @@ const UserData = () => {
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'prescription'
                 ? 'bg-white text-blue-600 shadow-sm'
-                : 'dark:text-white bg-[#ffffff77]'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('prescription')}
             >
@@ -560,7 +569,7 @@ const UserData = () => {
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'allergies'
                 ? 'bg-white text-blue-600 shadow-sm'
-                : 'dark:text-white bg-[#ffffff77] '
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86] '
                 }`}
               onClick={() => setActiveTab('allergies')}
             >
@@ -577,7 +586,7 @@ const UserData = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="flex-1">
+          <div className="flex-1 p-2">
             {renderTabContent()}
           </div>
         </div>

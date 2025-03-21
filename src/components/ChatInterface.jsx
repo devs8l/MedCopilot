@@ -25,15 +25,15 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
 
   // Different suggestions based on whether a patient is selected
   const patientSuggestionPrompts = [
-    "Summarize this patient's last visit.",
-    "Show me recent lab results and trends.",
+    "Summarize this<br/> patient's last visit.",
+    "Show me recent lab<br/> results and trends.",
     "Does this patient have any allergies or chronic conditions?",
     "Suggest possible causes for the patient's current symptoms."
   ];
 
   const generalSuggestionPrompts = [
-    "Summary of my patient list for today",
-    "Which patients need urgent attention or follow ups?",
+    "Summary of my<br/> patient list for today",
+    "Which patients need urgent<br/> attention or follow ups?",
     "What patterns should i be aware in today’s patients?",
     "Any missed appointments or cancellations today?"
   ];
@@ -44,7 +44,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
   // Debounced scroll to prevent jitter
   const debouncedScrollToBottom = () => {
     if (isTransitioning) return; // Skip scrolling during transitions
-    
+
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
@@ -72,7 +72,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
 
   const handleSendMessage = () => {
     if (!inputMessage.trim() && uploadedFiles.length === 0) return;
-    
+
     sendMessage(inputMessage, uploadedFiles);
     setPromptGiven(true);
   };
@@ -122,27 +122,27 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
   };
 
   return (
-    <div className="flex flex-col h-full w-full mx-auto shadow-lg  transition-opacity duration-200 ease-in-out" 
-         style={{ opacity: isTransitioning ? 0.7 : 1 }}>
+    <div className="flex flex-col h-full w-full mx-auto shadow-lg  transition-opacity duration-200 ease-in-out"
+      style={{ opacity: isTransitioning ? 0.7 : 1 }}>
       {/* Messages Container with fixed minimum height */}
-      <div 
+      <div
         ref={messageContainerRef}
         className={`flex-1 overflow-y-auto pb-1 sm:pb-1 md:pb-2 lg:pb-3 xl:pb-4 pr-1 sm:pr-2 md:pr-3 lg:pr-4 xl:pr-4 pl-1 sm:pl-2 md:pl-3 lg:pl-4 xl:pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${messages.length === 1 ? 'flex items-center justify-center' : ''}`}
       >
         {messages.length === 1 ? (
-          <div className="text-center space-y-1">
-            <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl font-semibold dark:text-white">{messages[0].content}</div>
-            <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-gray-600">{messages[0].subtext}</p>
-            <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-gray-600 mb-2 sm:mb-3 md:mb-4 lg:mb-6 xl:mb-8 mt-2 sm:mt-3 md:mt-4 lg:mt-6 xl:mt-8">{messages[0].para}</p>
+          <div className="text-center space-y-3">
+            <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl font-semibold dark:text-white">Good Morning Dr. John!</div>
+            <p className="text-xs sm:text-xs  md:text-sm lg:text-sm xl:text-sm text-gray-600">Ask a question or click on the prompts to get started</p>
+            {/* <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-gray-600 mb-2 sm:mb-3 md:mb-4 lg:mb-6 xl:mb-8 mt-2 sm:mt-3 md:mt-4 lg:mt-6 xl:mt-8">{messages[0].para}</p> */}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-4 w-full sm:w-2/3 md:w-2/3 lg:w-2/3 xl:w-2/3 m-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 mt-10 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-4 w-full sm:w-2/3 m-auto">
               {suggestionPrompts.map((prompt, index) => (
                 <button
                   key={index}
-                  className="p-1 sm:p-2 md:p-3 lg:p-4 xl:p-4 text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-[#52A1FF] border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-left"
-                  onClick={() => setInputMessage(prompt)}
+                  className="sm:py-2.5 sm:px-3 flex items-center justify-center text-xs sm:text-xs  text-[#7A7E86] border border-[#D3D4D7] rounded-xs hover:bg-gray-50 transition-colors text-center"
+                  onClick={() => setInputMessage(prompt.replace(/<br\/>/g, ' '))} // Remove <br/> tags when setting input
                 >
-                  {prompt}
+                  <p className='' dangerouslySetInnerHTML={{ __html: prompt }}></p>
                 </button>
               ))}
             </div>
@@ -181,7 +181,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                 {/* For bot messages, check loading state */}
                 {message.type === 'bot' && !message.isInitial && (
                   <div className="flex justify-start">
-                    <div className="bg-white text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
+                    <div className="bg-[#48547004] border border-gray-1 00 text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
                       <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm">{message.content}</p>
 
                       {/* Action buttons for bot messages */}

@@ -84,11 +84,11 @@ const Appointments = () => {
         setSelectedUser(user); // Store the selected user in context
         setIsUserSelected(true);
         console.log("Selected user:", user);
-        
+
     };
 
     // Render a single patient card
-    
+
     const renderPatientCard = (user) => {
         const isHovered = hoveredUserId === user._id;
         return (
@@ -100,9 +100,9 @@ const Appointments = () => {
                 onMouseEnter={() => setHoveredUserId(user._id)}
                 onMouseLeave={() => setHoveredUserId(null)}
             >
-                <div className={`grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center gap-1 p-3 sm:p-5 rounded-sm hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 border border-[#2228365a] ${isHovered ? 'bg-white shadow-md' : 'bg-[#ffffff5d]'} mb-3 sm:mb-4`}>
+                <div className={`grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center gap-1 p-3 sm:p-3 rounded-sm hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 border border-[#2228365a] ${isHovered ? 'bg-white shadow-md' : 'bg-[#ffffff22]'} mb-3 sm:mb-4`}>
                     <div className="grid grid-cols-[2.5rem_auto] sm:grid-cols-[3rem_auto] items-center gap-2 sm:gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
+                        <div className="w-10 h-10 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
                             <img src={user.profileImage} className="w-full h-full object-cover" alt={user.name} />
                         </div>
                         <div>
@@ -113,31 +113,35 @@ const Appointments = () => {
                     <div className="flex gap-2 items-center mt-2 sm:mt-0">
                         <Clock size={14} className="" />
                         <span className="text-xs sm:text-sm text-gray-500">{user.time}</span>
-                        
-                        
+
+
                     </div>
-    
+
                     {/* Expanded content wrapper - conditionally rendered */}
                     <div className={`col-span-1 sm:col-span-2 overflow-hidden transition-all duration-300 ease-in-out ${isHovered ? 'max-h-96' : 'max-h-0'}`}>
                         <div className="mt-2 pt-3 sm:pt-4 ml-10 sm:ml-16">
                             <div className="flex flex-col gap-2 sm:gap-3">
                                 <div>
                                     <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-1">
-                                            <Repeat size={12} className="" />Routine
-                                        </button>
-                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-1">
-                                            <ChartSpline size={12} className="" />Blood Pressure
-                                        </button>
-                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-1">
-                                            <Droplets size={12} className="" />Sugar
-                                        </button>
+                                    <div className="flex flex-col gap-2 mt-2">
+                                        <div>
+                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                                <Repeat size={12} className="" />Routine Checkup
+                                            </button>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                                <ChartSpline size={12} className="" />Blood Pressure Checkup
+                                            </button>
+                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                                <Droplets size={12} className="" />Sugar Checkup
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
                                     <h4 className="text-sm sm:text-md font-medium mt-3 sm:mt-4 text-gray-800">Additional Comments</h4>
-                                    <p className="text-xs sm:text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, modi.</p>
+                                    <p className="text-xs sm:text-sm text-gray-500">Feeling fatigues quite often. It is hampering my daily routine. I wonder what could be the reason?</p>
                                 </div>
                             </div>
                         </div>
@@ -433,7 +437,7 @@ const Appointments = () => {
     };
 
     return (
-        <div className="mx-auto dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-2 sm:gap-3 rounded-lg overflow-hidden">
+        <div className="mx-auto  dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-2 sm:gap-3 rounded-lg overflow-hidden">
             {renderView()}
         </div>
     );

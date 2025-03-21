@@ -134,7 +134,7 @@ const Home = () => {
 
       // Set minimum and maximum widths for chat
       const minChatWidth = Math.min(700, availableWidth * 0.3);
-      const maxChatWidth = Math.min(isUserDetailView ? 950 : 950, availableWidth * 0.7);
+      const maxChatWidth = Math.min(1000, availableWidth * 0.7);
 
       // When toggling sidebar, maintain proportions rather than fixed widths
       let constrainedChatWidth;
@@ -391,7 +391,7 @@ const Home = () => {
                 style={{ width: `${contentWidth}px` }}
               >
 
-                <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
+                <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${location.pathname.includes('/patients') ? 'hidden' : ''} ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
                   <DatePicker />
                   <DateSort />
                 </div>
@@ -415,7 +415,7 @@ const Home = () => {
                 style={{ width: `${contentWidth}px` }}
               >
 
-                <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
+                <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${location.pathname.includes('/patients') ? 'hidden' : ''} ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
                   <DatePicker />
                   <DateSort />
                 </div>
