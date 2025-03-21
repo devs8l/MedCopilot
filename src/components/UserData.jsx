@@ -402,18 +402,29 @@ const UserData = () => {
         return null;
     }
   };
+  const addOneHour = (time) => {
+    if (!time) return "";
 
+    const [hours, minutes] = time.split(":").map(Number);
+    let newHours = hours + 1;
+
+    if (newHours >= 24) {
+      newHours -= 24;
+    }
+
+    return `${String(newHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  };
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-10">
-        <div className="flex gap-5 text-xl font-bold px-6 py-5 items-center text-[#222836]">
+      <div className="flex items-center justify-between px-6 gap-10">
+        <div className="flex gap-5 text-xl font-bold  py-5 items-center text-[#222836]">
           <h2 className="">Appointments</h2>
           <ChevronRight size={15} />
           <h2>{userData?.name}</h2>
         </div>
         <div className="flex items-center py-3 gap-4">
           <div className="flex items-center gap-1">
-            <Calendar size={15} className="text-gray-500"/>
+            <Calendar size={15} className="text-gray-500" />
             <p className="text-sm text-gray-500">Today</p>
           </div>
           <p className="text-sm text-gray-500 ">{userData?.time}</p>
