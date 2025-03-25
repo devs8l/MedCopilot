@@ -87,3 +87,33 @@
 }
 
 
+.bold-text {
+  font-size: 1.1em; /* Makes text 10% larger than normal */
+  font-weight: bold;
+}
+
+/* Custom bullet points */
+.custom-bullet {
+  list-style-type: none; /* Remove default bullets */
+  padding-left: 20px; /* Indent bullets */
+}
+
+.custom-bullet li {
+  position: relative;
+  margin-bottom: 8px; /* Spacing between bullet points */
+}
+
+.custom-bullet li::before {
+  content: "•"; /* Custom bullet symbol */
+  color: #333; /* Bullet color */
+  font-size: 1.2em; /* Bullet size */
+  position: absolute;
+  left: -15px; /* Adjust bullet position */
+}
+
+/* Make bold text slightly larger */
+.bold-text {
+  font-size: 1.1em; /* 10% larger than normal text */
+  font-weight: bold;
+}
+

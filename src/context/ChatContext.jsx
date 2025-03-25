@@ -197,43 +197,45 @@ const ChatContextProvider = (props) => {
   const formatMedicalResponse = (response) => {
     if (!response) return 'No data available.';
 
-    // Split the response by new lines to handle line breaks
     const lines = response.split('\n');
+    let formattedLines = [];
+    let inList = false; // Track if we're inside a list
 
-    // Format each line
-    const formattedLines = lines.map((line) => {
-      // Trim whitespace
+    lines.forEach((line) => {
       line = line.trim();
 
-      // If the line starts with a bullet (•, -, or *), treat it as a list item
-      if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
-        // Remove the bullet and wrap the line in <li> tags
-        line = line.slice(1).trim(); // Remove the bullet
-        return `<li>${line}</li>`;
-      }
+      // Check if the line starts with a bullet (•, -, or *)
+      const isListItem = line.startsWith('•') || line.startsWith('-') || line.startsWith('*');
 
-      // If the line is not empty, process it
-      if (line) {
-        // Replace double stars (**) with <strong> tags for bold text
-        line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        // Wrap the line in a div for proper spacing
-        return `<div>${line}</div>`;
+      if (isListItem) {
+        // If this is the first list item, start a <ul>
+        if (!inList) {
+          formattedLines.push('<ul class="custom-bullet">');
+          inList = true;
+        }
+        // Remove the bullet and wrap in <li>
+        const listItemText = line.slice(1).trim();
+        formattedLines.push(`<li>${listItemText}</li>`);
       }
-
-      return ''; // Skip empty lines
+      else {
+        // If we were in a list but now have a non-list item, close the <ul>
+        if (inList) {
+          formattedLines.push('</ul>');
+          inList = false;
+        }
+        // Process non-list lines (bold formatting, etc.)
+        if (line) {
+          line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="bold-text">$1</strong>');
+          formattedLines.push(`<div>${line}</div>`);
+        }
+      }
     });
 
-    // Check if there are any list items
-    const hasListItems = formattedLines.some((line) => line.startsWith('<li>'));
-
-    // If there are list items, wrap them in a <ul> tag
-    if (hasListItems) {
-      const listItems = formattedLines.filter((line) => line.startsWith('<li>')).join('');
-      const nonListItems = formattedLines.filter((line) => !line.startsWith('<li>')).join('');
-      return `${nonListItems}<ul class="custom-bullet">${listItems}</ul>`;
+    // Close the list if the response ends with list items
+    if (inList) {
+      formattedLines.push('</ul>');
     }
 
-    // Join the lines into a single string
     return formattedLines.join('');
   };
 
