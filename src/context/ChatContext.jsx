@@ -136,22 +136,29 @@ const ChatContextProvider = (props) => {
         ]);
       } else {
         // General health chat flow - using a different endpoint without patient data
+        // Fetch data from the first API
+        const patientsResponse = await fetch(
+          'https://medicalchat-backend-mongodb.vercel.app/patients/doctors-view'
+        );
+        const patientsData = await patientsResponse.json();
+
+        // Post data to the second API
         const response = await fetch(
-          `https://medicalchat-tau.vercel.app/general_health_chat/${encodeURIComponent(message)}`,
+          `https://medicalchat-tau.vercel.app/doctor_analysis/${encodeURIComponent(message)}`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ query: message }),
+            body: JSON.stringify({ patients: patientsData }),
           }
         );
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
+
 
         // Format the API response
         const formattedContent = formatMedicalResponse(data.content);
@@ -273,41 +280,52 @@ const ChatContextProvider = (props) => {
         }
 
         const data = await response.json();
+        const formattedContent = formatMedicalResponse(data.content);
+
 
         // Add regenerated bot response to messages
         setMessages((prevMessages) => [
           ...prevMessages,
           {
             type: 'bot',
-            content: data.content || 'No response from medical analysis',
+            content: formattedContent || 'No response from medical analysis',
             isInitial: false,
           },
         ]);
       } else {
         // General health chat regeneration
+        const patientsResponse = await fetch(
+          'https://medicalchat-backend-mongodb.vercel.app/patients/doctors-view'
+        );
+        const patientsData = await patientsResponse.json();
+
+        // Post data to the second API
         const response = await fetch(
-          `https://medicalchat-tau.vercel.app/general_health_chat/${encodeURIComponent(originalUserMessage)}`,
+          `https://medicalchat-tau.vercel.app/doctor_analysis/${encodeURIComponent(originalUserMessage)}`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ query: originalUserMessage }),
+            body: JSON.stringify({ patients: patientsData }),
           }
         );
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
 
+
+        // Format the API response
+        const formattedContent = formatMedicalResponse(data.content);
+
         // Add regenerated bot response to messages
         setMessages((prevMessages) => [
           ...prevMessages,
           {
             type: 'bot',
-            content: data.content || 'No response from general health chat',
+            content: formattedContent || 'No response from general health chat',
             isInitial: false,
           },
         ]);
@@ -481,7 +499,7 @@ const ChatContextProvider = (props) => {
     setActiveSessionUserId(userId); // Track which user's session is active
     setSessionStartTime(Date.now());
     setElapsedTime(3600);
-  
+
     // Update initial message for patient if a patient is selected
     // if (userId) {
     //   // Add session start message to the existing chat history
@@ -493,7 +511,7 @@ const ChatContextProvider = (props) => {
     //     ]
     //   }));
     // }
-  
+
     // intervalRef.current = setInterval(() => {
     //   setElapsedTime((prev) => {
     //     if (prev <= 0) {
@@ -513,7 +531,7 @@ const ChatContextProvider = (props) => {
     setSessionStartTime(null);
     clearInterval(intervalRef.current);
     setElapsedTime(3600);
-  
+
     // Reset any active patient chat to general welcome message
     // if (activeSessionUserId) {
     //   setUserMessages(prev => ({
