@@ -171,7 +171,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
 
     return (
         <div>
-            <div className={`  flex items-center  justify-between rounded-xl ${isFullScreen ? 'bg-[#FFFFFFCC]' : ''} dark:text-white relative`}>
+            <div className={`  flex items-center  justify-between rounded-xl ${isFullScreen ? '' : ''} dark:text-white relative`}>
                 <div className="flex-1 overflow-x-auto scrollbar-hide ">
                     <div className="flex h-full gap-2">
                         {/* General Chat Tab */}
