@@ -156,7 +156,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                 {message.type === 'user' && (
                   <div className="flex justify-end">
                     <div className="bg-[#c8ddef80] text-gray-700 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
-                      <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm">{message.content}</p>
+                      <p className="text-sm sm:text-sm md:text-base lg:text-base xl:text-base">{message.content}</p>
 
                       {/* Display files for user messages if they exist */}
                       {message.files && message.files.length > 0 && (
@@ -185,7 +185,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                     <div className="text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
                       {/* Render formatted content using dangerouslySetInnerHTML */}
                       <div
-                        className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm"
+                        className="text-sm sm:text-sm md:text-base lg:text-base xl:text-base"
                         dangerouslySetInnerHTML={{ __html: formatMedicalResponse(message.content) }}
                       />
 
@@ -219,7 +219,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
                 <div className="bg-gray-100 text-gray-800 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-xl p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 flex items-center space-x-1 sm:space-x-1 md:space-x-2 lg:space-x-2 xl:space-x-2">
                   <Loader2 className="animate-spin text-gray-500" size={12} sm:size={14} md:size={16} lg:size={18} xl:size={18} />
                   <span className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm text-gray-500">
-                    {selectedUser ? "MedCopilot is preparing a detailed response..." : "Health Copilot is preparing a response..."}
+                    {selectedUser ? "MedCopilot is preparing a detailed response..." : "MedCopilot is preparing a response..."}
                   </span>
                 </div>
               </div>
