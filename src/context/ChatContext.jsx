@@ -372,7 +372,7 @@ const ChatContextProvider = (props) => {
         }
 
         const data = await response.json();
-        const formattedContent = formatMedicalResponse(data.formatted_response);
+        // const formattedContent = formatMedicalResponse(data.formatted_response);
 
 
         // Add regenerated bot response to messages
@@ -380,7 +380,7 @@ const ChatContextProvider = (props) => {
           ...prevMessages,
           {
             type: 'bot',
-            content: formattedContent || 'No response from medical analysis',
+            content: data.content || 'No response from medical analysis',
             isInitial: false,
           },
         ]);
@@ -410,14 +410,14 @@ const ChatContextProvider = (props) => {
 
 
         // Format the API response
-        const formattedContent = formatMedicalResponse(data.content);
+        // const formattedContent = formatMedicalResponse(data.content);
 
         // Add regenerated bot response to messages
         setMessages((prevMessages) => [
           ...prevMessages,
           {
             type: 'bot',
-            content: formattedContent || 'No response from general health chat',
+            content: data.content || 'No response from general health chat',
             isInitial: false,
           },
         ]);
