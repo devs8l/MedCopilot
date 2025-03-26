@@ -161,7 +161,7 @@ const ChatContextProvider = (props) => {
 
 
         // Format the API response
-        const formattedContent = formatMedicalResponse(data.content);
+        const formattedContent = formatMedicalResponse(data.formatted);
 
         // Add bot response to messages
         setMessages((prev) => [

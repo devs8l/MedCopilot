@@ -12,7 +12,8 @@ const Appointments = () => {
         filterBasis,
         selectedDate,
         weekBounds,
-        setSelectedUser
+        setSelectedUser,
+        isLoading
     } = useContext(MedContext);
     const [hoveredUserId, setHoveredUserId] = useState(null);
     const displayedUsers = searchQuery ? searchFilteredUsers : filteredUsers;
@@ -179,26 +180,33 @@ const Appointments = () => {
 
         return (
             <div className="space-y-2 sm:space-y-4 flex-grow overflow-y-auto overflow-hidden max-h-[50vh] sm:max-h-[65vh]">
-                {sortedDates.length > 0 ? (
-                    sortedDates.map(dateString => {
-                        const date = new Date(dateString);
-                        const formattedDate = date.toLocaleDateString('en-US', {
-                            day: 'numeric',
-                            month: 'long',
-                            weekday: 'long'
-                        });
-
-                        return (
-                            <div key={dateString} className="mb-4 sm:mb-6">
-                                <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedDate}</h3>
-                                <div className="space-y-0">
-                                    {groupedByDate[dateString].map(user => renderPatientCard(user))}
-                                </div>
-                            </div>
-                        );
-                    })
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-full">
+                        {/* You can use any loader component here */}
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
                 ) : (
-                    <p className="text-center text-sm text-gray-500">No appointments found for this date.</p>
+                    sortedDates.length > 0 ? (
+                        sortedDates.map(dateString => {
+                            const date = new Date(dateString);
+                            const formattedDate = date.toLocaleDateString('en-US', {
+                                day: 'numeric',
+                                month: 'long',
+                                weekday: 'long'
+                            });
+
+                            return (
+                                <div key={dateString} className="mb-4 sm:mb-6">
+                                    <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedDate}</h3>
+                                    <div className="space-y-0">
+                                        {groupedByDate[dateString].map(user => renderPatientCard(user))}
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <p className="text-center text-sm text-gray-500">No appointments found for this date.</p>
+                    )
                 )}
             </div>
         );

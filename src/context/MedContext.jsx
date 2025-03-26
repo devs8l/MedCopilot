@@ -32,7 +32,12 @@ const MedContextProvider = (props) => {
         }
 
         const data = await response.json();
-        setUsers(data);
+        const today = new Date();
+        const processedData = data.map(user => ({
+          ...user,
+          appointmentDate: today.toISOString() // or format it as needed
+        }));
+        setUsers(processedData);
         setError(null);
       } catch (err) {
         console.error('Error fetching patient data:', err);
@@ -94,6 +99,7 @@ const MedContextProvider = (props) => {
   };
 
   const [selectedDate, setSelectedDate] = useState(new Date());
+  // const [selectedDate, setSelectedDate] = useState(new Date("2025-03-25"));
   const [searchQuery, setSearchQuery] = useState('');
 
   // Authentication handlers
@@ -146,30 +152,30 @@ const MedContextProvider = (props) => {
   const filteredUsers = searchQuery
     ? users.filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : users.filter((user) => {
-        if (!user.appointmentDate) return false;
+      if (!user.appointmentDate) return false;
 
-        const userDateFormatted = formatDateForComparison(user.appointmentDate);
-        const userDate = new Date(user.appointmentDate);
+      const userDateFormatted = formatDateForComparison(user.appointmentDate);
+      const userDate = new Date(user.appointmentDate);
 
-        if (filterBasis === 'day') {
-          return userDateFormatted === formattedSelectedDate;
-        } else if (filterBasis === 'week') {
-          // Get the bounds of the week containing the selected date
-          const { startOfWeek, endOfWeek } = getWeekBounds(selectedDate);
+      if (filterBasis === 'day') {
+        return userDateFormatted === formattedSelectedDate;
+      } else if (filterBasis === 'week') {
+        // Get the bounds of the week containing the selected date
+        const { startOfWeek, endOfWeek } = getWeekBounds(selectedDate);
 
-          // Check if the user date is within the range
-          return userDate >= startOfWeek && userDate <= endOfWeek;
-        } else if (filterBasis === 'month') {
-          return (
-            userDate.getFullYear() === selectedDate.getFullYear() &&
-            userDate.getMonth() === selectedDate.getMonth()
-          );
-        } else if (filterBasis === 'year') {
-          return userDate.getFullYear() === selectedDate.getFullYear();
-        }
+        // Check if the user date is within the range
+        return userDate >= startOfWeek && userDate <= endOfWeek;
+      } else if (filterBasis === 'month') {
+        return (
+          userDate.getFullYear() === selectedDate.getFullYear() &&
+          userDate.getMonth() === selectedDate.getMonth()
+        );
+      } else if (filterBasis === 'year') {
+        return userDate.getFullYear() === selectedDate.getFullYear();
+      }
 
-        return false;
-      });
+      return false;
+    });
 
   // Get week bounds for the context to use in components
   const weekBounds = getWeekBounds(selectedDate);
@@ -206,7 +212,7 @@ const MedContextProvider = (props) => {
     setSelectedUser: handleSelectUser,
     isLoading,
     error,
-    
+
   };
 
   return <MedContext.Provider value={value}>{props.children}</MedContext.Provider>;
