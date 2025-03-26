@@ -123,14 +123,16 @@ const ChatContextProvider = (props) => {
         const data = await response.json();
 
         // Format the API response
-        const formattedContent = formatMedicalResponse(data.content);
+        // const formattedContent = formatMedicalResponse(data.formatted_response);
 
         // Add bot response to messages
+        console.log("dataaa",data.formatted_response);
+        
         setMessages((prev) => [
           ...prev,
           {
             type: 'bot',
-            content: formattedContent || 'No response from medical analysis',
+            content: data.content || 'No response from medical analysis',
             isInitial: false,
           },
         ]);
@@ -161,14 +163,14 @@ const ChatContextProvider = (props) => {
 
 
         // Format the API response
-        const formattedContent = formatMedicalResponse(data.formatted);
+        // const formattedContent = formatMedicalResponse(data.formatted_response);
 
         // Add bot response to messages
         setMessages((prev) => [
           ...prev,
           {
             type: 'bot',
-            content: formattedContent || 'No response from general health chat',
+            content: data.content || 'No response from general health chat',
             isInitial: false,
           },
         ]);
@@ -195,50 +197,138 @@ const ChatContextProvider = (props) => {
 
   // Helper function to format the medical response
   const formatMedicalResponse = (response) => {
-    if (!response) return 'No data available.';
+    if (!response) return '<div class="medical-text">No data available.</div>';
 
     const lines = response.split('\n');
-    let formattedLines = [];
-    let inList = false; // Track if we're inside a list
+    let html = [];
+    let inList = false;
+    let inSubList = false;
+    let currentIndent = 0;
 
     lines.forEach((line) => {
       line = line.trim();
+      if (!line) return;
 
-      // Check if the line starts with a bullet (•, -, or *)
-      const isListItem = line.startsWith('•') || line.startsWith('-') || line.startsWith('*');
+      // Handle headings (###, ##, #)
+      if (line.startsWith('### ')) {
+        closeLists();
+        const headingText = line.substring(4).trim();
+        html.push(`
+          <h3 class="medical-subheading">
+            ${formatContent(headingText)}
+          </h3>
+        `);
+        return;
+      }
 
-      if (isListItem) {
-        // If this is the first list item, start a <ul>
+      if (line.startsWith('## ')) {
+        closeLists();
+        const headingText = line.substring(3).trim();
+        html.push(`
+          <h2 class="medical-heading">
+            ${formatContent(headingText)}
+          </h2>
+        `);
+        return;
+      }
+
+      if (line.startsWith('# ')) {
+        closeLists();
+        const headingText = line.substring(2).trim();
+        html.push(`
+          <h1 class="medical-title">
+            ${formatContent(headingText)}
+          </h1>
+        `);
+        return;
+      }
+
+      // Handle bold section headers
+      if (line.match(/^\*\*.*\*\*$/)) {
+        closeLists();
+        html.push(`
+          <div class="medical-section">
+            ${formatContent(line.replace(/\*\*/g, ''))}
+          </div>
+        `);
+        return;
+      }
+
+      // Handle bullet points
+      if (line.startsWith('* ') || line.startsWith('- ')) {
+        const indent = line.search(/\S|$/);
+        const itemContent = line.substring(2).trim();
+
+        if (indent > currentIndent && inList) {
+          html.push('<ul class="medical-sublist">');
+          inSubList = true;
+        } else if (indent < currentIndent && inSubList) {
+          html.push('</ul>');
+          inSubList = false;
+        }
+
+        currentIndent = indent;
+
         if (!inList) {
-          formattedLines.push('<ul class="custom-bullet">');
+          html.push('<ul class="medical-list">');
           inList = true;
         }
-        // Remove the bullet and wrap in <li>
-        const listItemText = line.slice(1).trim();
-        formattedLines.push(`<li>${listItemText}</li>`);
+
+        html.push(`
+          <li class="medical-list-item">
+            ${formatContent(itemContent)}
+          </li>
+        `);
+        return;
       }
-      else {
-        // If we were in a list but now have a non-list item, close the <ul>
-        if (inList) {
-          formattedLines.push('</ul>');
-          inList = false;
-        }
-        // Process non-list lines (bold formatting, etc.)
-        if (line) {
-          line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="bold-text">$1</strong>');
-          formattedLines.push(`<div>${line}</div>`);
-        }
+
+      // Close lists for regular text
+      closeLists();
+      currentIndent = 0;
+
+      // Handle special sections
+      if (line.toLowerCase().startsWith('conclusion')) {
+        html.push(`
+          <div class="medical-conclusion">
+            ${formatContent(line)}
+          </div>
+        `);
+      } else {
+        // Regular text
+        html.push(`
+          <p class="medical-text">
+            ${formatContent(line)}
+          </p>
+        `);
       }
     });
 
-    // Close the list if the response ends with list items
-    if (inList) {
-      formattedLines.push('</ul>');
+    // Close any remaining lists
+    closeLists();
+
+    function closeLists() {
+      if (inSubList) {
+        html.push('</ul>');
+        inSubList = false;
+      }
+      if (inList) {
+        html.push('</ul>');
+        inList = false;
+      }
     }
 
-    return formattedLines.join('');
+    return html.join('');
   };
 
+  const formatContent = (text) => {
+    if (!text) return '';
+
+    // Convert markdown to HTML
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br/>');
+  };
   // Function to regenerate specific message
   const regenerateMessage = async (index) => {
     // Get the original user message to regenerate the response
@@ -282,7 +372,7 @@ const ChatContextProvider = (props) => {
         }
 
         const data = await response.json();
-        const formattedContent = formatMedicalResponse(data.content);
+        const formattedContent = formatMedicalResponse(data.formatted_response);
 
 
         // Add regenerated bot response to messages
@@ -357,6 +447,8 @@ const ChatContextProvider = (props) => {
       );
       if (!response.ok) throw new Error('Failed to fetch history');
       const historyData = await response.json();
+      console.log("historyData",historyData);
+      
       return historyData; // Pass this to the next API
     } catch (error) {
       console.error('Error fetching history:', error);
@@ -514,16 +606,16 @@ const ChatContextProvider = (props) => {
     //   }));
     // }
 
-    // intervalRef.current = setInterval(() => {
-    //   setElapsedTime((prev) => {
-    //     if (prev <= 0) {
-    //       clearInterval(intervalRef.current);
-    //       endSession();
-    //       return 0;
-    //     }
-    //     return prev - 1;
-    //   });
-    // }, 1000);
+    intervalRef.current = setInterval(() => {
+      setElapsedTime((prev) => {
+        if (prev <= 0) {
+          clearInterval(intervalRef.current);
+          endSession();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   // End session

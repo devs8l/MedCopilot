@@ -11,6 +11,7 @@ import Patients from "./components/Patients"; // Import the new component
 import Events from "./components/Events"; // Import the new component
 import DocumentPreview from "./components/DocumentPreview";
 import { MedContext } from "./context/MedContext";
+import Error from "./pages/Error";
 
 const App = () => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const App = () => {
       {location.pathname === "/login" ? (
         <Routes>
           <Route path="/login" element={<Login login={login} />} />
+          
         </Routes>
       ) : (
         <div className="px-2 bg-custom-gradient dark:bg-custom-gradient-d   min-h-screen overflow-x-hidden">
@@ -39,6 +41,7 @@ const App = () => {
               <Route path="events" element={<Events />} />
               <Route path="user/:id" element={<UserData />} />
             </Route>
+            <Route path="/error" element={<Error/>} />
           </Routes>
 
           {/* Document Preview Component */}

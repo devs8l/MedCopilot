@@ -87,35 +87,68 @@
 }
 
 
-.bold-text {
-  font-size: 1.1em; /* Makes text 10% larger than normal */
-  font-weight: bold;
+
+
+
+
+
+.medical-section {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem 0;
+  color: #2d3748;
 }
 
-/* Custom bullet points */
-.custom-bullet {
-  list-style-type: none; /* Remove default bullets */
-  padding-left: 20px; /* Indent bullets */
+.medical-list {
+  list-style-type: none;
+  margin: 0.5rem 0;
+  padding-left: 1rem;
 }
 
-.custom-bullet li {
+.medical-list li {
+  margin: 0.3rem 0;
   position: relative;
-  margin-bottom: 8px; /* Spacing between bullet points */
+  padding-left: 1.2rem;
 }
 
-.custom-bullet li::before {
-  content: "•"; /* Custom bullet symbol */
-  color: #333; /* Bullet color */
-  font-size: 1.2em; /* Bullet size */
+.medical-list li:before {
+  content: "•";
   position: absolute;
-  left: -15px; /* Adjust bullet position */
-}
-
-/* Make bold text slightly larger */
-.bold-text {
-  font-size: 1.1em; /* 10% larger than normal text */
+  left: 0;
+  color: #4a5568;
   font-weight: bold;
 }
 
+.medical-sublist {
+  list-style-type: none;
+  margin: 0.3rem 0;
+  padding-left: 1.5rem;
+}
 
+.medical-sublist li {
+  margin: 0.2rem 0;
+  position: relative;
+  padding-left: 1.2rem;
+}
 
+.medical-sublist li:before {
+  content: "◦";
+  position: absolute;
+  left: 0;
+  color: #4a5568;
+}
+
+.medical-text {
+  margin: 0.5rem 0;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.medical-conclusion {
+  /* margin: 1rem 0; */
+  /* padding: 0.8rem; */
+  /* background-color: #f8f9fa; */
+  /* border-left: 3px solid #4299e1; */
+  color: #2d3748;
+  line-height: 1.5;
+}
