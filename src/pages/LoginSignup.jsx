@@ -17,8 +17,8 @@ const LoginSignup = () => {
 
   // Temporary credentials for demo
   const tempCredentials = {
-    username: 'demo',
-    password: 'password123'
+    username: 'doc',
+    password: 'meddemo123@'
   };
 
   const handleChange = (e) => {
@@ -232,9 +232,9 @@ const LoginSignup = () => {
           )}
           
           {/* Demo credentials helper */}
-          <div className="mt-8 text-center text-sm text-gray-500">
+          {/* <div className="mt-8 text-center text-sm text-gray-500">
             <p>For demo: use username "{tempCredentials.username}" and password "{tempCredentials.password}"</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
