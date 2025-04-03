@@ -170,7 +170,7 @@ const Appointments = () => {
                                 }}
                                 className="contents"
                             >
-                                <button className="p-1 mt-3 mb-3 w-1/4 bg-[#1A73E8] rounded-sm text-white cursor-pointer">Open Profile</button>
+                                <button className="p-1 mt-3 mb-3 w-1/4 bg-[#1A73E8] rounded-sm text-sm text-white cursor-pointer">Open Profile</button>
                             </Link>
                         </div>
                     </div>
@@ -236,7 +236,7 @@ const Appointments = () => {
                     <>
                         {/* Today's appointments */}
                         <div className="mb-4 sm:mb-6">
-                            <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedToday}</h3>
+                            <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5 z-30 relative">{formattedToday}</h3>
                             <div className="space-y-0">
                                 {todayPatients.length > 0 ? (
                                     todayPatients.map(user => renderPatientCard(user))
@@ -248,7 +248,7 @@ const Appointments = () => {
 
                         {/* Tomorrow's appointments */}
                         <div className="mb-4 sm:mb-6">
-                            <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedTomorrow}</h3>
+                            <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5 z-20 relative">{formattedTomorrow}</h3>
                             <div className="space-y-0">
                                 {tomorrowPatients.length > 0 ? (
                                     tomorrowPatients.map(user => renderPatientCard(user))
