@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
-import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer, ChartSpline, Calendar, ChevronDown, ChevronUp } from "lucide-react";
+import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer, ChartSpline, Calendar } from "lucide-react";
 import Chart from "./Chart";
+
 
 const Stopwatch = ({ elapsedTime }) => {
   const formatTime = (time) => {
@@ -32,7 +33,6 @@ const UserData = () => {
   const [patientHistory, setPatientHistory] = useState(null);
   const [isLoadingReports, setIsLoadingReports] = useState(false);
   const [sessionHistory, setSessionHistory] = useState([]);
-  const [showAdditionalDetails, setShowAdditionalDetails] = useState(false);
 
   // Set isUserSelected to true when this component mounts
   useEffect(() => {
@@ -115,6 +115,7 @@ const UserData = () => {
     }
   };
 
+
   //charts sec
   const [healthMetricsData, setHealthMetricsData] = useState(null);
   const [isLoadingHealthMetrics, setIsLoadingHealthMetrics] = useState(false);
@@ -138,18 +139,21 @@ const UserData = () => {
     }
   };
 
+
   useEffect(() => {
     if (activeTab === 'Trends' && userData) {
       fetchHealthMetrics();
     }
   }, [activeTab, userData?._id]);
 
+
+
   // Load reports data when tab changes to 'reports'
   useEffect(() => {
     if (activeTab === 'summary' && userData && !patientHistory) {
       fetchPatientHistory();
     }
-  }, [activeTab, userData, patientHistory]);
+  }, [activeTab, userData, patientHistory]); // Added patientHistory dependency
 
   // Format and store chat history data when user messages change
   useEffect(() => {
@@ -270,6 +274,7 @@ const UserData = () => {
           </div>
         );
 
+
       case 'summary':
         if (isLoadingReports) {
           return (
@@ -289,6 +294,8 @@ const UserData = () => {
 
         return (
           <div className="space-y-4">
+
+
             {patientHistory ? (
               <div className="rounded-lg px-4">
                 <div className="flex justify-between items-center mb-2">
@@ -408,11 +415,23 @@ const UserData = () => {
         return null;
     }
   };
+  const addOneHour = (time) => {
+    if (!time) return "";
+
+    const [hours, minutes] = time.split(":").map(Number);
+    let newHours = hours + 1;
+
+    if (newHours >= 24) {
+      newHours -= 24;
+    }
+
+    return `${String(newHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  };
 
   return (
-    <div className="flex flex-col gap-2 h-full">
+    <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between px-6 gap-10">
-        <div className="flex gap-5 text-xl font-bold py-5 items-center text-[#222836]">
+        <div className="flex gap-5 text-xl font-bold  py-5 items-center text-[#222836]">
           <h2 className="cursor-pointer" onClick={() => navigate("/")}>Appointments</h2>
           <ChevronRight size={15} />
           <h2>{userData?.name}</h2>
@@ -425,235 +444,170 @@ const UserData = () => {
           <p className="text-sm text-gray-500 ">{userData?.time}</p>
         </div>
       </div>
-
-      {/* Patient Details Section - height adjusts based on showAdditionalDetails */}
-      <div
-        className={`flex items-start justify-between relative bg-[#ffffff94] p-5 md:p-5 rounded-sm mx-1 transition-all duration-300 ${showAdditionalDetails ? 'h-[35%]' : 'h-[25%]'
-          }`}
-      >
-        <div className="flex items-start space-x-4">
-          <img
-            src={userData?.profileImage || "/api/placeholder/80/80"}
-            className="w-13 h-13 rounded-full object-cover"
-            alt={userData?.name}
-          />
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-sm text-black font-semibold">Name: <span className="text-gray-700 font-medium">{userData?.name}</span></h2>
-              <div className="flex gap-1 items-center">
-                <h2 className="text-sm font-semibold">Patient ID: </h2>
-                <p className="text-sm text-gray-500">#{userData?._id?.slice(-6)}</p>
-              </div>
-
-              {showAdditionalDetails && (
-                <div className="flex flex-col gap-1 mt-1">
-                  <div className="flex gap-1">
-                    <h2 className="text-sm font-semibold">Sex: </h2>
-                    <p className="text-sm text-gray-500">{userData?.gender || 'Not specified'}</p>
-                  </div>
-                  <div className="flex gap-1">
-                    <h2 className="text-sm font-semibold">Age: </h2>
-                    <p className="text-sm text-gray-500">{userData?.age || '36'}</p>
-                  </div>
-                  <div className="flex gap-1">
-                    <h2 className="text-sm font-semibold">Weight: </h2>
-                    <p className="text-sm text-gray-500">{userData?.weight ? `${userData.weight} kg` : '70kgs'}</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-center gap-4 mt-2">
-                <div className="flex items-center gap-1 border-1 rounded-2xl px-2 py-1 border-gray-300">
-                  <FileText size={16} className="text-gray-500" />
-                  <span className="text-sm text-gray-800">120/80 mmHg</span>
-                </div>
-                <div className="flex items-center gap-1 border-1 rounded-2xl px-2 py-1 border-gray-300">
-                  <FileText size={16} className="text-gray-500" />
-                  <span className="text-sm text-gray-800">95 mg/dL</span>
-                </div>
-                <div className="flex items-center gap-1 border-1 rounded-2xl px-2 py-1 border-gray-300">
-                  <FileText size={16} className="text-gray-500" />
-                  <span className="text-sm text-gray-800">98%</span>
+      <h2 className="">   </h2>
+      <div>
+        <div className="flex items-start  justify-between bg-[#ffffff94] p-6 rounded-sm mx-1">
+          <div className="flex items-start space-x-4">
+            <img
+              src={userData?.profileImage || "/api/placeholder/80/80"}
+              className="w-13 h-13 rounded-full object-cover"
+              alt={userData?.name}
+            />
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-2">
+                <h2 className="text-sm font-semibold">Name:  {userData?.name}</h2>
+                <div className="flex gap-1">
+                  <h2 className="text-sm font-semibold">Patient ID: </h2>
+                  <p className="text-sm text-gray-500">#{userData?._id?.slice(-6)}</p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center">
-          {isSessionActive && activeSessionUserId === userData._id ? (
-            <div className="flex items-center gap-4">
-              <Stopwatch elapsedTime={elapsedTime} />
+          <div className="flex items-center">
+            {isSessionActive && activeSessionUserId === userData._id ? (
+              <div className="flex items-center gap-4">
+                <Stopwatch elapsedTime={elapsedTime} />
+                <button
+                  onClick={endSession}
+                  className="px-4 py-2 border border-red-500 cursor-pointer text-red-500 rounded-xs text-sm"
+                >
+                  End Session
+                </button>
+              </div>
+            ) : (
               <button
-                onClick={endSession}
-                className="px-4 py-2 border border-red-500 cursor-pointer text-red-500 rounded-xs text-sm"
+                onClick={() => startSession(userData._id)}
+                className="px-4 py-2 bg-[#2C9048] flex gap-3 cursor-pointer items-center justify-center text-white rounded-xs text-sm"
               >
-                End Session
+                <Play size={13} /> Start Session
               </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => startSession(userData._id)}
-              className="px-4 py-2 bg-[#2C9048] flex gap-3 cursor-pointer items-center justify-center text-white rounded-xs text-sm"
-            >
-              <Play size={13} /> Start Session
-            </button>
-          )}
-        </div>
-        <button
-          onClick={() => setShowAdditionalDetails(!showAdditionalDetails)}
-          className="ml-2 text-gray-500 hover:text-gray-700 absolute bottom-5 right-10"
-        >
-          {showAdditionalDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-      </div>
+            )}
+          </div>
 
-      {/* Tabs Section - height adjusts inversely based on showAdditionalDetails */}
-      <div
-        className={`p-4 flex flex-col gap-6 rounded-sm bg-[#ffffff] dark:bg-[#00000099] mx-1 overflow-auto transition-all duration-300 ${showAdditionalDetails ? 'h-[55%]' : 'h-[67%]'
-          }`}
-      >
+
+        </div>
+      </div>
+      <div className="p-4 flex flex-col gap-6 rounded-sm   bg-[#ffffff] dark:bg-[#00000099] mx-1 h-[calc(65vh-80px)] overflow-auto">
+
+        {/* Profile Section */}
+
+
+        {/* Action Buttons */}
         <div className="flex">
-          <div className="flex flex-col mb-2 mr-2 group gap-4 transition-all duration-300 w-11 group-hover:w-48 hover:w-48">
+          <div className="flex flex-col mb-2 mr-2  group gap-4 transition-all duration-300 w-11 group-hover:w-48 hover:w-48 ">
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'summary'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('summary')}
             >
               <div className="flex-shrink-0">
-                <Sparkle
-                  className={`transition-all duration-200 ${activeTab === 'summary'
-                      ? 'w-5 h-5 text-blue-600'
-                      : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
-                    }`}
-                />
+                <Sparkle className={`transition-all duration-200 ${activeTab === 'summary'
+                  ? 'w-5 h-5 text-blue-600 '
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5 '
+                  }`} />
               </div>
-              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">
-                Summary
-              </span>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Summary</span>
             </button>
 
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'prerequisites'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('prerequisites')}
             >
               <div className="flex-shrink-0">
-                <BookOpen
-                  className={`transition-all duration-200 ${activeTab === 'prerequisites'
-                      ? 'w-5 h-5 text-blue-600'
-                      : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
-                    }`}
-                />
+                <BookOpen className={`transition-all duration-200 ${activeTab === 'prerequisites'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
-              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">
-                Today's Prerequisite
-              </span>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Today's Prerequisite</span>
             </button>
 
             <button
               className={`flex items-center cursor-pointer px-3 py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'chatHistory'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('chatHistory')}
             >
               <div className="flex-shrink-0">
-                <Clock
-                  className={`transition-all duration-200 ${activeTab === 'chatHistory'
-                      ? 'w-5 h-5 text-blue-600'
-                      : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
-                    }`}
-                />
+                <Clock className={`transition-all duration-200 ${activeTab === 'chatHistory'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5 '
+                  }`} />
               </div>
-              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">
-                Chat History
-              </span>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Chat History</span>
             </button>
 
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'Trends'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('Trends')}
             >
               <div className="flex-shrink-0">
-                <ChartSpline
-                  className={`transition-all duration-200 ${activeTab === 'Trends'
-                      ? 'w-5 h-5 text-blue-600'
-                      : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
-                    }`}
-                />
+                <ChartSpline className={`transition-all duration-200 ${activeTab === 'Trends'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
-              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">
-                Trends
-              </span>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Trends</span>
             </button>
-
             <button
               className={`flex items-center px-3 cursor-pointer py-2 gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'reports'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86] '
                 }`}
               onClick={() => setActiveTab('reports')}
             >
               <div className="flex-shrink-0">
-                <ClipboardList
-                  className={`transition-all duration-200 ${activeTab === 'reports'
-                      ? 'w-5 h-5 text-blue-600'
-                      : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
-                    }`}
-                />
+                <ClipboardList className={`transition-all duration-200 ${activeTab === 'reports'
+                  ? 'w-5 h-5 text-blue-600 '
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
-              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">
-                Past Reports
-              </span>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Past Reports</span>
             </button>
 
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'prescription'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
                 }`}
               onClick={() => setActiveTab('prescription')}
             >
               <div className="flex-shrink-0">
-                <Pill
-                  className={`transition-all duration-200 ${activeTab === 'prescription'
-                      ? 'w-5 h-5 text-blue-600'
-                      : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
-                    }`}
-                />
+                <Pill className={`transition-all duration-200 ${activeTab === 'prescription'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
-              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">
-                Prescription
-              </span>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Prescription</span>
             </button>
 
             <button
               className={`flex items-center px-3 py-2 cursor-pointer gap-2 rounded-sm transition-all duration-200 group/button ${activeTab === 'allergies'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'dark:text-white bg-[#ffffff77] text-[#7A7E86]'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'dark:text-white bg-[#ffffff77] text-[#7A7E86] '
                 }`}
               onClick={() => setActiveTab('allergies')}
             >
               <div className="flex-shrink-0">
-                <AlertTriangle
-                  className={`transition-all duration-200 ${activeTab === 'allergies'
-                      ? 'w-5 h-5 text-blue-600'
-                      : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
-                    }`}
-                />
+                <AlertTriangle className={`transition-all duration-200 ${activeTab === 'allergies'
+                  ? 'w-5 h-5 text-blue-600'
+                  : 'w-4 h-4 text-gray-400 group-hover/button:w-5 group-hover/button:h-5'
+                  }`} />
               </div>
-              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">
-                Allergies
-              </span>
+              <span className="text-sm whitespace-nowrap opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300">Allergies</span>
             </button>
+
+
           </div>
 
           {/* Tab Content */}

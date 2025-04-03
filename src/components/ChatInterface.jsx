@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useEffect, useContext, useState } from 'react';
 import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2 } from 'lucide-react';
 import { MedContext } from '../context/MedContext';
 import { ChatContext } from '../context/ChatContext';
@@ -28,7 +28,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const messageContainerRef = useRef(null);
-
+  const [isInputFocused, setIsInputFocused] = useState(false);
   // Different suggestions based on whether a patient is selected
   const patientSuggestionPrompts = [
     "Summarize this<br/> patient's last visit.",
@@ -283,12 +283,14 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
 
       {/* Input Area with smooth transitions */}
       <div className={`p-1 sm:py-2 md:py-3 lg:py-3 xl:py-4 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-full'} mx-auto transition-all duration-200 ease-in-out`}>
-        <div className="flex flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#48547004] border border-gray-200 dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1">
+        <div className={`flex ${isInputFocused ? 'border-blue-300 shadow-xs' : 'border-gray-200'} flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#48547004] border  dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1`}>
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isTransitioning && handleSendMessage()}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
             placeholder={selectedUser ? "How can MedCopilot help with this patient?" : "Get key insights on your patient schedule and priorities for today"}
             className="flex-1 p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 rounded-lg focus:outline-none bg- dark:bg-[#27313C] dark:text-white"
             disabled={isTransitioning}
