@@ -283,7 +283,7 @@ const ChatInterface = ({ isFullScreen, promptGiven, setPromptGiven, isGeneralCha
 
       {/* Input Area with smooth transitions */}
       <div className={`p-1 sm:py-2 md:py-3 lg:py-3 xl:py-4 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-full'} mx-auto transition-all duration-200 ease-in-out`}>
-        <div className={`flex ${isInputFocused ? 'border-blue-300 shadow-xs' : 'border-gray-200'} flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#48547004] border  dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1`}>
+        <div className={`flex ${isInputFocused ? 'border-gray-100 drop-shadow-sm' : 'border-gray-200'} flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#ffffff] border  dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1`}>
           <input
             type="text"
             value={inputMessage}

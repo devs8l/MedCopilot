@@ -652,14 +652,11 @@ const Appointments = () => {
         <div className="relative">
             {/* Main content container with conditional blur */}
             <div
-                ref={appointmentsRef}
+                
                 className={`mx-auto dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-2 sm:gap-3 rounded-lg overflow-hidden transition-all duration-300 ${isBlurred ? 'relative' : ''
                     }`}
             >
-                {/* Blur overlay - only shown when a card is expanded */}
-                {isBlurred && (
-                    <div className="absolute inset-0  bg-opacity-40 backdrop-blur-xs z-10"></div>
-                )}
+                
 
                 {/* Actual content */}
                 <div className={``}>
