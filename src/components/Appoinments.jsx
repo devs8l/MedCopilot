@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { MedContext } from "../context/MedContext";
 import { Link } from "react-router-dom";
 import { ChartSpline, ChevronDown, Clock, Droplets, Repeat } from "lucide-react";
@@ -15,8 +15,25 @@ const Appointments = () => {
         setSelectedUser,
         isLoading
     } = useContext(MedContext);
-    const [hoveredUserId, setHoveredUserId] = useState(null);
+    const [expandedUserId, setExpandedUserId] = useState(null);
+    const [isBlurred, setIsBlurred] = useState(false);
+    const appointmentsRef = useRef(null);
     const displayedUsers = searchQuery ? searchFilteredUsers : filteredUsers;
+
+    // Close expanded card when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (appointmentsRef.current && !appointmentsRef.current.contains(event.target)) {
+                setExpandedUserId(null);
+                setIsBlurred(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     // Function to group patients by day of week
     const groupPatientsByWeekday = () => {
@@ -85,128 +102,312 @@ const Appointments = () => {
         setSelectedUser(user); // Store the selected user in context
         setIsUserSelected(true);
         console.log("Selected user:", user);
-
     };
 
     // Render a single patient card
-
     const renderPatientCard = (user) => {
-        const isHovered = hoveredUserId === user._id;
+        const isExpanded = expandedUserId === user._id;
+
+        const handleCardClick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setExpandedUserId(isExpanded ? null : user._id);
+            setIsBlurred(!isExpanded);
+        };
+
         return (
-            <Link
-                to={`/user/${user._id}`}
+            <div
                 key={user._id}
-                onClick={() => handleUserClick(user)}
-                className="block"
-                onMouseEnter={() => setHoveredUserId(user._id)}
-                onMouseLeave={() => setHoveredUserId(null)}
+                className={`relative grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center gap-1 p-3 sm:p-3  transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 border-b border-[#2228365a] ${isExpanded ? 'bg-white shadow-md z-20' : ''
+                    } mb-3 sm:mb-4`}
+                onClick={handleCardClick}
             >
-                <div className={`grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center gap-1 p-3 sm:p-3 rounded-sm hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 border border-[#2228365a] ${isHovered ? 'bg-white shadow-md' : 'bg-[#ffffff22]'} mb-3 sm:mb-4`}>
-                    <div className="grid grid-cols-[2.5rem_auto] sm:grid-cols-[3rem_auto] items-center gap-2 sm:gap-4">
-                        <div className="w-10 h-10 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
-                            <img src={user.profileImage} className="w-full h-full object-cover" alt={user.name} />
-                        </div>
-                        <div>
-                            <h3 className="font-medium text-sm sm:text-base text-gray-900">{user.name}</h3>
-                            <p className="text-xs sm:text-sm text-gray-500">#{user._id.slice(-7)}</p>
-                        </div>
+                <div className="grid grid-cols-[2.5rem_auto] sm:grid-cols-[3rem_auto] items-center gap-2 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
+                        <img src={user.profileImage} className="w-full h-full object-cover" alt={user.name} />
                     </div>
-                    <div className="flex gap-2 items-center mt-2 sm:mt-0">
-                        <Clock size={14} className="" />
-                        <span className="text-xs sm:text-sm text-gray-500">{user.time}</span>
-
-
+                    <div>
+                        <h3 className="font-medium text-sm sm:text-base text-gray-900">{user.name}</h3>
+                        <p className="text-xs sm:text-sm text-gray-500">#{user._id.slice(-7)}</p>
                     </div>
+                </div>
+                <div className="flex gap-2 items-center mt-2 sm:mt-0">
+                    <Clock size={14} className="" />
+                    <span className="text-xs sm:text-sm text-gray-500">{user.time}</span>
+                </div>
 
-                    {/* Expanded content wrapper - conditionally rendered */}
-                    <div className={`col-span-1 sm:col-span-2 overflow-hidden transition-all duration-300 ease-in-out ${isHovered ? 'max-h-96' : 'max-h-0'}`}>
-                        <div className="mt-2 pt-3 sm:pt-4 ml-10 sm:ml-16">
-                            <div className="flex flex-col gap-2 sm:gap-3">
-                                <div>
-                                    <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
-                                    <div className="flex flex-col gap-2 mt-2">
-                                        <div>
-                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                                                <Repeat size={12} className="" />Routine Checkup
-                                            </button>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                                                <ChartSpline size={12} className="" />Blood Pressure Checkup
-                                            </button>
-                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                                                <Droplets size={12} className="" />Sugar Checkup
-                                            </button>
-                                        </div>
+                {/* Expanded content wrapper - conditionally rendered */}
+                <div className={`col-span-1 sm:col-span-2 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-100' : 'max-h-0'}`}>
+                    <div className="mt-2 pt-3 sm:pt-4 ml-10 sm:ml-16">
+                        <div className="flex flex-col gap-2 sm:gap-3">
+                            <div>
+                                <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
+                                <div className="flex flex-col gap-2 mt-2">
+                                    <div>
+                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                            <Repeat size={12} className="" />Routine Checkup
+                                        </button>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                            <ChartSpline size={12} className="" />Blood Pressure Checkup
+                                        </button>
+                                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                            <Droplets size={12} className="" />Sugar Checkup
+                                        </button>
                                     </div>
                                 </div>
-                                <div>
-                                    <h4 className="text-sm sm:text-md font-medium mt-3 sm:mt-4 text-gray-800">Additional Comments</h4>
-                                    <p className="text-xs sm:text-sm text-gray-500">Feeling fatigues quite often. It is hampering my daily routine. I wonder what could be the reason?</p>
-                                </div>
                             </div>
+                            <div>
+                                <h4 className="text-sm sm:text-md font-medium mt-3 sm:mt-4 text-gray-800">Additional Comments</h4>
+                                <p className="text-xs sm:text-sm text-gray-500">Feeling fatigues quite often. It is hampering my daily routine. I wonder what could be the reason?</p>
+                            </div>
+                            <Link
+                                to={`/user/${user._id}`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleUserClick(user);
+                                }}
+                                className="contents"
+                            >
+                                <button className="p-1 mt-3 mb-3 w-1/4 bg-[#1A73E8] rounded-sm text-white cursor-pointer">Open Profile</button>
+                            </Link>
                         </div>
                     </div>
                 </div>
-            </Link>
+            </div>
         );
     };
 
-    // Render daily view - FIXED function to handle invalid dates
-    const renderDailyView = () => {
-        // Group users by date
-        const groupedByDate = {};
+    // Render schedule view with today and tomorrow's appointments
+    const renderScheduleView = () => {
+        // Get today's date
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0];
 
-        displayedUsers.forEach(user => {
-            if (user.appointmentDate) {
-                try {
-                    const date = new Date(user.appointmentDate);
-                    // Check if date is valid before processing
-                    if (!isNaN(date.getTime())) {
-                        const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD format
-                        if (!groupedByDate[dateString]) {
-                            groupedByDate[dateString] = [];
-                        }
-                        groupedByDate[dateString].push(user);
-                    }
-                } catch (error) {
-                    console.error("Invalid date for user:", user);
-                }
+        // Get tomorrow's date
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        const tomorrowString = tomorrow.toISOString().split('T')[0];
+
+        // Filter users for today and tomorrow
+        const todayPatients = displayedUsers.filter(user => {
+            if (!user.appointmentDate) return false;
+            try {
+                const date = new Date(user.appointmentDate);
+                return !isNaN(date.getTime()) && date.toISOString().split('T')[0] === todayString;
+            } catch (error) {
+                console.error("Invalid date for user:", user);
+                return false;
             }
         });
 
-        // Sort dates
-        const sortedDates = Object.keys(groupedByDate).sort();
+        const tomorrowPatients = displayedUsers.filter(user => {
+            if (!user.appointmentDate) return false;
+            try {
+                const date = new Date(user.appointmentDate);
+                return !isNaN(date.getTime()) && date.toISOString().split('T')[0] === tomorrowString;
+            } catch (error) {
+                console.error("Invalid date for user:", user);
+                return false;
+            }
+        });
+
+        // Format dates
+        const formattedToday = today.toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            weekday: 'long'
+        });
+
+        const formattedTomorrow = tomorrow.toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            weekday: 'long'
+        });
 
         return (
             <div className="space-y-2 sm:space-y-4 flex-grow overflow-y-auto overflow-hidden max-h-[50vh] sm:max-h-[65vh]">
                 {isLoading ? (
                     <div className="flex justify-center items-center h-full">
-                        {/* You can use any loader component here */}
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     </div>
                 ) : (
-                    sortedDates.length > 0 ? (
-                        sortedDates.map(dateString => {
-                            const date = new Date(dateString);
-                            const formattedDate = date.toLocaleDateString('en-US', {
-                                day: 'numeric',
-                                month: 'long',
-                                weekday: 'long'
-                            });
+                    <>
+                        {/* Today's appointments */}
+                        <div className="mb-4 sm:mb-6">
+                            <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedToday}</h3>
+                            <div className="space-y-0">
+                                {todayPatients.length > 0 ? (
+                                    todayPatients.map(user => renderPatientCard(user))
+                                ) : (
+                                    <p className="text-center text-sm text-gray-500">No appointments today.</p>
+                                )}
+                            </div>
+                        </div>
 
-                            return (
-                                <div key={dateString} className="mb-4 sm:mb-6">
-                                    <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedDate}</h3>
-                                    <div className="space-y-0">
-                                        {groupedByDate[dateString].map(user => renderPatientCard(user))}
-                                    </div>
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <p className="text-center text-sm text-gray-500">No appointments found for this date.</p>
-                    )
+                        {/* Tomorrow's appointments */}
+                        <div className="mb-4 sm:mb-6">
+                            <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedTomorrow}</h3>
+                            <div className="space-y-0">
+                                {tomorrowPatients.length > 0 ? (
+                                    tomorrowPatients.map(user => renderPatientCard(user))
+                                ) : (
+                                    <p className="text-center text-sm text-gray-500">No appointments tomorrow.</p>
+                                )}
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
+        );
+    };
+
+    // Render day view with table header
+    const renderDayView = () => {
+        // Get today's date
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0];
+
+        // Filter users for today
+        const todayPatients = displayedUsers.filter(user => {
+            if (!user.appointmentDate) return false;
+            try {
+                const date = new Date(user.appointmentDate);
+                return !isNaN(date.getTime()) && date.toISOString().split('T')[0] === todayString;
+            } catch (error) {
+                console.error("Invalid date for user:", user);
+                return false;
+            }
+        });
+
+        // Format date
+        const formattedToday = today.toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            weekday: 'long'
+        });
+
+        return (
+            <div className="space-y-2 sm:space-y-4 flex-grow overflow-y-auto overflow-hidden max-h-[50vh] sm:max-h-[65vh]">
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-full">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                ) : (
+                    <div className="mb-4 sm:mb-6">
+                        <h3 className="text-sm sm:text-base font-medium mb-2 pl-3 sm:pl-5">{formattedToday}</h3>
+
+                        {/* Table header */}
+                        <div className="mx-2 sm:mx-4 mb-2">
+                            <div className="grid grid-cols-12 gap-2 bg-gray-100 p-2 rounded-sm text-xs sm:text-sm">
+                                <div className="col-span-1 font-medium">S.No</div>
+                                <div className="col-span-5 font-medium">Patient</div>
+                                <div className="col-span-3 font-medium">Date</div>
+                                <div className="col-span-3 font-medium">Time</div>
+                            </div>
+                        </div>
+
+                        {/* Patient cards with table-like layout */}
+                        <div className="space-y-0">
+                            {todayPatients.length > 0 ? (
+                                todayPatients.map((user, index) => {
+                                    const isExpanded = expandedUserId === user._id;
+
+                                    const handleCardClick = (e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setExpandedUserId(isExpanded ? null : user._id);
+                                        setIsBlurred(!isExpanded);
+                                    };
+
+                                    return (
+                                        <div
+                                            key={user._id}
+                                            className={`relative grid grid-cols-12 gap-2 items-center p-3  transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 border-b border-[#2228365a] ${isExpanded ? 'bg-white shadow-md z-20' : 'bg-[#ffffff22]'
+                                                } mb-3 sm:mb-4`}
+                                            onClick={handleCardClick}
+                                        >
+                                            {/* Serial Number */}
+                                            <div className="col-span-1 text-xs sm:text-sm">
+                                                {index + 1}
+                                            </div>
+
+                                            {/* Patient Info */}
+                                            <div className="col-span-5">
+                                                <div className="flex items-center gap-2 sm:gap-4">
+                                                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
+                                                        <img src={user.profileImage} className="w-full h-full object-cover" alt={user.name} />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="font-medium text-sm sm:text-sm text-gray-900">{user.name}</h3>
+                                                        <p className="text-xs text-gray-500">#{user._id.slice(-7)}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Date */}
+                                            <div className="col-span-3 text-xs sm:text-sm text-gray-500">
+                                                {new Date(user.appointmentDate).toLocaleDateString('en-US', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric'
+                                                })}
+                                            </div>
+
+                                            {/* Time */}
+                                            <div className="col-span-3 flex gap-2 items-center text-xs sm:text-sm text-gray-500">
+                                                <Clock size={14} className="" />
+                                                <span>{user.time}</span>
+                                            </div>
+
+                                            {/* Expanded content wrapper - conditionally rendered */}
+                                            <div className={`col-span-12 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-100' : 'max-h-0'}`}>
+                                                <div className="mt-2 pt-3 sm:pt-4 ml-10 sm:ml-16">
+                                                    <div className="flex flex-col gap-2 sm:gap-3">
+                                                        <div>
+                                                            <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
+                                                            <div className="flex flex-col gap-2 mt-2">
+                                                                <div>
+                                                                    <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                                                        <Repeat size={12} className="" />Routine Checkup
+                                                                    </button>
+                                                                </div>
+                                                                <div className="flex gap-2">
+                                                                    <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                                                        <ChartSpline size={12} className="" />Blood Pressure Checkup
+                                                                    </button>
+                                                                    <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                                                        <Droplets size={12} className="" />Sugar Checkup
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-sm sm:text-md font-medium mt-3 sm:mt-4 text-gray-800">Additional Comments</h4>
+                                                            <p className="text-xs sm:text-sm text-gray-500">Feeling fatigues quite often. It is hampering my daily routine. I wonder what could be the reason?</p>
+                                                        </div>
+                                                        <Link
+                                                            to={`/user/${user._id}`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleUserClick(user);
+                                                            }}
+                                                            className="contents"
+                                                        >
+                                                            <button className="p-1 mt-3 mb-3 w-1/4 bg-[#1A73E8] rounded-sm text-white cursor-pointer">Open Profile</button>
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p className="text-center text-sm text-gray-500">No appointments today.</p>
+                            )}
+                        </div>
+                    </div>
                 )}
             </div>
         );
@@ -438,15 +639,33 @@ const Appointments = () => {
                 return renderMonthlyView();
             case 'year':
                 return renderYearlyView();
+            case 'schedule':
+                return renderScheduleView();
             case 'day':
+                return renderDayView();
             default:
-                return renderDailyView();
+                return renderScheduleView();
         }
     };
 
     return (
-        <div className="mx-auto  dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-2 sm:gap-3 rounded-lg overflow-hidden">
-            {renderView()}
+        <div className="relative">
+            {/* Main content container with conditional blur */}
+            <div
+                ref={appointmentsRef}
+                className={`mx-auto dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-2 sm:gap-3 rounded-lg overflow-hidden transition-all duration-300 ${isBlurred ? 'relative' : ''
+                    }`}
+            >
+                {/* Blur overlay - only shown when a card is expanded */}
+                {isBlurred && (
+                    <div className="absolute inset-0  bg-opacity-40 backdrop-blur-xs z-10"></div>
+                )}
+
+                {/* Actual content */}
+                <div className={``}>
+                    {renderView()}
+                </div>
+            </div>
         </div>
     );
 };

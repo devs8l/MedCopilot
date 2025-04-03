@@ -7,7 +7,7 @@ const MedContextProvider = (props) => {
   const [isUserSelected, setIsUserSelected] = useState(
     localStorage.getItem('isUserSelected') === 'true'
   );
-  const [filterBasis, setFilterBasis] = useState('day');
+  const [filterBasis, setFilterBasis] = useState('schedule');
   const [isExpanded, setIsExpanded] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem('isAuthenticated') === 'true'
@@ -157,7 +157,7 @@ const MedContextProvider = (props) => {
       const userDateFormatted = formatDateForComparison(user.appointmentDate);
       const userDate = new Date(user.appointmentDate);
 
-      if (filterBasis === 'day') {
+      if (filterBasis === 'day' || filterBasis === 'schedule') {
         return userDateFormatted === formattedSelectedDate;
       } else if (filterBasis === 'week') {
         // Get the bounds of the week containing the selected date
