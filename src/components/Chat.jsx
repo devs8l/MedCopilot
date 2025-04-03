@@ -224,7 +224,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     </div>
                 </div>
             </div>
-            <div className={`px-2 sm:px-3  sm:pt-3  bg-[#ffffff] dark:bg-[#00000099]  ${activeTabId === 'general'?"rounded-r-lg rounded-b-lg":"rounded-lg" }  flex flex-col overflow-hidden`}>
+            <div className={`px-2 sm:px-3  sm:pt-3  bg-[#ffffff] dark:bg-[#00000099]  ${activeTabId === 'general' ? "rounded-r-lg rounded-b-lg" : "rounded-lg"}  flex flex-col overflow-hidden`}>
 
                 <div className="flex items-center justify-between">
                     <h1 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mt-2 sm:mt-4 px-2 sm:px-4 mb-1 sm:mb-2">
@@ -234,6 +234,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     </h1>
                     <div className={`flex space-x-2 sm:space-x-4 items-center mt-1 sm:mt-2 justify-center mr-2 sm:mr-5`}>
                         <button
+                            title="Place in left"
                             onClick={() => !isTransitioning && swapPosition(true)}
                             className={`rounded ${isFullScreen ? "hidden" : ""} ${isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
                             disabled={isSwapped || isTransitioning}
@@ -241,6 +242,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                             <img src="/right.svg" alt="" className="rotate-180 w-4 sm:w-6 h-4 sm:h-6" />
                         </button>
                         <button
+                            title="Place in right"
                             onClick={() => !isTransitioning && swapPosition(false)}
                             className={`rounded ${isFullScreen ? "hidden" : ""} ${!isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
                             disabled={!isSwapped || isTransitioning}
@@ -248,6 +250,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                             <img src="/right.svg" className="w-4 sm:w-6 h-4 sm:h-6" alt="" />
                         </button>
                         <button
+                            title="Fullscreen"
                             onClick={() => !isTransitioning && toggleFullScreen()}
                             className="p-1 rounded hover:bg-gray-100 cursor-pointer ml-auto w-6 sm:w-8 h-6 sm:h-8 flex items-center justify-center"
                             disabled={isTransitioning}
