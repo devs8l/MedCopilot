@@ -446,25 +446,36 @@ const UserData = () => {
       </div>
       <h2 className="">   </h2>
       <div>
-        <div className="flex items-start  justify-between bg-[#ffffff94] p-6 rounded-sm mx-1">
+        <div className="flex items-start  justify-between bg-[#ffffff8e] border-gray-300 border p-6 rounded-md mx-1">
           <div className="flex items-start space-x-4">
             <img
               src={userData?.profileImage || "/api/placeholder/80/80"}
               className="w-13 h-13 rounded-full object-cover"
               alt={userData?.name}
             />
-            <div className="flex flex-col gap-5">
+            <div className="flex  gap-10">
               <div className="flex flex-col gap-2">
-                <h2 className="text-sm font-semibold">Name:  {userData?.name}</h2>
+                <h2 className="text-sm font-semibold text-gray-700">Name: <span className="font-medium text-gray-500">{userData?.name}</span> </h2>
                 <div className="flex gap-1">
-                  <h2 className="text-sm font-semibold">Patient ID: </h2>
+                  <h2 className="text-sm font-semibold text-gray-700">Patient ID: </h2>
                   <p className="text-sm text-gray-500">#{userData?._id?.slice(-6)}</p>
                 </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <h2 className="text-sm font-semibold text-gray-700">Sex: <span className="font-medium text-gray-500">{userData?.gender}</span> </h2>
+                <div className="flex gap-1">
+                  <h2 className="text-sm font-semibold text-gray-700">Age: </h2>
+                  <p className="text-sm text-gray-500">35</p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <h2 className="text-sm font-semibold text-gray-700">Weight: <span className="font-medium text-gray-500">64kg</span> </h2>
+                
               </div>
             </div>
           </div>
 
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             {isSessionActive && activeSessionUserId === userData._id ? (
               <div className="flex items-center gap-4">
                 <Stopwatch elapsedTime={elapsedTime} />
@@ -483,7 +494,7 @@ const UserData = () => {
                 <Play size={13} /> Start Session
               </button>
             )}
-          </div>
+          </div> */}
 
 
         </div>

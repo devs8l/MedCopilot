@@ -119,7 +119,7 @@ const Appointments = () => {
             <>
                 <div
                     key={user._id}
-                    className={`relative rounded-md grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center gap-1 p-3 sm:p-3 transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 ${isExpanded ? 'bg-[#ffffffba] shadow-md z-20 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-green-500 before:rounded-r' : 'hover:bg-[#ffffffba] hover-shadow-7xl'} mb-3 sm:my-2 `}
+                    className={`relative rounded-md grid grid-cols-1 sm:grid-cols-[2fr_1fr] items-center overflow-hidden gap-1 p-3 sm:p-3 transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 ${isExpanded ? 'bg-[#ffffff8e] border border-gray-200 shadow-md z-20 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-green-500 before:rounded-r' : 'hover:bg-[#ffffff8e] border border-[#fff0] hover:border-gray-200  hover-shadow-7xl'} mb-3 sm:my-2 `}
                     onClick={handleCardClick}
                 >
                     <div className="grid grid-cols-[2.5rem_auto] sm:grid-cols-[3rem_auto] items-center gap-2 sm:gap-4">
@@ -138,30 +138,20 @@ const Appointments = () => {
 
                     {/* Expanded content wrapper - conditionally rendered */}
                     <div className={`col-span-1 sm:col-span-2 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-80' : 'max-h-0'}`}>
-                        <div className="mt-2 pt-3 sm:pt-4 ml-10 sm:ml-16">
-                            <div className="flex flex-col gap-2 sm:gap-3 items-end">
-                                {/* <div>
-                                    <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
-                                    <div className="flex flex-col gap-2 mt-2">
-                                        <div>
-                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                                                <Repeat size={12} className="" />Routine Checkup
-                                            </button>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                                                <ChartSpline size={12} className="" />Blood Pressure Checkup
-                                            </button>
-                                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                                                <Droplets size={12} className="" />Sugar Checkup
-                                            </button>
-                                        </div>
-                                    </div>
+                        <div className="pt-3 sm:pt-4 ml-10 sm:ml-16">
+                            <div className="flex flex-col gap-2 sm:gap-3 ">
+                                <div className="flex gap-2 ">
+                                    <button className="flex gap-3 w-1/4 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5 ">
+                                        Sex:  {user.gender}
+                                    </button>
+                                    <button className="flex gap-1 w-1/4 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                        Age: 28
+                                    </button>
+                                    <button className="flex gap-1 w-1/3 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                        Weight: 59kg
+                                    </button>
                                 </div>
-                                <div>
-                                    <h4 className="text-sm sm:text-md font-medium mt-3 sm:mt-4 text-gray-800">Additional Comments</h4>
-                                    <p className="text-xs sm:text-sm text-gray-500">Feeling fatigues quite often. It is hampering my daily routine. I wonder what could be the reason?</p>
-                                </div> */}
+
                                 <Link
                                     to={`/user/${user._id}`}
                                     onClick={(e) => {
@@ -170,7 +160,7 @@ const Appointments = () => {
                                     }}
                                     className="contents"
                                 >
-                                    <button className="p-1 mt-3 mb-3 w-1/3 mr-2 hover:text-white text-[#1A73E8] border transition-all duration-100 ease-in border-[#1A73E8]  hover:bg-[#1A73E8] rounded-xs text-sm  cursor-pointer">Open Profile</button>
+                                    <button className="p-1 mt-3 mb-3 w-full mr-2 hover:text-white text-[#1A73E8] border transition-all duration-100 ease-in border-[#1A73E8]  hover:bg-[#1A73E8] rounded-xs text-sm  cursor-pointer">Open Profile</button>
                                 </Link>
                             </div>
                         </div>
@@ -299,9 +289,9 @@ const Appointments = () => {
                 ) : (
                     <div className="mb-4 sm:mb-6">
                         {/* Table header */}
-                        <div className="mx-2 sm:mx-4 mb-2">
-                            <div className="grid grid-cols-12 gap-2 bg-gray-100 px-4 py-4 rounded-sm text-xs sm:text-sm">
-                                <div className="col-span-1 font-medium">S.No</div>
+                        <div className=" mb-2">
+                            <div className="grid grid-cols-13 gap-2 bg-[#ffffff7a] px-4 py-6 rounded-sm text-xs sm:text-sm border border-gray-300">
+                                <div className="col-span-2 font-medium">S.No</div>
                                 <div className="col-span-5 font-medium">Patient</div>
                                 <div className="col-span-3 font-medium">Date</div>
                                 <div className="col-span-3 font-medium">Time</div>
@@ -324,9 +314,9 @@ const Appointments = () => {
                                     return (
                                         <div key={user._id}>
                                             <div
-                                                className={`relative rounded-md grid grid-cols-12 gap-2 items-center p-3 sm:p-3 transition-all duration-300 ease-in-out cursor-pointer mx-2 sm:mx-4 ${isExpanded
-                                                    ? 'bg-[#ffffffba] shadow-md z-20 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-green-500 before:rounded-r'
-                                                    : 'hover:bg-[#ffffffba] hover-shadow-7xl'
+                                                className={`relative overflow-hidden rounded-md grid grid-cols-12 gap-2 items-center   sm:py-3 px-5 transition-all duration-300 ease-in-out cursor-pointer  ${isExpanded
+                                                    ? 'bg-[#ffffff8e] shadow-md z-20 before:absolute before:left-0 before:top-0 border border-gray-200 before:h-full before:w-1 before:bg-green-500 before:rounded-r'
+                                                    : 'hover:bg-[#ffffff8e] hover-shadow-7xl border border-[#fff0] hover:border-gray-200'
                                                     } my-2`}
                                                 onClick={handleCardClick}
                                             >
@@ -338,7 +328,7 @@ const Appointments = () => {
                                                 {/* Patient Info */}
                                                 <div className="col-span-5">
                                                     <div className="flex items-center gap-2 sm:gap-4">
-                                                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
+                                                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center overflow-hidden justify-center">
                                                             <img src={user.profileImage} className="w-full h-full object-cover" alt={user.name} />
                                                         </div>
                                                         <div>
@@ -366,8 +356,19 @@ const Appointments = () => {
                                                 {/* Expanded content wrapper - conditionally rendered */}
                                                 <div className={`col-span-12 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-80' : 'max-h-0'
                                                     }`}>
-                                                    <div className="mt-2 pt-3 sm:pt-4 ml-10 sm:ml-16">
-                                                        <div className="flex flex-col gap-2 sm:gap-3 items-end">
+                                                    <div className="mt-2 pt-3 sm:pt-4 ml-10 sm:ml-26">
+                                                        <div className="flex flex-col gap-2 sm:gap-3 ">
+                                                            <div className="flex gap-2 ">
+                                                                <button className="flex gap-3 w-1/4 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5 ">
+                                                                    Sex:  {user.gender}
+                                                                </button>
+                                                                <button className="flex gap-1 w-1/4 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                                                    Age: 28
+                                                                </button>
+                                                                <button className="flex gap-1 w-1/3 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                                                                    Weight: 59kg
+                                                                </button>
+                                                            </div>
                                                             <Link
                                                                 to={`/user/${user._id}`}
                                                                 onClick={(e) => {
@@ -376,7 +377,7 @@ const Appointments = () => {
                                                                 }}
                                                                 className="contents"
                                                             >
-                                                                <button className="p-1 mt-3 mb-3 w-1/3 mr-2 hover:text-white text-[#1A73E8] border transition-all duration-100 ease-in border-[#1A73E8]  hover:bg-[#1A73E8] rounded-xs text-sm  cursor-pointer">Open Profile</button>
+                                                                <button className="p-1 mt-3 mb-3 w-full mr-2 hover:text-white text-[#1A73E8] border transition-all duration-100 ease-in border-[#1a73e87c]  hover:bg-[#1A73E8] rounded-xs text-sm  cursor-pointer">Open Profile</button>
                                                             </Link>
                                                         </div>
                                                     </div>
@@ -636,7 +637,7 @@ const Appointments = () => {
             {/* Main content container with conditional blur */}
             <div
 
-                className={`mx-auto dark:text-white px-1 py-1 pb-1 flex flex-col justify-between gap-2 sm:gap-3 rounded-lg overflow-hidden transition-all duration-300 ${isBlurred ? 'relative' : ''
+                className={`mx-auto dark:text-white  py-1 pb-1 flex flex-col justify-between gap-2 sm:gap-3 rounded-lg overflow-hidden transition-all duration-300 ${isBlurred ? 'relative' : ''
                     }`}
             >
 

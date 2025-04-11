@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
-import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2 } from 'lucide-react';
+import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2, Droplets, ChartSpline, Repeat } from 'lucide-react';
 import { MedContext } from '../context/MedContext';
 import { ChatContext } from '../context/ChatContext';
 import ReactMarkdown from 'react-markdown';
@@ -27,6 +27,8 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [localPromptGiven, setLocalPromptGiven] = useState(false);
+  const [hasFocusedInput, setHasFocusedInput] = useState(false);
+  const [hasAnimatedInput, setHasAnimatedInput] = useState(false);
 
   // Different suggestions based on whether a patient is selected
   const patientSuggestionPrompts = [
@@ -65,13 +67,8 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
   useEffect(() => {
     setLocalPromptGiven(false);
     setShowSuggestions(false);
-    
-    // Show suggestions with animation after a short delay
-    const timer = setTimeout(() => {
-      setShowSuggestions(true);
-    }, 300);
-    
-    return () => clearTimeout(timer);
+    setHasFocusedInput(false);
+    setHasAnimatedInput(false);
   }, [selectedUser, isGeneralChat]);
 
   // Save the previous scroll position before transition
@@ -139,46 +136,93 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
     setInputMessage(prompt);
   };
 
+  const handleInputFocus = () => {
+    setIsInputFocused(true);
+    setHasFocusedInput(true);
+
+    // Show suggestions with animation after a short delay
+    if (!showSuggestions && !localPromptGiven) {
+      setShowSuggestions(true);
+    }
+
+    // Trigger border animation only once when input is focused for the first time
+    if (!hasAnimatedInput) {
+      setHasAnimatedInput(true);
+    }
+  };
+
   // Check if we should show the initial state (empty chat)
   const showInitialState = messages.length <= 1 && !localPromptGiven;
 
   return (
     <div className="flex flex-col h-full w-full mx-auto shadow-lg transition-opacity duration-200 ease-in-out"
       style={{ opacity: isTransitioning ? 0.7 : 1 }}>
-      
+
       {/* Messages Container with fixed minimum height */}
       <div
         ref={messageContainerRef}
-        className={`flex-1 overflow-y-auto pb-1 sm:pb-1 md:pb-2 lg:pb-3 xl:pb-4 pr-1 sm:pr-2 md:pr-3 lg:pr-4 xl:pr-4 pl-1 sm:pl-2 md:pl-3 lg:pl-4 xl:pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${showInitialState ? 'flex items-center justify-center' : ''}`}
+        className={`flex-1 overflow-y-auto pb-1 sm:pb-1 md:pb-2   pr-1 sm:pr-2 md:pr-3 lg:pr-4 xl:pr-4 pl-1 sm:pl-2 md:pl-3 lg:pl-4 xl:pl-4 min-h-[200px] transition-all duration-200 ease-in-out items-center ${showInitialState ? 'flex  justify-center' : ''} ${hasFocusedInput ? 'items-end' : ''}`}
       >
+        
         {showInitialState ? (
-          <div className="w-full text-center space-y-6">
-            <div className="text-2xl font-semibold text-gray-800 dark:text-white">
-              {selectedUser ? `Patient: ${selectedUser.name}` : 'Good Morning Dr. John!'}
-            </div>
+          <div className="w-full text-center space-y-6 ">
+            {selectedUser ? (
+              <div className="flex gap-4 items-center absolute top-30">
+                <div className="relative mb-4">
+                  <img
+                    src={selectedUser.profileImage || '/default-user.png'}
+                    alt="Patient"
+                    className="w-12 h-12 rounded-full object-cover  "
+                  />
+                </div>
+                <div className='flex flex-col justify-center items-start border border-gray-200 rounded-lg p-4 w-[90%]'>
+                  <div className="flex flex-wrap justify-center gap-2 ">
+                    <h3 className="text-md text-gray-600 text-left ">Feeling fatigued quite often. I also have acute body pain. It is hampering my daily routine. I wonder what could be the reason? Lately, I’ve noticed my appetite ha...</h3>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-2 text-left">
+                    <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
+                    <div className="flex gap-2">
+                      <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                        <Repeat size={12} className="" />Routine Checkup
+                      </button>
+                      <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                        <ChartSpline size={12} className="" />Blood Pressure Checkup
+                      </button>
+                      <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                        <Droplets size={12} className="" />Sugar Checkup
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-2xl font-semibold text-gray-800 dark:text-white">
+                Good Morning Dr. John!
+              </div>
+            )}
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {selectedUser ? "Ask a question about this patient" : "Ask a question to get started"}
+              {selectedUser ? "" : "Ask a question to get started"}
             </p>
-            
+
             {/* Unified UI for both general and patient chat */}
-            <div className="w-full max-w-md mx-auto mt-8 ">
-              <div className={`flex flex-col gap-2 bg-white dark:bg-[#27313C] border shadow-lg border-gray-200 dark:border-gray-700 overflow-hidden rounded-lg`}>
+            <div className="w-full max-w-md mx-auto mt-8">
+              <div className={`relative flex flex-col gap-2 bg-white border shadow-lg border-gray-200 dark:border-gray-700 overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${isInputFocused ? 'shadow-lg' : ''}`}>
                 <input
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !isTransitioning && handleSendMessage()}
-                  onFocus={() => setIsInputFocused(true)}
+                  onFocus={handleInputFocus}
                   onBlur={() => setIsInputFocused(false)}
                   placeholder={selectedUser ? "How can MedCopilot help with this patient?" : "Get key insights on your patient schedule"}
-                  className="flex-1 p-3 rounded-lg focus:outline-none bg-white dark:bg-[#27313C] dark:text-white "
+                  className="flex-1 p-3 rounded-lg text-sm focus:outline-none bg-white dark:bg-[#27313C] dark:text-white relative z-10"
                   disabled={isTransitioning}
                 />
-                <div className='flex justify-between items-center p-2'>
+                <div className='flex justify-between items-center p-2 relative z-10'>
                   <div className='flex'>
                     <button
                       onClick={triggerFileUpload}
-                      className="p-2 mr-2 border border-gray-300 text-gray-700 dark:text-white rounded-full cursor-pointer transition-colors"
+                      className="p-2 mr-2 border border-gray-300 text-gray-700 dark:text-white rounded-full cursor-pointer transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                       disabled={isTransitioning}
                     >
                       <Paperclip size={16} />
@@ -197,18 +241,18 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
               </div>
             </div>
 
-            {/* Animated Suggestions List */}
-            {showSuggestions && (
-              <div className="w-full max-w-md mx-auto mt-6">
+            {/* Animated Suggestions List - Only show after input is focused */}
+            {showSuggestions && hasFocusedInput && (
+              <div className="w-full max-w-md mx-auto mt-6 relative left-5">
                 <ul className="space-y-2">
                   {suggestionPrompts.map((prompt, index) => (
-                    <li 
+                    <li
                       key={index}
                       className={`opacity-0 transform -translate-y-2 animate-fadeInUp`}
                       style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
                     >
                       <button
-                        className="w-full p-2 text-left text-gray-700 border-b text-sm border-[#0000005a] transition-colors cursor-pointer"
+                        className="w-full p-3 text-left text-gray-500 text-xs transition-all duration-200   rounded-lg cursor-pointer"
                         onClick={() => handleSuggestionClick(prompt)}
                       >
                         {prompt}
@@ -341,10 +385,9 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
           </div>
         )}
       </div>
-
       {/* Input Area - Only show at bottom when not in initial state */}
       {!showInitialState && (
-        <div className={`p-1 sm:py-2 md:py-3 lg:py-3 xl:py-4 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-3/4'} mx-auto transition-all duration-200 ease-in-out`}>
+        <div className={`p-1  sm:py-2 md:py-3 lg:py-3 xl:py-6 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-3/4'} mx-auto transition-all duration-200 ease-in-out`}>
           <div className={`flex ${isInputFocused ? 'border-gray-100 drop-shadow-sm' : 'border-gray-200'} flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#ffffff] border dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1`}>
             <input
               type="text"
