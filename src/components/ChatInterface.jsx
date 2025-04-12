@@ -152,7 +152,9 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
   const handleInputFocus = () => {
     setIsInputFocused(true);
     setHasFocusedInput(true);
-    setShowBoxClass(true); // Show the box class when input is focused
+    if(!hasAnimatedInput) {
+      setShowBoxClass(true); // Show the box class when input is focused
+    }
 
     // Show suggestions with animation after a short delay
     if (!showSuggestions && !localPromptGiven) {
