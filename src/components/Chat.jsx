@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, memo, useState, useRef } from "react";
 import ChatInterface from "./ChatInterface";
-import { Maximize, Minimize, X, AlertCircle, MessageCircle, Home } from "lucide-react";
+import { Maximize, Minimize, X, AlertCircle, MessageCircle, Home, User } from "lucide-react";
 import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -202,11 +202,12 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                                     }`}
                             >
                                 <div className="w-4 sm:w-6 h-4 sm:h-6 rounded-full flex items-center justify-center overflow-hidden">
-                                    <img
+                                    {/* <img
                                         src={tab.profileImage || "/default-avatar.png"}
                                         alt={tab.name}
                                         className="object-cover w-full h-full"
-                                    />
+                                    /> */}
+                                    <User size={17}/>
                                 </div>
                                 <span className="max-w-20 sm:max-w-32 truncate text-xs sm:text-sm">{tab.name}</span>
                                 {hasHistory(tab._id) && (

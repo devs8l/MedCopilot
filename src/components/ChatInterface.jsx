@@ -161,42 +161,44 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
       {/* Messages Container with fixed minimum height */}
       <div
         ref={messageContainerRef}
-        className={`flex-1 overflow-y-auto pb-1 sm:pb-1 md:pb-2   pr-1 sm:pr-2 md:pr-3 lg:pr-4 xl:pr-4 pl-1 sm:pl-2 md:pl-3 lg:pl-4 xl:pl-4 min-h-[200px] transition-all duration-200 ease-in-out items-center ${showInitialState ? 'flex  justify-center' : ''} ${hasFocusedInput ? 'items-end' : ''}`}
+        className={`flex-1 overflow-y-auto pb-1 sm:pb-1 md:pb-2 pr-1 sm:pr-2 md:pr-3 lg:pr-4 xl:pr-4 pl-1 sm:pl-2 md:pl-3 lg:pl-4 xl:pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${showInitialState ? 'flex justify-center' : ''} `}
       >
         
         {showInitialState ? (
-          <div className="w-full text-center space-y-6 ">
+          <div className={`w-full mt-4 max-w-2xl mx-auto flex flex-col text-center space-y-3 ${selectedUser?'items-end':'items-center'} px-4`}>
             {selectedUser ? (
-              <div className="flex gap-4 items-center absolute top-30">
-                <div className="relative mb-4">
-                  <img
-                    src={selectedUser.profileImage || '/default-user.png'}
-                    alt="Patient"
-                    className="w-12 h-12 rounded-full object-cover  "
-                  />
-                </div>
-                <div className='flex flex-col justify-center items-start border border-gray-200 rounded-lg p-4 w-[90%]'>
-                  <div className="flex flex-wrap justify-center gap-2 ">
-                    <h3 className="text-md text-gray-600 text-left ">Feeling fatigued quite often. I also have acute body pain. It is hampering my daily routine. I wonder what could be the reason? Lately, I’ve noticed my appetite ha...</h3>
+              <div className="flex flex-col items-center w-full">
+                <div className="flex items-center w-full gap-4 ">
+                  <div className="relative">
+                    <img
+                      src={selectedUser.profileImage || '/default-user.png'}
+                      alt="Patient"
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
                   </div>
-                  <div className="flex flex-col gap-2 mt-2 text-left">
-                    <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
-                    <div className="flex gap-2">
-                      <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                        <Repeat size={12} className="" />Routine Checkup
-                      </button>
-                      <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                        <ChartSpline size={12} className="" />Blood Pressure Checkup
-                      </button>
-                      <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                        <Droplets size={12} className="" />Sugar Checkup
-                      </button>
+                  <div className='flex-1 border border-gray-200 rounded-2xl p-4 '>
+                    <div className="flex flex-col items-start">
+                      <h3 className="text-md text-gray-600 text-left">Feeling fatigued quite often. I also have acute body pain. It is hampering my daily routine. I wonder what could be the reason? Lately, I've noticed my appetite ha...</h3>
+                    </div>
+                    <div className="flex flex-col gap-2 mt-2 text-left">
+                      <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
+                      <div className="flex flex-wrap gap-2">
+                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                          <Repeat size={12} />Routine Checkup
+                        </button>
+                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                          <ChartSpline size={12} />Blood Pressure Checkup
+                        </button>
+                        <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                          <Droplets size={12} />Sugar Checkup
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="text-2xl font-semibold text-gray-800 dark:text-white">
+              <div className="text-2xl font-semibold text-gray-800 p-5 dark:text-white">
                 Good Morning Dr. John!
               </div>
             )}
@@ -205,8 +207,8 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
             </p>
 
             {/* Unified UI for both general and patient chat */}
-            <div className="w-full max-w-md mx-auto mt-8">
-              <div className={`relative flex flex-col gap-2 bg-white border shadow-lg border-gray-200 dark:border-gray-700 overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${isInputFocused ? 'shadow-lg' : ''}`}>
+            <div className="w-[90%] ">
+              <div className={`relative flex flex-col gap-2 bg-white border shadow-lg border-gray-200 dark:border-gray-700 overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${isInputFocused ? 'shadow-xl' : ''}`}>
                 <input
                   type="text"
                   value={inputMessage}
@@ -231,7 +233,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                   <div className='flex'>
                     <button
                       onClick={handleSendMessage}
-                      className="p-2 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
+                      className={`p-2 border ${hasFocusedInput ? 'bg-blue-500 text-white':' border-blue-500 text-blue-500'} transition-all ease-in duration-400 rounded-full cursor-pointer hover:bg-blue-500 hover:text-white`}
                       disabled={isTransitioning}
                     >
                       <ArrowUp size={16} />
@@ -243,8 +245,8 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
 
             {/* Animated Suggestions List - Only show after input is focused */}
             {showSuggestions && hasFocusedInput && (
-              <div className="w-full max-w-md mx-auto mt-6 relative left-5">
-                <ul className="space-y-2">
+              <div className="w-[90%] mt-6">
+                <ul className="space-y-1">
                   {suggestionPrompts.map((prompt, index) => (
                     <li
                       key={index}
@@ -252,7 +254,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                       style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
                     >
                       <button
-                        className="w-full p-3 text-left text-gray-500 text-xs transition-all duration-200   rounded-lg cursor-pointer"
+                        className="w-full p-3 text-left text-gray-500 text-xs transition-all duration-200 rounded-lg cursor-pointer"
                         onClick={() => handleSuggestionClick(prompt)}
                       >
                         {prompt}
@@ -387,7 +389,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
       </div>
       {/* Input Area - Only show at bottom when not in initial state */}
       {!showInitialState && (
-        <div className={`p-1  sm:py-2 md:py-3 lg:py-3 xl:py-6 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-3/4'} mx-auto transition-all duration-200 ease-in-out`}>
+        <div className={`p-1 sm:py-2 md:py-3 lg:py-3 xl:py-6 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-3/4'} mx-auto transition-all duration-200 ease-in-out`}>
           <div className={`flex ${isInputFocused ? 'border-gray-100 drop-shadow-sm' : 'border-gray-200'} flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#ffffff] border dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1`}>
             <input
               type="text"
