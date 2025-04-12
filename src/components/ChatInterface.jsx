@@ -165,10 +165,10 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
       >
         
         {showInitialState ? (
-          <div className={`w-full mt-4 max-w-2xl mx-auto flex flex-col text-center space-y-3 ${selectedUser?'items-end':'items-center'} px-4`}>
+          <div className={`w-full mt-4 max-w-3xl mx-auto flex flex-col text-center space-y-3 ${selectedUser?'items-end':'items-center'} px-4`}>
             {selectedUser ? (
               <div className="flex flex-col items-center w-full">
-                <div className="flex items-center w-full gap-4 ">
+                <div className="flex items-center w-full gap-7 ">
                   <div className="relative">
                     <img
                       src={selectedUser.profileImage || '/default-user.png'}
