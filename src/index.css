@@ -120,53 +120,39 @@
 }
 
 
-
-:root {
-	--d: 1500ms;
-	--angle: 90deg;
-	--gradX: 100%;
-	--gradY: 50%;
-	--c1: rgb(83, 196, 222);
-	--c2: rgba(0, 0, 0, 0);
-}
-
-
-
 .box {
-	border-image: conic-gradient(from var(--angle), var(--c2), var(--c1) 0.1turn, var(--c1) 0.15turn, var(--c2) 0.25turn) 30;
-	animation: borderRotate var(--d) linear infinite forwards;
+  --border-angle: 0deg;
+  border-radius: 18px;
+  /* box-shadow: 0px 2px 4px hsl(0 0% 0% / 25%); */
+  animation: border-angle-rotate 1s infinite linear;
+  border: 0.15rem solid transparent;
+  position: relative;
+  background: linear-gradient(white, white) padding-box,
+    conic-gradient(
+        from var(--border-angle),
+        var(--bg) 50%,
+      rgba(92, 142, 212, 0.59)
+      )
+      border-box;
 }
 
-
-
-@keyframes borderRotate {
-	100% {
-		--angle: 420deg;
-	}
+@keyframes border-angle-rotate {
+  from { --border-angle: 0deg; }
+  to { --border-angle: 360deg; }
 }
 
-@keyframes borderRadial {
-	20% {
-		--gradX: 100%;
-		--gradY: 50%;
-	}
-	40% {
-		--gradX: 100%;
-		--gradY: 100%;
-	}
-	60% {
-		--gradX: 50%;
-		--gradY: 100%;
-	}
-	80% {
-		--gradX: 0%;
-		--gradY: 50%;
-	}
-	100% {
-		--gradX: 50%;
-		--gradY: 0%;
-	}
+body {
+  --bg: hsl(0, 0%, 100%);
+  background: var(--bg);
+
 }
+
+@property --border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
 
 
 

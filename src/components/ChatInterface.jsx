@@ -29,6 +29,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
   const [localPromptGiven, setLocalPromptGiven] = useState(false);
   const [hasFocusedInput, setHasFocusedInput] = useState(false);
   const [hasAnimatedInput, setHasAnimatedInput] = useState(false);
+  const [showBoxClass, setShowBoxClass] = useState(false); // New state for controlling box class
 
   // Different suggestions based on whether a patient is selected
   const patientSuggestionPrompts = [
@@ -69,6 +70,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
     setShowSuggestions(false);
     setHasFocusedInput(false);
     setHasAnimatedInput(false);
+    setShowBoxClass(false);
   }, [selectedUser, isGeneralChat]);
 
   // Save the previous scroll position before transition
@@ -79,6 +81,17 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
       messageContainerRef.current.scrollTop = messageContainerRef.current.dataset.scrollTop;
     }
   }, [isTransitioning]);
+
+  // Effect to handle the box class removal after 1 second
+  useEffect(() => {
+    let timer;
+    if (showBoxClass) {
+      timer = setTimeout(() => {
+        setShowBoxClass(false);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [showBoxClass]);
 
   const handleSendMessage = () => {
     if (!inputMessage.trim() && uploadedFiles.length === 0) return;
@@ -139,6 +152,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
   const handleInputFocus = () => {
     setIsInputFocused(true);
     setHasFocusedInput(true);
+    setShowBoxClass(true); // Show the box class when input is focused
 
     // Show suggestions with animation after a short delay
     if (!showSuggestions && !localPromptGiven) {
@@ -208,8 +222,8 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
 
             {/* Unified UI for both general and patient chat */}
             <div className="w-[90%] ">
-              <div className={`relative flex flex-col gap-2 bg-white border shadow-lg border-gray-200 dark:border-gray-700 overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${isInputFocused ? 'shadow-xl' : ''}`}>
-                <input
+              <div className={`relative flex flex-col gap-2 bg-white border-[0.15rem] shadow-lg border-gray-50  overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${showBoxClass ? 'box' : ''} ${isInputFocused ? 'shadow-xl' : ''}`}>
+                <input  
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
@@ -273,7 +287,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                 {message.type === 'user' && (
                   <div className="flex justify-end">
                     <div className="bg-[#c8ddef80] text-gray-700 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
-                      <p className="text-sm sm:text-sm md:text-base lg:text-base xl:text-base">{message.content}</p>
+                      {/* <p className="text-sm sm:text-sm md:text-base lg:text-base xl:text-base">{message.content}</p> */}
 
                       {/* Display files for user messages if they exist */}
                       {message.files && message.files.length > 0 && (
