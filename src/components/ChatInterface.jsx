@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
-import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2, Droplets, ChartSpline, Repeat } from 'lucide-react';
+import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2, Droplets, ChartSpline, Repeat, ChevronDown, ChevronUp } from 'lucide-react';
 import { MedContext } from '../context/MedContext';
 import { ChatContext } from '../context/ChatContext';
 import ReactMarkdown from 'react-markdown';
@@ -29,7 +29,9 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
   const [localPromptGiven, setLocalPromptGiven] = useState(false);
   const [hasFocusedInput, setHasFocusedInput] = useState(false);
   const [hasAnimatedInput, setHasAnimatedInput] = useState(false);
-  const [showBoxClass, setShowBoxClass] = useState(false); // New state for controlling box class
+  const [showBoxClass, setShowBoxClass] = useState(false);
+  const [isUserDetailsExpanded, setIsUserDetailsExpanded] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Different suggestions based on whether a patient is selected
   const patientSuggestionPrompts = [
@@ -71,6 +73,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
     setHasFocusedInput(false);
     setHasAnimatedInput(false);
     setShowBoxClass(false);
+    setIsUserDetailsExpanded(false);
   }, [selectedUser, isGeneralChat]);
 
   // Save the previous scroll position before transition
@@ -157,7 +160,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
     }
 
     // Show suggestions with animation after a short delay
-    if (!showSuggestions && !localPromptGiven) {
+    if (!showSuggestions && !localPromptGiven && !isUserDetailsExpanded) {
       setShowSuggestions(true);
     }
 
@@ -165,6 +168,14 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
     if (!hasAnimatedInput) {
       setHasAnimatedInput(true);
     }
+  };
+
+  const toggleUserDetails = () => {
+    setIsAnimating(true);
+    setIsUserDetailsExpanded(!isUserDetailsExpanded);
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 300); // Match this with your transition duration
   };
 
   // Check if we should show the initial state (empty chat)
@@ -183,18 +194,32 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
         {showInitialState ? (
           <div className={`w-full mt-4 max-w-3xl mx-auto flex flex-col text-center space-y-3 ${selectedUser?'items-end':'items-center'} px-4`}>
             {selectedUser ? (
-              <div className="flex flex-col items-center w-full">
-                <div className="flex items-center w-full gap-7 ">
+              <div className="flex flex-col items-center w-full  ease-in">
+                <div className={`relative flex   w-full gap-7 ${isUserDetailsExpanded ? 'mb-4' : ''}`}>
                   <div className="relative">
                     <img
                       src={selectedUser.profileImage || '/default-user.png'}
                       alt="Patient"
-                      className="w-12 h-12 rounded-full object-cover"
+                      className="w-12 h-12 rounded-full object-cover mt-2"
                     />
                   </div>
-                  <div className='flex-1 border border-gray-200 rounded-2xl p-4 '>
+                  <div className={`flex-1 border border-gray-200 rounded-2xl p-4 transition-all duration-300 ease-in-out ${isUserDetailsExpanded ? 'h-auto' : 'h-[150px] overflow-hidden'}`}>
                     <div className="flex flex-col items-start">
-                      <h3 className="text-md text-gray-600 text-left">Feeling fatigued quite often. I also have acute body pain. It is hampering my daily routine. I wonder what could be the reason? Lately, I've noticed my appetite ha...</h3>
+                      <h3 className="text-md text-gray-600 text-left">
+                        {isUserDetailsExpanded ? (
+                          <>
+                            Feeling fatigued quite often. I also have acute body pain. It is hampering my daily routine. I wonder what could be the reason? Lately, I've noticed my appetite has decreased significantly. I've been experiencing headaches in the morning and difficulty sleeping at night. My blood pressure readings have been slightly elevated compared to my normal range.
+                            <br /><br />
+                            Previous conditions: Mild hypertension (diagnosed 2019), Seasonal allergies
+                            <br />
+                            Medications: Lisinopril 10mg daily, Loratadine as needed
+                            <br />
+                            Last visit: 3 months ago for routine checkup
+                          </>
+                        ) : (
+                          "Feeling fatigued quite often. I also have acute body pain. It is hampering my daily routine. I wonder what could be the reason? Lately, I've noticed my appetite ha..."
+                        )}
+                      </h3>
                     </div>
                     <div className="flex flex-col gap-2 mt-2 text-left">
                       <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
@@ -210,6 +235,12 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                         </button>
                       </div>
                     </div>
+                    <button 
+                      onClick={toggleUserDetails}
+                      className={`absolute right-4 bottom-4 p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 ${isUserDetailsExpanded ? 'transform rotate-180' : ''}`}
+                    >
+                      {isUserDetailsExpanded ? <ChevronDown size={16} /> : <ChevronDown size={16} />}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -223,8 +254,8 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
             </p>
 
             {/* Unified UI for both general and patient chat */}
-            <div className="w-[90%] ">
-              <div className={`relative flex flex-col gap-2 bg-white border-[0.15rem] shadow-lg border-gray-50  overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${showBoxClass ? 'box' : ''} ${isInputFocused ? 'shadow-xl' : ''}`}>
+            <div className={`w-[90%] transition-all duration-300 ease-in-out ${isUserDetailsExpanded ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-auto'}`}>
+              <div className={`relative flex flex-col gap-2 bg-white border-[0.15rem] shadow-lg border-gray-50 overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${showBoxClass ? 'box' : ''} ${isInputFocused ? 'shadow-xl' : ''}`}>
                 <input  
                   type="text"
                   value={inputMessage}
@@ -260,8 +291,8 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
             </div>
 
             {/* Animated Suggestions List - Only show after input is focused */}
-            {showSuggestions && hasFocusedInput && (
-              <div className="w-[90%] mt-6">
+            {showSuggestions && hasFocusedInput && !isUserDetailsExpanded && (
+              <div className={`w-[90%] mt-6 transition-all duration-300 ease-in-out ${isUserDetailsExpanded ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-auto'}`}>
                 <ul className="space-y-1">
                   {suggestionPrompts.map((prompt, index) => (
                     <li
@@ -270,7 +301,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                       style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
                     >
                       <button
-                        className="w-full p-3 text-left text-gray-500 text-xs transition-all duration-200 rounded-lg cursor-pointer"
+                        className="w-full p-3 text-left text-gray-500 text-xs transition-all duration-200 rounded-lg cursor-pointer "
                         onClick={() => handleSuggestionClick(prompt)}
                       >
                         {prompt}
@@ -289,7 +320,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                 {message.type === 'user' && (
                   <div className="flex justify-end">
                     <div className="bg-[#c8ddef80] text-gray-700 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[80%] xl:max-w-[80%] rounded-lg p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3">
-                      {/* <p className="text-sm sm:text-sm md:text-base lg:text-base xl:text-base">{message.content}</p> */}
+                      <p className="text-sm sm:text-sm md:text-base lg:text-base xl:text-base">{message.content}</p>
 
                       {/* Display files for user messages if they exist */}
                       {message.files && message.files.length > 0 && (
@@ -405,8 +436,8 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
       </div>
       {/* Input Area - Only show at bottom when not in initial state */}
       {!showInitialState && (
-        <div className={`p-1 sm:py-2 md:py-3 lg:py-3 xl:py-6 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-3/4'} mx-auto transition-all duration-200 ease-in-out`}>
-          <div className={`flex ${isInputFocused ? 'border-gray-100 drop-shadow-sm' : 'border-gray-200'} flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#ffffff] border dark:bg-[#27313C] dark:text-white overflow-hidden rounded-lg pb-1`}>
+        <div className={`p-1 sm:py-2 px-0 ${isFullScreen ? 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3' : 'w-3/4'} mx-auto transition-all duration-200 ease-in-out`}>
+          <div className={`flex p-1 ${isInputFocused ? 'border-gray-100 drop-shadow-sm' : 'border-gray-200'} flex-col gap-1 sm:gap-1 md:gap-2 lg:gap-2 xl:gap-2 bg-[#ffffff] border dark:bg-[#27313C] dark:text-white overflow-hidden rounded-2xl pb-1`}>
             <input
               type="text"
               value={inputMessage}
@@ -415,7 +446,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
               placeholder={selectedUser ? "How can MedCopilot help with this patient?" : "Get key insights on your patient schedule and priorities for today"}
-              className="flex-1 p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 rounded-lg focus:outline-none dark:bg-[#27313C] dark:text-white"
+              className="flex-1 p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3 rounded-lg text-sm focus:outline-none dark:bg-[#27313C] dark:text-white"
               disabled={isTransitioning}
             />
             <div className='flex justify-between items-center p-1 sm:p-2 md:p-3 lg:p-3 xl:p-3'>
