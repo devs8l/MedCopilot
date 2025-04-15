@@ -218,7 +218,7 @@ const Home = () => {
                 className="bg-[#FFFFFF66] dark:bg-[#00000099] h-full rounded-lg p-1.5"
                 
               >
-                <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${location.pathname.includes('/patients') ? 'hidden' : ''} ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
+                <div className={`flex gap-3 items-center w-full px-3 mb-3 justify-between ${location.pathname.includes('/patients') ? 'hidden' : ''} ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
                   <DatePicker />
                   <DateSort />
                 </div>
