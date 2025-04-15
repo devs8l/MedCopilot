@@ -1,9 +1,9 @@
-import { Menu, Moon, Sun, Search, CircleHelp, ChevronLeft, X, LogOut, User, CircleCheck, UserX, ClockAlert, Bell, Bolt } from 'lucide-react';
+import { Menu, Moon, Sun, Search, CircleHelp, ChevronLeft, X, LogOut, User, CircleCheck, UserX, ClockAlert, Bell, Bolt, Settings } from 'lucide-react';
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import DatePicker from './DatePicker';
 import DateSort from './DateSort';
 import { Link } from 'react-router-dom';
-import { MedContext } from '../context/MedContext'; // Import context
+import { MedContext } from '../context/MedContext';
 import NotificationPopup from './NotificationPopup';
 
 const Navbar = () => {
@@ -11,13 +11,15 @@ const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isIconsDropdownOpen, setIsIconsDropdownOpen] = useState(false);
+    const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const searchInputRef = useRef(null);
     const mobileMenuRef = useRef(null);
     const iconsDropdownRef = useRef(null);
+    const profileDropdownRef = useRef(null);
 
     // Dark mode state
     const [theme, setTheme] = useState(
-        localStorage.getItem("theme") || "light" // Default to "light" instead of checking system preference
+        localStorage.getItem("theme") || "light"
     );
 
     // Apply theme on mount & when theme state changes
@@ -67,6 +69,11 @@ const Navbar = () => {
                 !event.target.closest('[data-icons-toggle]')) {
                 setIsIconsDropdownOpen(false);
             }
+
+            if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target) &&
+                !event.target.closest('[data-profile-toggle]')) {
+                setIsProfileDropdownOpen(false);
+            }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
@@ -82,6 +89,7 @@ const Navbar = () => {
                 if (isSearchOpen) setIsSearchOpen(false);
                 if (isMobileMenuOpen) setIsMobileMenuOpen(false);
                 if (isIconsDropdownOpen) setIsIconsDropdownOpen(false);
+                if (isProfileDropdownOpen) setIsProfileDropdownOpen(false);
             }
         };
 
@@ -89,7 +97,7 @@ const Navbar = () => {
         return () => {
             document.removeEventListener('keydown', handleEscKey);
         };
-    }, [isSearchOpen, isMobileMenuOpen, isIconsDropdownOpen]);
+    }, [isSearchOpen, isMobileMenuOpen, isIconsDropdownOpen, isProfileDropdownOpen]);
 
     // Format date for different screen sizes
     const formatDate = () => {
@@ -135,7 +143,7 @@ const Navbar = () => {
                             </div>
 
                             {/* Stats buttons - hidden on mobile, visible on desktop */}
-                            <div className="hidden md:flex gap-1 sm:gap-2 md:gap-4 px-2 sm:px-4 md:px-8  no-scrollbar">
+                            <div className="hidden md:flex gap-1 sm:gap-2 md:gap-4 px-2 sm:px-4 md:px-8 no-scrollbar">
                                 <button title="Today's Appointments" className="py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 whitespace-nowrap">
                                     <User size={12} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />
                                     <h1 className="text-xs sm:text-sm">15</h1>
@@ -170,7 +178,7 @@ const Navbar = () => {
                         </div>
 
                         {/* Right Section - Date and Actions */}
-                        <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
+                        <div className="flex items-center  gap-2 sm:gap-4 md:gap-6">
                             {/* Date/Time display - responsive versions */}
                             <div className="hidden sm:block text-xs sm:text-sm md:text-md whitespace-nowrap truncate">
                                 {date} | {time}
@@ -201,9 +209,76 @@ const Navbar = () => {
                                     <CircleHelp className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
                                 <NotificationPopup />
-                                <button title="Settings">
+                                {/* <button title="Settings">
                                     <Bolt className="w-4 h-4 sm:w-5 sm:h-5" />
-                                </button>
+                                </button> */}
+                                
+                                {/* Profile dropdown */}
+                                <div className="relative flex items-center">
+                                    <button
+                                        className="w-9 h-9 rounded-full overflow-hidden"
+                                        onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                                        aria-label="Toggle profile menu"
+                                        data-profile-toggle
+                                    >
+                                        <img 
+                                            className="w-full h-full object-cover" 
+                                            src="/doc-dp.png" 
+                                            alt="User profile" 
+                                        />
+                                    </button>
+                                    
+                                    {isProfileDropdownOpen && (
+                                        <div
+                                            ref={profileDropdownRef}
+                                            className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-900 rounded-xl shadow-md p-2 z-50 animate-slideDown w-48"
+                                        >
+                                            <div className="flex flex-col space-y-2">
+                                                <Link 
+                                                    to="/profile" 
+                                                    className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
+                                                    onClick={() => setIsProfileDropdownOpen(false)}
+                                                >
+                                                    <User className="w-4 h-4" />
+                                                    <span className="text-sm">Profile</span>
+                                                </Link>
+                                                <Link 
+                                                    to="/settings" 
+                                                    className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
+                                                    onClick={() => setIsProfileDropdownOpen(false)}
+                                                >
+                                                    <Settings className="w-4 h-4" />
+                                                    <span className="text-sm">Settings</span>
+                                                </Link>
+                                                <div 
+                                                    className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
+                                                    onClick={() => {
+                                                        toggleTheme();
+                                                        setIsProfileDropdownOpen(false);
+                                                    }}
+                                                >
+                                                    {theme === "dark" ? 
+                                                        <Sun className="w-4 h-4" /> : 
+                                                        <Moon className="w-4 h-4" />
+                                                    }
+                                                    <span className="text-sm">
+                                                        {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                                                    </span>
+                                                </div>
+                                                <div 
+                                                    className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer text-red-500"
+                                                    onClick={() => {
+                                                        logout();
+                                                        setIsProfileDropdownOpen(false);
+                                                    }}
+                                                >
+                                                    <LogOut className="w-4 h-4" />
+                                                    <span className="text-sm">Logout</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {/* MOBILE: Icons dropdown toggle */}
@@ -311,12 +386,62 @@ const Navbar = () => {
                         className="md:hidden bg-white dark:bg-gray-900 m-2 mt-0 rounded-xl shadow-md p-4 animate-slideDown z-40"
                     >
                         <div className="flex flex-col space-y-4">
-                            <div className="flex items-center gap-2">
-                                <User className="w-4 h-4 sm:w-5 sm:h-5" />
-                                <span className="text-sm">Profile</span>
+                            {/* Profile section */}
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-10 h-10 rounded-full overflow-hidden">
+                                    <img 
+                                        className="w-full h-full object-cover" 
+                                        src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+                                        alt="User profile" 
+                                    />
+                                </div>
+                                <div>
+                                    <h3 className="font-medium">John Doe</h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Admin</p>
+                                </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <Link 
+                                to="/profile" 
+                                className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <User className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <span className="text-sm">Profile</span>
+                            </Link>
+
+                            <Link 
+                                to="/settings" 
+                                className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <span className="text-sm">Settings</span>
+                            </Link>
+
+                            <div 
+                                className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
+                                onClick={() => {
+                                    toggleTheme();
+                                    setIsMobileMenuOpen(false);
+                                }}
+                            >
+                                {theme === "dark" ? 
+                                    <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : 
+                                    <Moon className="w-4 h-4 sm:w-5 sm:h-5" />
+                                }
+                                <span className="text-sm">
+                                    {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                                </span>
+                            </div>
+
+                            <div 
+                                className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer text-red-500"
+                                onClick={() => {
+                                    logout();
+                                    setIsMobileMenuOpen(false);
+                                }}
+                            >
                                 <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
                                 <span className="text-sm">Logout</span>
                             </div>
