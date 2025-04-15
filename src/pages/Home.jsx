@@ -1,5 +1,5 @@
-import { useContext, useState, useEffect,useRef } from "react";
-import { Outlet } from "react-router-dom";
+import { useContext, useState, useEffect, useRef } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import Chat from "../components/Chat";
 import { MedContext } from "../context/MedContext";
@@ -8,41 +8,46 @@ import DatePicker from "../components/DatePicker";
 import DateSort from "../components/DateSort";
 
 const Home = () => {
-  const { isExpanded, setIsExpanded } = useContext(MedContext);
+  const { isExpanded, setIsExpanded, isSearchOpen, isUserSelected } = useContext(MedContext);
   const [isSwapped, setIsSwapped] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const containerRef = useRef(null);
-  const { isSearchOpen, isUserSelected } = useContext(MedContext);
   const [isMobile, setIsMobile] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-  const [activeTab, setActiveTab] = useState('content'); // 'content' or 'chat'
+  const [activeTab, setActiveTab] = useState('content');
+  const [isMeasuring, setIsMeasuring] = useState(true);
+  const location = useLocation();
+  
   const isUserDetailView = location.pathname.includes('/user/');
-
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       setWindowWidth(width);
-      setIsMobile(width < 768); // 768px is typical md breakpoint
+      setIsMobile(width < 768);
     };
 
-    // Call once on mount to set initial state
     handleResize();
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Calculate panel widths based on 70-30 ratio
+  useEffect(() => {
+    if (containerRef.current) {
+      setIsMeasuring(false);
+    }
+  }, [containerRef.current]);
+
   const getPanelWidths = () => {
-    if (!containerRef.current) return { contentWidth: 0, chatWidth: 0 };
+    if (!containerRef.current || isMeasuring) {
+      return { contentWidth: '50%', chatWidth: '50%' };
+    }
 
     const totalWidth = containerRef.current.offsetWidth;
     const sidebarWidth = isExpanded ? 350 : 70;
     const availableWidth = totalWidth - sidebarWidth;
 
-    // Maintain 70-30 ratio (content-chat) by default
     const contentWidth = availableWidth * 0.35;
     const chatWidth = availableWidth * 0.65;
 
@@ -61,30 +66,23 @@ const Home = () => {
     setIsFullScreen(!isFullScreen);
   };
 
-  // Dynamic width calculation for fullscreen mode based on sidebar state
   const getFullScreenWidth = () => {
     if (!containerRef.current) return '100%';
-
-    if (isMobile) {
-      return '100%';
-    }
+    if (isMobile) return '100%';
 
     const totalWidth = containerRef.current.offsetWidth;
     const sidebarWidth = isExpanded ? 350 : 70;
     return `${totalWidth - sidebarWidth}px`;
   };
 
-  // Toggle between content and chat views on mobile
   const toggleMobileView = (view) => {
     setActiveTab(view);
   };
 
-  // Toggle mobile sidebar visibility
   const toggleMobileSidebar = () => {
     setShowMobileSidebar(!showMobileSidebar);
   };
 
-  // Render mobile navigation tabs
   const renderMobileTabs = () => {
     return (
       <div className="flex h-14 dark:bg-gray-800 z-20">
@@ -104,7 +102,6 @@ const Home = () => {
     );
   };
 
-  // Render mobile sidebar overlay
   const renderMobileSidebar = () => {
     return (
       <div className={`fixed inset-0 z-50 bg-[#ffffff34] bg-opacity-50 transition-opacity ${showMobileSidebar ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={toggleMobileSidebar}>
@@ -127,8 +124,10 @@ const Home = () => {
   if (isMobile) {
     return (
       <div ref={containerRef} className="flex flex-col h-full w-full">
-        {/* Mobile Sidebar Overlay */}
+        {/* Mobile Sidebar Overlay - Kept exactly as original */}
         {renderMobileSidebar()}
+        
+        {/* Mobile Tabs - Kept exactly as original */}
         {renderMobileTabs()}
 
         {/* Content View */}
@@ -157,18 +156,18 @@ const Home = () => {
     );
   }
 
-  // Get the calculated widths for desktop view
   const { contentWidth, chatWidth } = getPanelWidths();
 
   return (
-    <div ref={containerRef} className={`flex h-full ${isFullScreen ? 'px-0' : 'px-1'} w-full`}>
+    <div 
+      ref={containerRef} 
+      className={`flex h-full ${isFullScreen ? 'px-0' : 'px-1'} w-full`}
+      style={{ visibility: isMeasuring ? 'hidden' : 'visible' }}
+    >
       {isSwapped ? (
-        // Swapped layout (chat on left, content on right)
         <div className="w-full flex h-[86vh] justify-between flex-col md:flex-row gap-3">
-          {/* Sidebar */}
           <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
-          {/* Chat */}
           <div
             style={{
               width: isFullScreen ? getFullScreenWidth() : `${chatWidth}px`,
@@ -187,14 +186,10 @@ const Home = () => {
             />
           </div>
 
-          {/* Content area */}
           {!isFullScreen && (
             <div className="flex flex-col flex-1" style={{ width: `${contentWidth}px` }}>
               <MidHeader />
-              <div
-                className="bg-[#FFFFFF66] dark:bg-[#00000099] h-full rounded-lg p-1.5"
-                
-              >
+              <div className="bg-[#FFFFFF66] dark:bg-[#00000099] h-full rounded-lg p-1.5">
                 <div className={`flex gap-3 items-center w-full mx-5 mb-3 justify-start ${location.pathname.includes('/patients') ? 'hidden' : ''} ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
                   <DatePicker />
                   <DateSort />
@@ -205,19 +200,13 @@ const Home = () => {
           )}
         </div>
       ) : (
-        // Original layout (content on left, chat on right)
         <div className="w-full flex h-[86vh] flex-col justify-between md:flex-row gap-3">
-          {/* Sidebar */}
           <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
-          {/* Content area */}
           {!isFullScreen && (
-            <div className="flex flex-col flex-1 " style={{ width: `${contentWidth}px` }}>
+            <div className="flex flex-col flex-1" style={{ width: `${contentWidth}px` }}>
               <MidHeader />
-              <div
-                className="bg-[#FFFFFF66] dark:bg-[#00000099] h-full rounded-lg p-1.5"
-                
-              >
+              <div className="bg-[#FFFFFF66] dark:bg-[#00000099] h-full rounded-lg p-1.5">
                 <div className={`flex gap-3 items-center w-full px-3 mb-3 justify-between ${location.pathname.includes('/patients') ? 'hidden' : ''} ${isUserSelected ? 'hidden' : ''} ${isSearchOpen ? 'hidden' : ''} transition-all duration-300 ease-in-out`}>
                   <DatePicker />
                   <DateSort />
@@ -227,11 +216,10 @@ const Home = () => {
             </div>
           )}
 
-          {/* Chat */}
           <div
             style={{
               width: isFullScreen ? getFullScreenWidth() : `${chatWidth}px`,
-              maxWidth: '100vw',  // Prevent overflow
+              maxWidth: '100vw',
               flexShrink: 0,
               marginLeft: isFullScreen ? '0' : '0px',
               left: isFullScreen ? (isExpanded ? '350px' : '70px') : null,
