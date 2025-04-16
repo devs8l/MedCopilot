@@ -6,7 +6,7 @@ import { ChatContext } from "../context/ChatContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
-    const { selectedUser, setIsUserSelected, setSelectedUser } = useContext(MedContext);
+    const { selectedUser, setIsUserSelected, setSelectedUser, isNotesExpanded } = useContext(MedContext);
     const { clearChatHistory, userMessages, endSession } = useContext(ChatContext);
     const location = useLocation();
     const navigate = useNavigate();
@@ -185,8 +185,8 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                         {/* General Chat Tab */}
                         <div
                             onClick={switchToGeneralTab}
-                            className={`flex items-center gap-1 sm:gap-2 pt-2 pb-2 rounded-t-md px-2 sm:px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === 'general'
-                                ? 'bg-white dark:bg-gray-700 pb-4'
+                            className={`flex items-center gap-1 sm:gap-2 mt-1 rounded-md px-2 sm:px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === 'general'
+                                ? 'bg-white dark:bg-gray-700 mb-3'
                                 : 'bg-[#FFFFFF33] dark:bg-gray-800 dark:hover:bg-gray-600 rounded-md text-gray-400'
                                 }`}
                         >
@@ -197,7 +197,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                                     alt=""
                                 />
                             </div>
-                            <span className="max-w-20 sm:max-w-32 truncate text-xs sm:text-sm">MedCopilot Chat</span>
+                            {/* <span className="max-w-20 sm:max-w-32 truncate text-xs sm:text-sm">MedCopilot Chat</span> */}
                             {hasHistory('general') && (
                                 <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                             )}
@@ -208,8 +208,8 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                             <div
                                 key={tab._id}
                                 onClick={() => switchToTab(tab._id)}
-                                className={`flex items-center gap-1 sm:gap-2 rounded-t-md pt-2 pb-2 px-2 sm:px-3 h-full py-1 cursor-pointer whitespace-nowrap ${activeTabId === tab._id
-                                    ? 'bg-white dark:bg-gray-700 pb-4'
+                                className={`flex items-center gap-1 sm:gap-2 rounded-lg mt-1  px-2 sm:px-3 h-full py-1 cursor-pointer whitespace-nowrap ${activeTabId === tab._id
+                                    ? 'bg-white dark:bg-gray-700 mb-3'
                                     : 'bg-[#FFFFFF33] dark:bg-gray-800 dark:hover:bg-gray-600 rounded-md text-gray-400'
                                     }`}
                             >
@@ -232,46 +232,61 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     </div>
                 </div>
             </div>
-            <div className={`px-2 sm:px-3 sm:pt-3 bg-[#ffffff] dark:bg-[#00000099] ${activeTabId === 'general' ? "rounded-r-lg rounded-b-lg" : "rounded-lg"
-                } flex flex-col overflow-hidden relative`}>
+            <div className={`px-2 sm:px-3 sm:pt-3 bg-[#ffffff] dark:bg-[#00000099] rounded-lg flex flex-col overflow-hidden relative`}>
 
                 <div className="flex items-center justify-between">
-                    <h1 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mt-2 sm:mt-4 px-2 sm:px-4 mb-1 sm:mb-2">
+                    <h1 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mt-2 sm:mt-3 px-2 sm:px-4 mb-1 sm:mb-2">
                         {activeTabId === 'general'
                             ? 'Chat'
                             : `Chat for ${activeTabs.find(tab => tab._id === activeTabId)?.name || ''}`}
                     </h1>
                     {hasHistory(activeTabId) && activeTabId !== 'general' && (
-                        <div className="flex flex-col  items-center absolute animate-fadeInUp transform -translate-x-1/2 top-5 left-1/2 z-10">
-                            {/* Centered User profile capsule - grows from center */}
+                        <div className="flex flex-col items-center absolute animate-fadeInUp transform -translate-x-1/2 top-5 left-1/2 z-10">
+                            {/* Centered User profile capsule */}
                             <div className="relative flex justify-center w-full">
-                                <div 
-                                    onClick={toggleUserDetails} 
-                                    className={`cursor-pointer transition-all duration-300 ease-in-out bg-white   ${
-                                        isUserDetailsExpanded ? "w-full rounded-t-3xl border-t border-r border-l border-gray-200" : "w-auto rounded-full border  border-gray-200"
-                                    }`}
-                                    style={{
-                                        transformOrigin: 'center',
-                                        transition: 'width 0.3s ease-in-out'
-                                    }}
+                                <div
+                                    onClick={toggleUserDetails}
+                                    className={`cursor-pointer bg-white ${isUserDetailsExpanded
+                                        ? "w-full rounded-t-3xl border-t border-r border-l border-gray-200"
+                                        : "w-auto rounded-full border border-gray-200"
+                                        }`}
                                 >
-                                    <div className={`flex items-center px-2 py-1 ${isUserDetailsExpanded ? "justify-center" : "justify-center"}`}>
-                                        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
-                                            <img src={activeTabs.find(tab => tab._id === activeTabId)?.profileImage || "/api/placeholder/28/28"} alt="" />
-                                        </div>
-                                        <div className="flex items-center ml-2">
-                                            <h3 className="font-medium text-gray-800 text-xs whitespace-nowrap">
-                                                {activeTabs.find(tab => tab._id === activeTabId)?.name}
-                                            </h3>
-                                            <div className="ml-1">
-                                                {isUserDetailsExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                    <div className={`flex items-center gap-2 px-2 py-1 ${isUserDetailsExpanded ? "justify-center" : "justify-start"}`}>
+                                        <div className="flex items-center">
+                                            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                <img src={activeTabs.find(tab => tab._id === activeTabId)?.profileImage || "/api/placeholder/28/28"} alt="" />
                                             </div>
+                                            {/* <h3 className="font-medium text-gray-800 text-xs whitespace-nowrap ml-2">
+                                                {activeTabs.find(tab => tab._id === activeTabId)?.name}
+                                            </h3> */}
                                         </div>
+
+                                        {/* Conditionally render capsules or dropdown */}
+                                        {!isNotesExpanded && !isUserDetailsExpanded ? (
+                                            <div className="flex items-center justify-center gap-1 ml-2 whitespace-nowrap overflow-hidden">
+                                                <button className="flex gap-1 text-xs sm:text-sm border border-gray-200 text-gray-500 justify-center items-center rounded-xl px-2 py-0.5 whitespace-nowrap">
+                                                    <img src="/bp.svg" className="w-4 h-4" alt="" /><span className="animate-fadeInUp">120/80 mmHg</span>
+                                                </button>
+                                                <button className="flex gap-1 text-xs sm:text-sm border border-gray-200 text-gray-500 justify-center items-center rounded-xl px-2 py-0.5 whitespace-nowrap">
+                                                    <img src="/glucose.svg" className="w-4 h-4" alt="" /><span className="animate-fadeInUp">95 mg/dL</span>
+                                                </button>
+                                                <button className="flex gap-1 text-xs sm:text-sm border border-gray-200 text-gray-500 justify-center items-center rounded-xl px-2 py-0.5 whitespace-nowrap">
+                                                    <img src="/o2.svg" className="w-4 h-4" alt="" /><span className="animate-fadeInUp">98%</span>
+                                                </button>
+                                                <div className="bg-[#1A73E80D] flex justify-center items-center rounded-full p-1">
+                                                    <ChevronDown size={14} color="#1A73E8" />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="bg-[#1A73E80D] flex justify-center items-center rounded-full p-1">
+                                                <ChevronDown size={14} color="#1A73E8" className="rotate-180 transition-all duration-300" />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Expanded details panel - shown when toggled with no gap */}
+                            {/* Expanded details panel */}
                             {isUserDetailsExpanded && (
                                 <div className="w-full">
                                     <div className="border-x border-b animate-fadeInUp border-gray-200 bg-white rounded-b-2xl p-4 transition-all duration-300 ease-in-out shadow-xl">
@@ -305,33 +320,6 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                             )}
                         </div>
                     )}
-
-                    <div className={`flex space-x-2 sm:space-x-4 items-center mt-1 sm:mt-2 justify-center mr-2 sm:mr-5`}>
-                        <button
-                            title="Place in left"
-                            onClick={() => !isTransitioning && swapPosition(true)}
-                            className={`rounded ${isFullScreen ? "hidden" : ""} ${isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
-                            disabled={isSwapped || isTransitioning}
-                        >
-                            <img src="/right.svg" alt="" className="rotate-180 w-4 sm:w-6 h-4 sm:h-6" />
-                        </button>
-                        <button
-                            title="Place in right"
-                            onClick={() => !isTransitioning && swapPosition(false)}
-                            className={`rounded ${isFullScreen ? "hidden" : ""} ${!isSwapped ? "opacity-10" : "hover:bg-gray-100"}`}
-                            disabled={!isSwapped || isTransitioning}
-                        >
-                            <img src="/right.svg" className="w-4 sm:w-6 h-4 sm:h-6" alt="" />
-                        </button>
-                        <button
-                            title="Fullscreen"
-                            onClick={() => !isTransitioning && toggleFullScreen()}
-                            className="p-1 rounded hover:bg-gray-100 cursor-pointer ml-auto w-6 sm:w-8 h-6 sm:h-8 flex items-center justify-center"
-                            disabled={isTransitioning}
-                        >
-                            {isFullScreen ? <Minimize size={16} /> : <Maximize size={16} />}
-                        </button>
-                    </div>
                 </div>
 
                 {/* Confirmation Dialog */}

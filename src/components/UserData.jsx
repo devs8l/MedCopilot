@@ -5,6 +5,7 @@ import { ChatContext } from "../context/ChatContext";
 import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer, ChartSpline, Calendar, Ear } from "lucide-react";
 import Chart from "./Chart";
 
+
 // Add these new components (you can customize them as needed)
 const Transcript = () => {
   return (

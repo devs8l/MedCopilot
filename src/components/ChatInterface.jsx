@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
-  const { openDocumentPreview, selectedUser } = useContext(MedContext);
+  const { openDocumentPreview, selectedUser, isNotesExpanded } = useContext(MedContext);
   const {
     messages,
     inputMessage,
@@ -155,7 +155,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
   const handleInputFocus = () => {
     setIsInputFocused(true);
     setHasFocusedInput(true);
-    if(!hasAnimatedInput) {
+    if (!hasAnimatedInput) {
       setShowBoxClass(true); // Show the box class when input is focused
     }
 
@@ -190,12 +190,12 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
         ref={messageContainerRef}
         className={`flex-1 overflow-y-auto pb-1 sm:pb-1 md:pb-2 pr-1 sm:pr-2 md:pr-3 lg:pr-4 xl:pr-4 pl-1 sm:pl-2 md:pl-3 lg:pl-4 xl:pl-4 min-h-[200px] transition-all duration-200 ease-in-out ${showInitialState ? 'flex justify-center' : ''} `}
       >
-        
+
         {showInitialState ? (
-          <div className={`w-full mt-4 max-w-3xl mx-auto flex flex-col text-center space-y-3 ${selectedUser?'items-end':'items-center'} px-4`}>
+          <div className={`w-full mt-4  max-w-3xl mx-auto flex  flex-col text-center space-y-3 ${selectedUser ? 'items-end' : 'items-center'} px-4`}>
             {selectedUser ? (
-              <div className="flex flex-col items-center w-full  ease-in">
-                <div className={`relative flex   w-full gap-7 ${isUserDetailsExpanded ? 'mb-4' : ''}`}>
+              <div className="flex flex-col items-center w-full ease-in">
+                <div className={`relative flex w-full gap-7 ${isUserDetailsExpanded ? 'mb-4' : ''}`}>
                   <div className="relative">
                     <img
                       src={selectedUser.profileImage || '/default-user.png'}
@@ -203,7 +203,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                       className="w-12 h-12 rounded-full object-cover mt-2"
                     />
                   </div>
-                  <div className={`flex-1 border border-gray-200 rounded-2xl p-4 transition-all duration-300 ease-in-out ${isUserDetailsExpanded ? 'h-auto' : 'h-[150px] overflow-hidden'}`}>
+                  <div className={`flex-1 border border-gray-200 rounded-2xl p-4 transition-all duration-300 ease-in-out ${isUserDetailsExpanded ? 'h-auto animate-fadeInDown' : 'overflow-hidden animate-fadeInUp'}`}>
                     <div className="flex flex-col items-start">
                       <h3 className="text-md text-gray-600 text-left">
                         {isUserDetailsExpanded ? (
@@ -217,7 +217,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                             Last visit: 3 months ago for routine checkup
                           </>
                         ) : (
-                          "Feeling fatigued quite often. I also have acute body pain. It is hampering my daily routine. I wonder what could be the reason? Lately, I've noticed my appetite ha..."
+                          "Feeling fatigued quite often. I also have acute body pain. It is hampering my daily routine. I wonder what could be the reason?"
                         )}
                       </h3>
                     </div>
@@ -225,17 +225,49 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                       <h4 className="text-sm sm:text-md font-medium text-gray-800">Visiting for</h4>
                       <div className="flex flex-wrap gap-2">
                         <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                          <Repeat size={12} />Routine Checkup
+                          <Repeat size={12} /><span className="animate-fadeInUp">Routine Checkup</span> 
                         </button>
                         <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                          <ChartSpline size={12} />Blood Pressure Checkup
+                          <ChartSpline size={12} /><span className="animate-fadeInUp">Blood Pressure Checkup</span> 
                         </button>
                         <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
-                          <Droplets size={12} />Sugar Checkup
+                          <Droplets size={12} /><span className="animate-fadeInUp">Sugar Checkup</span>
                         </button>
                       </div>
                     </div>
-                    <button 
+
+                    {/* Additional content that only shows when expanded */}
+                    {isUserDetailsExpanded && (
+                      <>
+                        <div className="flex flex-col gap-2 mt-6 text-left">
+                          <h4 className="text-sm sm:text-md font-medium text-gray-800">Medical History</h4>
+                          <div className="flex flex-wrap gap-2">
+                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                              <Repeat size={12} /><span className="animate-fadeInUp">Hypertension</span> 
+                            </button>
+                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 sm:px-3 py-0.5">
+                              <ChartSpline size={12} /><span className="animate-fadeInUp">Seasonal Allergies</span>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2 mt-6 text-left">
+                          <h4 className="text-sm sm:text-md font-medium text-gray-800">Demographics</h4>
+                          <div className="flex flex-wrap gap-2">
+                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 py-0.5 whitespace-nowrap">
+                              <img src="/bp.svg" className="w-4 h-4" alt="" /><span className="animate-fadeInUp">120/80 mmHg</span>
+                            </button>
+                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 py-0.5 whitespace-nowrap">
+                              <img src="/glucose.svg" className="w-4 h-4" alt="" /><span className="animate-fadeInUp">95 mg/dL</span>
+                            </button>
+                            <button className="flex gap-1 text-xs sm:text-sm border border-gray-500 text-gray-500 justify-center items-center rounded-xl px-2 py-0.5 whitespace-nowrap">
+                              <img src="/o2.svg" className="w-4 h-4" alt="" /><span className="animate-fadeInUp">98%</span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    <button
                       onClick={toggleUserDetails}
                       className={`absolute right-4 bottom-4 p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 ${isUserDetailsExpanded ? 'transform rotate-180' : ''}`}
                     >
@@ -249,14 +281,14 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                 Good Morning Dr. John!
               </div>
             )}
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className={`text-sm text-gray-600 dark:text-gray-400 ${selectedUser ? '':'mb-15'}`}>
               {selectedUser ? "" : "Ask a question to get started"}
             </p>
 
             {/* Unified UI for both general and patient chat */}
             <div className={`w-[90%] transition-all duration-300 ease-in-out ${isUserDetailsExpanded ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-auto'}`}>
-              <div className={`relative flex flex-col gap-2 bg-white border-[0.15rem] shadow-lg border-gray-50 overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${showBoxClass ? 'box' : ''} ${isInputFocused ? 'shadow-xl' : ''}`}>
-                <input  
+              <div className={`relative flex flex-col gap-2 bg-white border-[0.15rem] shadow-md border-gray-50 overflow-hidden rounded-2xl px-3 py-4 transition-all duration-300 ${showBoxClass ? 'box' : ''} ${isInputFocused ? 'shadow-xl' : ''}`}>
+                <input
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
@@ -280,7 +312,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                   <div className='flex'>
                     <button
                       onClick={handleSendMessage}
-                      className={`p-2 border ${hasFocusedInput ? 'bg-blue-500 text-white':' border-blue-500 text-blue-500'} transition-all ease-in duration-400 rounded-full cursor-pointer hover:bg-blue-500 hover:text-white`}
+                      className={`p-2 border ${hasFocusedInput ? 'bg-blue-500 text-white' : ' border-blue-500 text-blue-500'} transition-all ease-in duration-400 rounded-full cursor-pointer hover:bg-blue-500 hover:text-white`}
                       disabled={isTransitioning}
                     >
                       <ArrowUp size={16} />

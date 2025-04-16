@@ -5,14 +5,17 @@ import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import MedContextProvider from './context/MedContext.jsx';
 import ChatContextProvider from './context/ChatContext.jsx';
+import { DragDropProvider } from './context/DragDropContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <MedContextProvider>
       <ChatContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <DragDropProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </DragDropProvider>
       </ChatContextProvider>
     </MedContextProvider>
   </StrictMode>

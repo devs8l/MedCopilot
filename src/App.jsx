@@ -13,6 +13,7 @@ import DocumentPreview from "./components/DocumentPreview";
 import { MedContext } from "./context/MedContext";
 import Error from "./pages/Error";
 
+
 const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const App = () => {
           
         </Routes>
       ) : (
-        <div className="px-2 bg-custom-gradient dark:bg-custom-gradient-d   min-h-screen overflow-x-hidden">
+        <div className="px-2 bg-custom-gradient dark:bg-custom-gradient-d overflow-x-hidden  min-h-screen ">
           {isAuthenticated && <Navbar handleLogout={logout} />}
           <Routes>
             <Route path="/" element={<Home />}>
