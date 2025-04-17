@@ -7,7 +7,7 @@ import { MedContext } from '../context/MedContext';
 import NotificationPopup from './NotificationPopup';
 
 const Navbar = () => {
-    const { searchQuery, setSearchQuery, isUserSelected, setIsUserSelected, logout, isExpanded, setIsExpanded, setSelectedUser } = useContext(MedContext);
+    const { searchQuery, setSearchQuery, isUserSelected, setIsUserSelected, logout, isExpanded, setIsExpanded, setSelectedUser,isNotesExpanded,setisNotesExpanded } = useContext(MedContext);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isIconsDropdownOpen, setIsIconsDropdownOpen] = useState(false);
@@ -127,7 +127,7 @@ const Navbar = () => {
                         {/* Left Section - Logo and Toggle */}
                         <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
                             <button
-                                onClick={() => setIsExpanded(!isExpanded)}
+                                onClick={() => {setIsExpanded(!isExpanded)}}
                                 className="rounded-md cursor-pointer w-8 h-8 flex items-center justify-center"
                                 aria-label="Toggle sidebar"
                             >

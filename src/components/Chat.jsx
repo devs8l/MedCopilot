@@ -4,10 +4,11 @@ import { Maximize, Minimize, X, AlertCircle, MessageCircle, Home, User, ChevronD
 import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import SimpleSpeechRecognition from "./Speech";
 
 const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
     const { selectedUser, setIsUserSelected, setSelectedUser, isNotesExpanded } = useContext(MedContext);
-    const { clearChatHistory, userMessages, endSession } = useContext(ChatContext);
+    const { clearChatHistory, userMessages, endSession, isSpeechActive } = useContext(ChatContext);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -179,7 +180,8 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
 
     return (
         <div>
-            <div className={`flex items-center justify-between rounded-xl ${isFullScreen ? '' : ''} dark:text-white relative`}>
+
+            <div className={`flex items-center justify-between rounded-xl dark:text-white relative`}>
                 <div className="flex-1 overflow-x-auto scrollbar-hide">
                     <div className="flex h-full gap-2">
                         {/* General Chat Tab */}
@@ -233,7 +235,13 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                 </div>
             </div>
             <div className={`px-2 sm:px-3 sm:pt-3 bg-[#ffffff] dark:bg-[#00000099] rounded-lg flex flex-col overflow-hidden relative`}>
-
+                {
+                    isSpeechActive && (
+                        <div className="flex items-center animate-fadeInUp justify-center absolute w-full h-full z-100 top-0 left-0 bg-[#ffffff] ">
+                            <SimpleSpeechRecognition />
+                        </div>
+                    )
+                }
                 <div className="flex items-center justify-between">
                     <h1 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mt-2 sm:mt-3 px-2 sm:px-4 mb-1 sm:mb-2">
                         {activeTabId === 'general'

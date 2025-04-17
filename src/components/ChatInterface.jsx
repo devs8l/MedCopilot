@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
-import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2, Droplets, ChartSpline, Repeat, ChevronDown, ChevronUp } from 'lucide-react';
+import { RefreshCcw, Clipboard, ArrowRight, ThumbsUp, ThumbsDown, ArrowUp, Paperclip, Lightbulb, X, Clock, History, Loader2, Droplets, ChartSpline, Repeat, ChevronDown, ChevronUp, Mic } from 'lucide-react';
 import { MedContext } from '../context/MedContext';
 import { ChatContext } from '../context/ChatContext';
 import ReactMarkdown from 'react-markdown';
@@ -18,7 +18,9 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
     isMessageLoading,
     handleClockClick,
     isloadingHistory,
-    formatMedicalResponse
+    formatMedicalResponse,
+    isSpeechActive,
+    setIsSpeechActive
   } = useContext(ChatContext);
 
   const fileInputRef = useRef(null);
@@ -308,6 +310,13 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                     >
                       <Paperclip size={16} />
                     </button>
+                    <button
+                      onClick={()=>setIsSpeechActive(true)}
+                      className={`p-2 border ${hasFocusedInput ? 'bg-blue-500 text-white' : ' border-blue-500 text-blue-500'} transition-all ease-in duration-400 rounded-full cursor-pointer hover:bg-blue-500 hover:text-white`}
+                      disabled={isTransitioning}
+                    >
+                      <Mic size={16} />
+                    </button>
                   </div>
                   <div className='flex'>
                     <button
@@ -317,6 +326,7 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                     >
                       <ArrowUp size={16} />
                     </button>
+                    
                   </div>
                 </div>
               </div>

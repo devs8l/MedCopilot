@@ -39,6 +39,9 @@ const ChatContextProvider = (props) => {
   const [elapsedTime, setElapsedTime] = useState(3600);
   const intervalRef = useRef(null);
 
+  //speech
+  const [isSpeechActive, setIsSpeechActive] = useState(false);
+
   // Get current messages - either selected user or general
   const messages = selectedUser
     ? (userMessages[selectedUser._id] || [isSessionActive ? defaultGeneralMessage : defaultGeneralMessage])
@@ -666,7 +669,9 @@ const ChatContextProvider = (props) => {
     startSession,
     endSession,
     activeSessionUserId,
-    formatMedicalResponse
+    formatMedicalResponse,
+    isSpeechActive, 
+    setIsSpeechActive
   };
 
   return <ChatContext.Provider value={value}>{props.children}</ChatContext.Provider>;

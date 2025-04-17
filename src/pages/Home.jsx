@@ -45,7 +45,7 @@ const Home = () => {
     }
 
     const totalWidth = containerRef.current.offsetWidth;
-    const sidebarWidth = isExpanded ? 350 : 70;
+    const sidebarWidth = isExpanded ? 380 : 70;
     const availableWidth = totalWidth - sidebarWidth;
 
     // Fixed content width - always 35% of available space
