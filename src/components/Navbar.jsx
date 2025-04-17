@@ -128,7 +128,7 @@ const Navbar = () => {
                         <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
                             <button
                                 onClick={() => {setIsExpanded(!isExpanded)}}
-                                className="rounded-md cursor-pointer w-8 h-8 flex items-center justify-center"
+                                className="rounded-md cursor-pointer z-1000 w-8 h-8 flex items-center justify-center"
                                 aria-label="Toggle sidebar"
                             >
                                 {isExpanded ?
@@ -137,7 +137,7 @@ const Navbar = () => {
                                 }
                             </button>
 
-                            <div className="my-1">
+                            <div className="my-1 z-1000">
                                 <h1 className="text-base sm:text-lg md:text-xl font-semibold">MedCopilot</h1>
                                 <p className="text-xs text-gray-600 dark:text-gray-400 hidden xs:block">Product by JNC Tech</p>
                             </div>

@@ -35,6 +35,9 @@ const App = () => {
       ) : (
         <div className="px-2 bg-custom-gradient dark:bg-custom-gradient-d overflow-x-hidden  min-h-screen ">
           {isAuthenticated && <Navbar handleLogout={logout} />}
+          {/* <div className="flex flex-col absolute z-100 top-0 left-0 bg-white h-screen w-[20vw]">
+
+          </div> */}
           <Routes>
             <Route path="/" element={<Home />}>
               <Route index element={<Appoinments />} />

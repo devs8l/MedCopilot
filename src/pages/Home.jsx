@@ -158,7 +158,7 @@ const Home = () => {
       className="flex h-full px-1 w-full"
       style={{ visibility: isMeasuring ? 'hidden' : 'visible' }}
     >
-      <div className="w-full flex h-[87vh] flex-col  md:flex-row gap-4">
+      <div className="w-full flex h-[87vh] flex-col justify-end md:flex-row gap-4">
         <SideBar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
         {/* Content section - fixed width */}
