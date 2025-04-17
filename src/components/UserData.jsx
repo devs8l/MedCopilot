@@ -435,7 +435,7 @@ const UserData = () => {
         );
       case 'Trends':
         return (
-          <div className="px-10">
+          <div className="px-0">
             <div className="text-gray-500">
               {isLoadingHealthMetrics ? (
                 <div className="flex flex-col items-center justify-center h-40">
@@ -591,10 +591,10 @@ const UserData = () => {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between px-6 gap-10">
-        <div className="flex gap-5 text-xl font-bold py-5 items-center text-[#222836]">
+        <div className="flex gap-1 text-xl font-bold py-5 items-center text-[#222836]">
           <h2 className="cursor-pointer" onClick={() => navigate("/")}>Appointments</h2>
           <ChevronRight size={15} />
-          <h2>{userData?.name}</h2>
+          <h2>{userData.name.split(' ')[0] + ''}</h2>
         </div>
         <div className="flex items-center py-3 gap-4">
           <div className="flex items-center gap-1">
@@ -635,7 +635,7 @@ const UserData = () => {
           </div>
         </div>
       </div>
-      <div className="  flex flex-col  rounded-sm bg-[#ffffff] dark:bg-[#00000099] mx-1 h-[calc(65vh-80px)] overflow-auto">
+      <div className="  flex flex-col  rounded-sm bg-[#ffffff] dark:bg-[#00000099] mx-1 h-[calc(65vh-100px)] overflow-auto">
         {/* View Selection Buttons */}
         <div className="flex items-center border-b border-gray-300 p-3 gap-3 justify-between ">
           <button

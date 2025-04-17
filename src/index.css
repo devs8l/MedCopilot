@@ -18,6 +18,9 @@
   margin-left: 0.5vw !important;
   max-width: 100% !important;
 }
+.css-1n1xn3x-MuiPickersSlideTransition-root-MuiDayCalendar-slideTransition {
+  min-height: 180px !important;
+}
 
 .css-1nxbkmn-MuiPickersCalendarHeader-root {
   max-height: 20px !important;
@@ -28,10 +31,6 @@
   margin: 0px 0 !important;
 }
 
-.css-1chuxo2-MuiPickersCalendarHeader-label {
-  margin-right: 0px !important;
-  margin-left: 10px !important;
-}
 
 /* Customize the scrollbar width */
 ::-webkit-scrollbar {
@@ -115,6 +114,14 @@
     opacity: 1;
   }
 }
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
 .animate-fadeInUp {
   animation: fadeInUp 0.3s ease-out forwards;
@@ -125,6 +132,14 @@
 
 .animate-fadeIn {
   animation: fadeIn 1s ease-out forwards;
+  /* animation-delay: 1s; */
+}
+.animate-fadeInFast {
+  animation: fadeIn 0.5s ease-out forwards;
+  /* animation-delay: 1s; */
+}
+.animate-fadeOut {
+  animation: fadeOut 0.01s ease-out forwards;
   /* animation-delay: 1s; */
 }
 

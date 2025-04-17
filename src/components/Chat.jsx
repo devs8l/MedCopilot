@@ -179,11 +179,10 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
     };
 
     return (
-        <div>
-
-            <div className={`flex items-center justify-between rounded-xl dark:text-white relative`}>
+        <div className="h-full flex flex-col ">
+            <div className={`flex items-center justify-between rounded-xl  dark:text-white relative`}>
                 <div className="flex-1 overflow-x-auto scrollbar-hide">
-                    <div className="flex h-full gap-2">
+                    <div className="flex  gap-2">
                         {/* General Chat Tab */}
                         <div
                             onClick={switchToGeneralTab}
@@ -234,7 +233,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     </div>
                 </div>
             </div>
-            <div className={`px-2 sm:px-3 sm:pt-3 bg-[#ffffff] dark:bg-[#00000099] rounded-lg flex flex-col overflow-hidden relative`}>
+            <div className={`px-2 sm:px-3 sm:pt-3 h-full bg-[#ffffff] dark:bg-[#00000099] rounded-lg flex flex-col overflow-hidden relative`}>
                 {
                     isSpeechActive && (
                         <div className="flex items-center animate-fadeInUp justify-center absolute w-full h-full z-100 top-0 left-0 bg-[#ffffff] ">
@@ -246,7 +245,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     <h1 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mt-2 sm:mt-3 px-2 sm:px-4 mb-1 sm:mb-2">
                         {activeTabId === 'general'
                             ? 'Chat'
-                            : `Chat for ${activeTabs.find(tab => tab._id === activeTabId)?.name || ''}`}
+                            : `Chat for ${activeTabs.find(tab => tab._id === activeTabId)?.name.split(' ')[0] || ''}`}
                     </h1>
                     {hasHistory(activeTabId) && activeTabId !== 'general' && (
                         <div className="flex flex-col items-center absolute animate-fadeInUp transform -translate-x-1/2 top-5 left-1/2 z-10">
@@ -361,7 +360,7 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                 )}
 
                 {/* Chat content area */}
-                <div className="flex-grow overflow-y-auto h-[calc(80vh-80px)] sm:h-[calc(83vh-80px)] transition-opacity duration-300 ease-in-out">
+                <div className="flex-grow overflow-y-auto  transition-opacity duration-300 ease-in-out">
                     <ChatInterface
                         isFullScreen={isFullScreen}
                         isGeneralChat={activeTabId === 'general'}

@@ -312,8 +312,9 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
                     </button>
                     <button
                       onClick={()=>setIsSpeechActive(true)}
-                      className={`p-2 border ${hasFocusedInput ? 'bg-blue-500 text-white' : ' border-blue-500 text-blue-500'} transition-all ease-in duration-400 rounded-full cursor-pointer hover:bg-blue-500 hover:text-white`}
                       disabled={isTransitioning}
+                      className="p-2 mr-2 border border-gray-300 text-gray-700 dark:text-white rounded-full cursor-pointer transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                      
                     >
                       <Mic size={16} />
                     </button>
@@ -495,10 +496,10 @@ const ChatInterface = ({ isFullScreen, isGeneralChat, isTransitioning }) => {
               <div className='flex'>
                 <button
                   onClick={triggerFileUpload}
-                  className="p-1 sm:p-1 md:p-2 lg:p-2 xl:p-2 mr-1 sm:mr-1 md:mr-2 lg:mr-2 xl:mr-2 border-[#9B9EA2] border text-white rounded-full cursor-pointer transition-colors"
+                  className="p-1 sm:p-1 md:p-2 lg:p-2 xl:p-2 mr-1 sm:mr-1 md:mr-2 lg:mr-2 xl:mr-2 border-[#9B9EA2] border  rounded-full cursor-pointer transition-colors"
                   disabled={isTransitioning}
                 >
-                  <img src="/doc.svg" className='w-3 h-3 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-4 lg:h-4 xl:w-4 xl:h-4' alt="" />
+                  <Paperclip size={16} />
                 </button>
               </div>
               <div className='flex'>

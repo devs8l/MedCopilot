@@ -126,7 +126,7 @@ const Navbar = () => {
                     <div className="flex items-center justify-between">
                         {/* Left Section - Logo and Toggle */}
                         <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
-                            <button
+                            {/* <button
                                 onClick={() => {setIsExpanded(!isExpanded)}}
                                 className="rounded-md cursor-pointer z-1000 w-8 h-8 flex items-center justify-center"
                                 aria-label="Toggle sidebar"
@@ -135,15 +135,15 @@ const Navbar = () => {
                                     <img src="/ham-c.svg" className="w-4 h-4 sm:w-5 sm:h-5" alt="Close menu" /> :
                                     <img src="/ham-e.svg" className="w-4 h-4 sm:w-5 sm:h-5" alt="Open menu" />
                                 }
-                            </button>
+                            </button> */}
 
-                            <div className="my-1 z-1000">
-                                <h1 className="text-base sm:text-lg md:text-xl font-semibold">MedCopilot</h1>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 hidden xs:block">Product by JNC Tech</p>
+                            <div className={`${isExpanded ? 'hidden':''} my-1 z-1000`}>
+                                <h1 className={`text-base sm:text-lg md:text-xl font-semibold`}>MedCopilot</h1>
+                                <p className="text-xs text-gray-600 dark:text-gray-400  xs:block">Product by JNC Tech</p>
                             </div>
 
                             {/* Stats buttons - hidden on mobile, visible on desktop */}
-                            <div className="hidden md:flex gap-1 sm:gap-2 md:gap-4 px-2 sm:px-4 md:px-8 no-scrollbar">
+                            <div className="hidden md:flex gap-1 sm:gap-2 md:gap-4 px-2  my-3 no-scrollbar">
                                 <button title="Today's Appointments" className="py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 whitespace-nowrap">
                                     <User size={12} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />
                                     <h1 className="text-xs sm:text-sm">15</h1>
