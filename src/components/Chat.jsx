@@ -1,255 +1,47 @@
-import React, { useContext, useEffect, memo, useState, useRef } from "react";
+import React, { memo, useContext, useState } from "react";
 import ChatInterface from "./ChatInterface";
-import { Maximize, Minimize, X, AlertCircle, MessageCircle, Home, User, ChevronDown, ChevronUp, Repeat, ChartSpline, Droplets } from "lucide-react";
+import { Maximize, Minimize, AlertCircle, ChevronDown, Repeat, ChartSpline, Droplets } from "lucide-react";
 import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
-import { useLocation, useNavigate } from "react-router-dom";
 import SimpleSpeechRecognition from "./Speech";
+import { useChatTabs } from "../context/ChatTabsContext";
 
-const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) => {
-    const { selectedUser, setIsUserSelected, setSelectedUser, isNotesExpanded } = useContext(MedContext);
-    const { clearChatHistory, userMessages, endSession, isSpeechActive } = useContext(ChatContext);
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    const [isTransitioning, setIsTransitioning] = useState(false);
-    const transitionTimeoutRef = useRef(null);
+const Chat = memo(({ toggleFullScreen, isFullScreen }) => {
+    const { selectedUser, isNotesExpanded } = useContext(MedContext);
+    const { isSpeechActive } = useContext(ChatContext);
+    const { activeTabId, activeTabs, addTab, showConfirmDialog, confirmCloseTab, cancelCloseTab, tabToClose } = useChatTabs();
+    
     const [isUserDetailsExpanded, setIsUserDetailsExpanded] = useState(false);
-
-    const [activeTabs, setActiveTabs] = useState(() => {
-        const storedTabs = localStorage.getItem('activeTabs');
-        return storedTabs ? JSON.parse(storedTabs) : [];
-    });
-
-    const [activeTabId, setActiveTabId] = useState(() => {
-        return location.pathname.startsWith('/user/') ? location.pathname.split('/')[2] : 'general';
-    });
-
-    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const [tabToClose, setTabToClose] = useState(null);
-
-    const safeTransition = (callback, duration = 300) => {
-        if (isTransitioning) return false;
-
-        if (transitionTimeoutRef.current) {
-            clearTimeout(transitionTimeoutRef.current);
-        }
-
-        setIsTransitioning(true);
-
-        callback();
-
-        transitionTimeoutRef.current = setTimeout(() => {
-            setIsTransitioning(false);
-            transitionTimeoutRef.current = null;
-        }, duration);
-
-        return true;
-    };
 
     const toggleUserDetails = () => {
         setIsUserDetailsExpanded(!isUserDetailsExpanded);
     };
 
-    useEffect(() => {
-        if (isTransitioning) return;
-
-        const isUserRoute = location.pathname.startsWith('/user/');
-
-        if (isUserRoute) {
-            const userId = location.pathname.split('/')[2];
-            const userTab = activeTabs.find(tab => tab._id === userId);
-            if (userTab) {
-                setSelectedUser(userTab);
-                setActiveTabId(userId);
-                setIsUserSelected(true);
-            }
-        } else if (location.pathname === '/') {
-            setSelectedUser(null);
-            setActiveTabId('general');
-            setIsUserSelected(false);
+    // Add new tab when a user is selected
+    React.useEffect(() => {
+        if (selectedUser) {
+            addTab(selectedUser);
         }
-    }, [location.pathname, activeTabs, setSelectedUser, setIsUserSelected, isTransitioning]);
-
-    useEffect(() => {
-        if (isTransitioning) return;
-
-        if (selectedUser && !activeTabs.find(tab => tab._id === selectedUser._id)) {
-            safeTransition(() => {
-                setActiveTabs(prev => [...prev, selectedUser]);
-                localStorage.setItem(`sessionStarted_${selectedUser._id}`, "true");
-            });
-        }
-    }, [selectedUser, activeTabs]);
-
-    useEffect(() => {
-        const debounce = setTimeout(() => {
-            localStorage.setItem('activeTabs', JSON.stringify(activeTabs));
-        }, 300);
-
-        return () => clearTimeout(debounce);
-    }, [activeTabs]);
-
-    const switchToGeneralTab = () => {
-        if (activeTabId === 'general') return;
-
-        safeTransition(() => {
-            setSelectedUser(null);
-            setActiveTabId('general');
-            setIsUserSelected(false);
-            navigate('/');
-            setIsUserDetailsExpanded(false);
-        });
-    };
-
-    const switchToTab = (userId) => {
-        if (userId === activeTabId) return;
-
-        safeTransition(() => {
-            if (userId === 'general') {
-                switchToGeneralTab();
-            } else {
-                const userToSelect = activeTabs.find(tab => tab._id === userId);
-                if (userToSelect) {
-                    setSelectedUser(userToSelect);
-                    setActiveTabId(userId);
-                    setIsUserSelected(true);
-                    navigate(`/user/${userId}`);
-                    setIsUserDetailsExpanded(false);
-                }
-            }
-        });
-    };
-
-    const handleCloseTab = (e, userId) => {
-        e.stopPropagation();
-        setTabToClose(userId);
-        setShowConfirmDialog(true);
-    };
-
-    const confirmCloseTab = () => {
-        if (!tabToClose) return;
-
-        safeTransition(() => {
-            const tabIndex = activeTabs.findIndex(tab => tab._id === tabToClose);
-            const updatedTabs = activeTabs.filter(tab => tab._id !== tabToClose);
-
-            localStorage.removeItem(`promptGiven_${tabToClose}`);
-            localStorage.removeItem(`sessionStarted_${tabToClose}`);
-            clearChatHistory(tabToClose);
-            endSession(tabToClose);
-
-            if (activeTabId === tabToClose) {
-                if (updatedTabs.length > 0) {
-                    let nextTabIndex = tabIndex;
-                    if (nextTabIndex >= updatedTabs.length) {
-                        nextTabIndex = updatedTabs.length - 1;
-                    }
-
-                    const nextTab = updatedTabs[nextTabIndex];
-                    setSelectedUser(nextTab);
-                    setActiveTabId(nextTab._id);
-                    setIsUserSelected(true);
-                    navigate(`/user/${nextTab._id}`);
-                } else {
-                    setSelectedUser(null);
-                    setActiveTabId('general');
-                    setIsUserSelected(false);
-                    navigate('/');
-                }
-            }
-
-            setActiveTabs(updatedTabs);
-            setShowConfirmDialog(false);
-            setTabToClose(null);
-            setIsUserDetailsExpanded(false);
-        });
-    };
-
-    const cancelCloseTab = () => {
-        setShowConfirmDialog(false);
-        setTabToClose(null);
-    };
-
-    const hasHistory = (userId) => {
-        if (userId === 'general') {
-            return userMessages.general && userMessages.general.length > 1;
-        }
-        return userMessages[userId] && userMessages[userId].length > 1;
-    };
+    }, [selectedUser, addTab]);
 
     return (
-        <div className="h-full flex flex-col ">
-            <div className={`flex items-center justify-between rounded-xl  dark:text-white relative`}>
-                <div className="flex-1 overflow-x-auto scrollbar-hide">
-                    <div className="flex  gap-2">
-                        {/* General Chat Tab */}
-                        <div
-                            onClick={switchToGeneralTab}
-                            className={`flex items-center gap-1 sm:gap-2 mt-1 rounded-md px-2 sm:px-3 py-1 h-full cursor-pointer whitespace-nowrap ${activeTabId === 'general'
-                                ? 'bg-white dark:bg-gray-700 mb-3'
-                                : 'bg-[#FFFFFF33] dark:bg-gray-800 dark:hover:bg-gray-600 rounded-md text-gray-400'
-                                }`}
-                        >
-                            <div className="w-4 sm:w-6 h-4 sm:h-6 rounded-full flex items-center justify-center">
-                                <img
-                                    src="/home.svg"
-                                    className={`${activeTabId === 'general' ? '' : 'opacity-50'}`}
-                                    alt=""
-                                />
-                            </div>
-                            {/* <span className="max-w-20 sm:max-w-32 truncate text-xs sm:text-sm">MedCopilot Chat</span> */}
-                            {hasHistory('general') && (
-                                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                            )}
-                        </div>
-
-                        {/* User-specific Tabs */}
-                        {activeTabs.map(tab => (
-                            <div
-                                key={tab._id}
-                                onClick={() => switchToTab(tab._id)}
-                                className={`flex items-center gap-1 sm:gap-2 rounded-lg mt-1  px-2 sm:px-3 h-full py-1 cursor-pointer whitespace-nowrap ${activeTabId === tab._id
-                                    ? 'bg-white dark:bg-gray-700 mb-3'
-                                    : 'bg-[#FFFFFF33] dark:bg-gray-800 dark:hover:bg-gray-600 rounded-md text-gray-400'
-                                    }`}
-                            >
-                                <div className="w-4 sm:w-6 h-4 sm:h-6 rounded-full flex items-center justify-center overflow-hidden">
-                                    <User size={17} />
-                                </div>
-                                <span className="max-w-20 sm:max-w-32 truncate text-xs sm:text-sm">{tab.name}</span>
-                                {hasHistory(tab._id) && (
-                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                                )}
-                                <button
-                                    onClick={(e) => handleCloseTab(e, tab._id)}
-                                    className="ml-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
-                                    disabled={isTransitioning}
-                                >
-                                    <X size={12} />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+        <div className="h-full flex flex-col">
             <div className={`px-2 sm:px-3 sm:pt-3 h-full bg-[#ffffff] dark:bg-[#00000099] rounded-lg flex flex-col overflow-hidden relative`}>
-                {
-                    isSpeechActive && (
-                        <div className="flex items-center animate-fadeInUp justify-center absolute w-full h-full z-100 top-0 left-0 bg-[#ffffff] ">
-                            <SimpleSpeechRecognition />
-                        </div>
-                    )
-                }
+                {isSpeechActive && (
+                    <div className="flex items-center animate-fadeInUp justify-center absolute w-full h-full z-100 top-0 left-0 bg-[#ffffff] ">
+                        <SimpleSpeechRecognition />
+                    </div>
+                )}
+                
                 <div className="flex items-center justify-between">
                     <h1 className="text-lg sm:text-xl text-[#222836] dark:text-white font-semibold mt-2 sm:mt-3 px-2 sm:px-4 mb-1 sm:mb-2">
                         {activeTabId === 'general'
                             ? 'Chat'
                             : `Chat for ${activeTabs.find(tab => tab._id === activeTabId)?.name.split(' ')[0] || ''}`}
                     </h1>
-                    {hasHistory(activeTabId) && activeTabId !== 'general' && (
+                    
+                    {activeTabId !== 'general' && (
                         <div className="flex flex-col items-center absolute animate-fadeInUp transform -translate-x-1/2 top-5 left-1/2 z-10">
-                            {/* Centered User profile capsule */}
                             <div className="relative flex justify-center w-full">
                                 <div
                                     onClick={toggleUserDetails}
@@ -263,12 +55,8 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                                             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
                                                 <img src={activeTabs.find(tab => tab._id === activeTabId)?.profileImage || "/api/placeholder/28/28"} alt="" />
                                             </div>
-                                            {/* <h3 className="font-medium text-gray-800 text-xs whitespace-nowrap ml-2">
-                                                {activeTabs.find(tab => tab._id === activeTabId)?.name}
-                                            </h3> */}
                                         </div>
 
-                                        {/* Conditionally render capsules or dropdown */}
                                         {!isNotesExpanded && !isUserDetailsExpanded ? (
                                             <div className="flex items-center justify-center gap-1 ml-2 whitespace-nowrap overflow-hidden">
                                                 <button className="flex gap-1 text-xs sm:text-sm border border-gray-200 text-gray-500 justify-center items-center rounded-xl px-2 py-0.5 whitespace-nowrap">
@@ -293,7 +81,6 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                                 </div>
                             </div>
 
-                            {/* Expanded details panel */}
                             {isUserDetailsExpanded && (
                                 <div className="w-full">
                                     <div className="border-x border-b animate-fadeInUp border-gray-200 bg-white rounded-b-2xl p-4 transition-all duration-300 ease-in-out shadow-xl">
@@ -329,7 +116,6 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     )}
                 </div>
 
-                {/* Confirmation Dialog */}
                 {showConfirmDialog && (
                     <div className="fixed inset-0 bg-[#0000008c] flex items-center justify-center z-50">
                         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-md w-full shadow-lg">
@@ -359,12 +145,10 @@ const Chat = memo(({ swapPosition, isSwapped, toggleFullScreen, isFullScreen }) 
                     </div>
                 )}
 
-                {/* Chat content area */}
-                <div className="flex-grow overflow-y-auto  transition-opacity duration-300 ease-in-out">
+                <div className="flex-grow overflow-y-auto transition-opacity duration-300 ease-in-out">
                     <ChatInterface
                         isFullScreen={isFullScreen}
                         isGeneralChat={activeTabId === 'general'}
-                        isTransitioning={isTransitioning}
                     />
                 </div>
             </div>

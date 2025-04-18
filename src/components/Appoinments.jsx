@@ -9,11 +9,14 @@ const Appointments = () => {
         searchQuery,
         searchFilteredUsers,
         setIsUserSelected,
+        isUserSelected,
         filterBasis,
         selectedDate,
         weekBounds,
         setSelectedUser,
-        isLoading
+        isLoading,
+        isContentExpanded,
+        setIsContentExpanded
     } = useContext(MedContext);
     const [expandedUserId, setExpandedUserId] = useState(null);
     const [isBlurred, setIsBlurred] = useState(false);
@@ -631,9 +634,21 @@ const Appointments = () => {
                 return renderScheduleView();
         }
     };
+    if (!isContentExpanded) {
+        return (
+            <div className="h-full  rounded-lg flex flex-col items-center justify-between py-4">
+                <button
+                    onClick={() => setIsContentExpanded(true)}
+                    className="text-gray-500 p-2 rounded-full hover:text-gray-900 animate-fadeInLeft"
+                >
+                    <img src="/notes.svg" className='w-5 h-5' alt="" />
+                </button>
+            </div>
+        );
+    }
 
     return (
-        <div className="relative">
+        <div className={`relative ${isUserSelected ? 'animate-fadeOut':''} `}>
             {/* Main content container with conditional blur */}
             <div
 

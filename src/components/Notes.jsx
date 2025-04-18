@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { ChevronDown, Bold, Italic, Link, List, ListOrdered, Undo, Redo, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, Bold, Italic, Link, List, ListOrdered, Undo, Redo } from 'lucide-react';
 import { MedContext } from "../context/MedContext";
 
 const Notes = () => {
     const { isNotesExpanded, setIsNotesExpanded, selectedUser } = useContext(MedContext);
-    const [noteTitle, setNoteTitle] = useState(!selectedUser?'':selectedUser.name);
+    const [noteTitle, setNoteTitle] = useState(!selectedUser ? '' : selectedUser.name);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selectedFormat, setSelectedFormat] = useState("Normal");
     const editorRef = useRef(null);
@@ -55,8 +55,6 @@ const Notes = () => {
 
     const handleFormat = (e) => {
         setSelectedFormat(e.target.value);
-
-        // Clear any existing formatting first
         execCommand('removeFormat');
 
         switch (e.target.value) {
@@ -92,7 +90,7 @@ const Notes = () => {
             <div className="h-full bg-white rounded-lg flex flex-col items-center justify-between py-4">
                 <button
                     onClick={toggleNotesExpansion}
-                    className="text-gray-500 p-2 rounded-full hover:text-gray-900"
+                    className="text-gray-500 p-2 rounded-full hover:text-gray-900 animate-fadeInLeft"
                 >
                     <img src="/notes.svg" className='w-5 h-5' alt="" />
                 </button>
@@ -102,9 +100,9 @@ const Notes = () => {
 
     return (
         <div className="w-full h-full bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-            {/* Header */}
-            <div className="border-b border-gray-200 p-4 flex justify-between items-center">
-                <h1 className="text-lg sm:text-xl font-semibold mt-2 ">Notes</h1>
+            {/* Header - appears first with shortest delay */}
+            <div className="border-b border-gray-200 p-4 flex justify-between items-center animate-fadeInLeft [animation-delay:100ms]">
+                <h1 className="text-lg sm:text-xl font-semibold mt-2">Notes</h1>
                 <div className="flex items-center gap-2">
                     <div className="relative">
                         <button
@@ -132,8 +130,8 @@ const Notes = () => {
                 </div>
             </div>
 
-            {/* Note Title */}
-            <div className="border-b border-gray-200 p-4">
+            {/* Note Title - appears next */}
+            <div className="border-b border-gray-200 p-4 animate-fadeInLeft [animation-delay:200ms]">
                 <input
                     type="text"
                     className="w-full outline-none text-gray-800"
@@ -142,8 +140,8 @@ const Notes = () => {
                 />
             </div>
 
-            {/* Checkboxes */}
-            <div className="p-4 space-y-2">
+            {/* Checkboxes - appears next */}
+            <div className="p-4 space-y-2 animate-fadeInLeft [animation-delay:300ms]">
                 <div className="flex items-center gap-2">
                     <input type="checkbox" id="update" className="w-4 h-4 text-blue-500" defaultChecked />
                     <label htmlFor="update" className="text-sm">
@@ -158,8 +156,8 @@ const Notes = () => {
                 </div>
             </div>
 
-            {/* Formatting Toolbar */}
-            <div className="w-full p-4 border-t border-b border-gray-200">
+            {/* Formatting Toolbar - appears next */}
+            <div className="w-full p-4 border-t border-b border-gray-200 animate-fadeInLeft [animation-delay:400ms]">
                 <div className="flex items-center gap-2 flex-wrap">
                     <button className="text-gray-500 p-1" onClick={handleUndo}>
                         <Undo size={18} />
@@ -197,18 +195,18 @@ const Notes = () => {
                 </div>
             </div>
 
-            {/* Rich Text Editor Area */}
+            {/* Rich Text Editor Area - appears next */}
             <div
                 ref={editorRef}
-                className="flex-1 p-4 outline-none overflow-y-auto"
+                className="flex-1 p-4 outline-none overflow-y-auto animate-fadeInLeft [animation-delay:500ms]"
                 onClick={handleEditorClick}
                 onInput={handleEditorClick}
             >
                 {/* Placeholder content will be added by useEffect */}
             </div>
 
-            {/* Update Button */}
-            <div className="p-4 flex justify-end border-t border-gray-200">
+            {/* Update Button - appears last */}
+            <div className="p-4 flex justify-end border-t border-gray-200 animate-fadeInLeft [animation-delay:600ms]">
                 <button className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded">
                     Update EMR
                 </button>

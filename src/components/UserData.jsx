@@ -4,6 +4,7 @@ import { MedContext } from "../context/MedContext";
 import { ChatContext } from "../context/ChatContext";
 import { Clock, AlertCircle, CheckCircle2, Loader, Info, Ellipsis, ChevronRight, ClipboardList, BookOpen, Pill, AlertTriangle, FileText, Sparkle, Play, Timer, ChartSpline, Calendar, Ear } from "lucide-react";
 import Chart from "./Chart";
+import PatientCardCollapse from "./PatientCardCollapse";
 
 
 // Add these new components (you can customize them as needed)
@@ -70,7 +71,7 @@ const Stopwatch = ({ elapsedTime }) => {
 const UserData = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { users, filteredUsers, setIsUserSelected } = useContext(MedContext);
+  const { users, filteredUsers, setIsUserSelected,setIsContentExpanded,isContentExpanded } = useContext(MedContext);
   const { userMessages, isloadingHistory, isSessionActive, elapsedTime, startSession, endSession, activeSessionUserId } = useContext(ChatContext);
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("summary");
@@ -581,15 +582,19 @@ const UserData = () => {
         );
       case 'transcript':
         return <Transcript />;
-      case 'actionable':
-        return <Actionable />;
       default:
         return null;
     }
   };
 
+  if (!isContentExpanded) {
+    return (
+      <PatientCardCollapse userData={userData}/>
+    );
+}
+
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 animate-fadeIn">
       <div className="flex items-center justify-between px-6 gap-10">
         <div className="flex gap-1 text-xl font-bold py-5 items-center text-[#222836]">
           <h2 className="cursor-pointer" onClick={() => navigate("/")}>Appointments</h2>
@@ -603,6 +608,12 @@ const UserData = () => {
           </div>
           <p className="text-sm text-gray-500 ">{userData?.time}</p>
         </div>
+        <button
+          className="text-gray-500 p-1 hover:bg-gray-100 rounded"
+          onClick={() => setIsContentExpanded(!isContentExpanded)}
+        >
+          <img src="/notes.svg" className='w-5 h-5' alt="" />
+        </button>
       </div>
       <h2 className="">   </h2>
       <div>
@@ -635,27 +646,27 @@ const UserData = () => {
           </div>
         </div>
       </div>
-      <div className="  flex flex-col  rounded-sm bg-[#ffffff] dark:bg-[#00000099] mx-1 h-[calc(65vh-100px)] overflow-auto">
+      <div className="  flex flex-col  rounded-sm bg-[#ffffff] dark:bg-[#00000099] mx-1 h-[calc(75vh-100px)] overflow-auto">
         {/* View Selection Buttons */}
         <div className="flex items-center border-b border-gray-300 p-3 gap-3 justify-between ">
           <button
             onClick={() => setActiveView('synopsis')}
-            className={`px-4 text-sm w-1/3 py-2 flex justify-center items-center gap-2 rounded-sm ${activeView === 'synopsis' ? 'bg-blue-100 text-gray-950 font-medium' : 'text-gray-600 bg-gray-50'}`}
+            className={`px-4 text-sm w-1/2 py-2 flex justify-center items-center gap-2 rounded-sm ${activeView === 'synopsis' ? 'bg-blue-100 text-gray-950 font-medium' : 'text-gray-600 bg-gray-50'}`}
           >
-            <FileText size={15} className={`${activeView === 'synopsis' ?'text-gray-950':''}`}/> Synopsis
+            <FileText size={15} className={`${activeView === 'synopsis' ? 'text-gray-950' : ''}`} /> Synopsis
           </button>
           <button
             onClick={() => setActiveView('transcript')}
-            className={`px-4 text-sm py-2 w-1/3 flex justify-center items-center gap-2 rounded-sm ${activeView === 'transcript' ? 'bg-blue-100 text-gray-950 font-medium' : 'text-gray-600 bg-gray-50'}`}
+            className={`px-4 text-sm py-2 w-1/2 flex justify-center items-center gap-2 rounded-sm ${activeView === 'transcript' ? 'bg-blue-100 text-gray-950 font-medium' : 'text-gray-600 bg-gray-50'}`}
           >
-            <Ear size={15} className={`${activeView === 'transcript' ?'text-gray-950':''}`}/>Transcript
+            <Ear size={15} className={`${activeView === 'transcript' ? 'text-gray-950' : ''}`} />Transcript
           </button>
-          <button
+          {/* <button
             onClick={() => setActiveView('actionable')}
             className={`px-4 text-sm py-2 w-1/3 flex justify-center items-center gap-2 rounded-sm ${activeView === 'actionable' ? 'bg-blue-100 text-gray-950 font-medium' : 'text-gray-600 bg-gray-50'}`}
           >
-            <Play size={15} className={`${activeView === 'actionable' ?'text-gray-950':''}`}/>Actionable
-          </button>
+            <Play size={15} className={`${activeView === 'actionable' ? 'text-gray-950' : ''}`} />Actionable
+          </button> */}
         </div>
 
         {/* Main Content */}

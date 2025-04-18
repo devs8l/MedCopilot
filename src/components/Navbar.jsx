@@ -5,9 +5,10 @@ import DateSort from './DateSort';
 import { Link } from 'react-router-dom';
 import { MedContext } from '../context/MedContext';
 import NotificationPopup from './NotificationPopup';
+import ChatTabs from './ChatTabs';
 
 const Navbar = () => {
-    const { searchQuery, setSearchQuery, isUserSelected, setIsUserSelected, logout, isExpanded, setIsExpanded, setSelectedUser,isNotesExpanded,setisNotesExpanded } = useContext(MedContext);
+    const { searchQuery, setSearchQuery, isUserSelected, setIsUserSelected, logout, isExpanded, setIsExpanded, setSelectedUser, isNotesExpanded, setisNotesExpanded, setIsContentExpanded, isContentExpanded } = useContext(MedContext);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isIconsDropdownOpen, setIsIconsDropdownOpen] = useState(false);
@@ -137,13 +138,13 @@ const Navbar = () => {
                                 }
                             </button> */}
 
-                            <div className={`${isExpanded ? 'hidden':''} my-1 z-1000`}>
+                            <div className={`${isExpanded ? 'fadeOutLeft hidden' : ''} my-1 z-1000`}>
                                 <h1 className={`text-base sm:text-lg md:text-xl font-semibold`}>MedCopilot</h1>
                                 <p className="text-xs text-gray-600 dark:text-gray-400  xs:block">Product by JNC Tech</p>
                             </div>
 
                             {/* Stats buttons - hidden on mobile, visible on desktop */}
-                            <div className="hidden md:flex gap-1 sm:gap-2 md:gap-4 px-2  my-3 no-scrollbar">
+                            {/* <div className="hidden md:flex gap-1 sm:gap-2 md:gap-4 px-2  my-3 no-scrollbar">
                                 <button title="Today's Appointments" className="py-1 bg-[#7c797925] rounded-xs flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 whitespace-nowrap">
                                     <User size={12} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />
                                     <h1 className="text-xs sm:text-sm">15</h1>
@@ -156,6 +157,10 @@ const Navbar = () => {
                                     <CircleCheck size={12} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />
                                     <h1 className="text-xs sm:text-sm">3</h1>
                                 </button>
+                                
+                            </div> */}
+                            <div className='my-1'>
+                                <ChatTabs />
                             </div>
                         </div>
 
@@ -212,7 +217,7 @@ const Navbar = () => {
                                 {/* <button title="Settings">
                                     <Bolt className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button> */}
-                                
+
                                 {/* Profile dropdown */}
                                 <div className="relative flex items-center">
                                     <button
@@ -221,51 +226,51 @@ const Navbar = () => {
                                         aria-label="Toggle profile menu"
                                         data-profile-toggle
                                     >
-                                        <img 
-                                            className="w-full h-full object-cover" 
-                                            src="/doc-dp.png" 
-                                            alt="User profile" 
+                                        <img
+                                            className="w-full h-full object-cover"
+                                            src="/doc-dp.png"
+                                            alt="User profile"
                                         />
                                     </button>
-                                    
+
                                     {isProfileDropdownOpen && (
                                         <div
                                             ref={profileDropdownRef}
                                             className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-900 rounded-xl shadow-md p-2 z-50 animate-slideDown w-48"
                                         >
                                             <div className="flex flex-col space-y-2">
-                                                <Link 
-                                                    to="/profile" 
+                                                <Link
+                                                    to="/profile"
                                                     className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
                                                     onClick={() => setIsProfileDropdownOpen(false)}
                                                 >
                                                     <User className="w-4 h-4" />
                                                     <span className="text-sm">Profile</span>
                                                 </Link>
-                                                <Link 
-                                                    to="/settings" 
+                                                <Link
+                                                    to="/settings"
                                                     className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
                                                     onClick={() => setIsProfileDropdownOpen(false)}
                                                 >
                                                     <Settings className="w-4 h-4" />
                                                     <span className="text-sm">Settings</span>
                                                 </Link>
-                                                <div 
+                                                <div
                                                     className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
                                                     onClick={() => {
                                                         toggleTheme();
                                                         setIsProfileDropdownOpen(false);
                                                     }}
                                                 >
-                                                    {theme === "dark" ? 
-                                                        <Sun className="w-4 h-4" /> : 
+                                                    {theme === "dark" ?
+                                                        <Sun className="w-4 h-4" /> :
                                                         <Moon className="w-4 h-4" />
                                                     }
                                                     <span className="text-sm">
                                                         {theme === "dark" ? "Light Mode" : "Dark Mode"}
                                                     </span>
                                                 </div>
-                                                <div 
+                                                <div
                                                     className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer text-red-500"
                                                     onClick={() => {
                                                         logout();
@@ -389,10 +394,10 @@ const Navbar = () => {
                             {/* Profile section */}
                             <div className="flex items-center gap-3 mb-3">
                                 <div className="w-10 h-10 rounded-full overflow-hidden">
-                                    <img 
-                                        className="w-full h-full object-cover" 
-                                        src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-                                        alt="User profile" 
+                                    <img
+                                        className="w-full h-full object-cover"
+                                        src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                        alt="User profile"
                                     />
                                 </div>
                                 <div>
@@ -401,8 +406,8 @@ const Navbar = () => {
                                 </div>
                             </div>
 
-                            <Link 
-                                to="/profile" 
+                            <Link
+                                to="/profile"
                                 className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
@@ -410,8 +415,8 @@ const Navbar = () => {
                                 <span className="text-sm">Profile</span>
                             </Link>
 
-                            <Link 
-                                to="/settings" 
+                            <Link
+                                to="/settings"
                                 className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
@@ -419,15 +424,15 @@ const Navbar = () => {
                                 <span className="text-sm">Settings</span>
                             </Link>
 
-                            <div 
+                            <div
                                 className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
                                 onClick={() => {
                                     toggleTheme();
                                     setIsMobileMenuOpen(false);
                                 }}
                             >
-                                {theme === "dark" ? 
-                                    <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : 
+                                {theme === "dark" ?
+                                    <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> :
                                     <Moon className="w-4 h-4 sm:w-5 sm:h-5" />
                                 }
                                 <span className="text-sm">
@@ -435,7 +440,7 @@ const Navbar = () => {
                                 </span>
                             </div>
 
-                            <div 
+                            <div
                                 className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer text-red-500"
                                 onClick={() => {
                                     logout();

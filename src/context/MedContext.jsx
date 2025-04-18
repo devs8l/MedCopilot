@@ -10,6 +10,7 @@ const MedContextProvider = (props) => {
   const [filterBasis, setFilterBasis] = useState('schedule');
   const [isExpanded, setIsExpanded] = useState(false);
   const [isNotesExpanded, setIsNotesExpanded] = useState(false);
+  const [isContentExpanded, setIsContentExpanded] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem('isAuthenticated') === 'true'
   );
@@ -214,7 +215,9 @@ const MedContextProvider = (props) => {
     isLoading,
     error,
     isNotesExpanded,
-    setIsNotesExpanded
+    setIsNotesExpanded,
+    isContentExpanded, 
+    setIsContentExpanded
 
   };
 
